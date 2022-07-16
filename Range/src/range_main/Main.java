@@ -1,3 +1,7 @@
+package range_main;
+
+import ru.academits.ageev.Range;
+
 import java.util.Scanner;
 
 public class Main {
