@@ -1,4 +1,4 @@
-package ru.academits.ageev;
+package ru.academits.ageev.range;
 
 public class Range {
     private final double from;
@@ -46,6 +46,7 @@ public class Range {
         } else {
             double newFrom1 = Math.min(this.from, range2.from);
             double newTo1 = Math.max(this.to, range2.to);
+
             newRange1 = new Range(newFrom1, newTo1);
             newRange2 = null;
         }
@@ -57,7 +58,6 @@ public class Range {
         if (this.from >= range2.from && this.to <= range2.to) {
             return null;
         }
-
 
         if (this.from < range2.from && this.to > range2.to) {
             Range newRange1 = new Range(this.from, range2.from);

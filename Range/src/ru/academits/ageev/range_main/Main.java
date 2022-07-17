@@ -1,6 +1,6 @@
-package range_main;
+package ru.academits.ageev.range_main;
 
-import ru.academits.ageev.Range;
+import ru.academits.ageev.range.Range;
 
 import java.util.Scanner;
 
@@ -12,6 +12,7 @@ public class Main {
 
         System.out.println("Диапазон 1 от " + range1.getFrom() + " до " + range1.getTo());
         System.out.println("Диапазон 2 от " + range2.getFrom() + " до " + range2.getTo());
+
         System.out.println("Длина диапазона 1 = " + range1.getLength());
         System.out.println("Длина диапазона 2 = " + range2.getLength());
 
