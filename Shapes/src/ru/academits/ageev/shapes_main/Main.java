@@ -19,8 +19,9 @@ public class Main {
         shapes[6] = new Circle(5);
         shapes[7] = new Circle(10);
 
-        System.out.println(getMaxAreaShape(shapes));
-        System.out.println(getSecondLargestPerimeterShape(shapes));
+        System.out.println(getMaxAreaShape(shapes) + "\n" +
+                "=========================================" + "\n" +
+                getSecondLargestPerimeterShape(shapes));
     }
 
     public static Shape getMaxAreaShape(Shape[] shapes) {
