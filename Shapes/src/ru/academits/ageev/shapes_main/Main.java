@@ -1,6 +1,7 @@
 package ru.academits.ageev.shapes_main;
 
 import ru.academits.ageev.comparator.AreaComparator;
+import ru.academits.ageev.comparator.PerimeterComparator;
 import ru.academits.ageev.shapes.*;
 
 import java.util.Arrays;
@@ -30,8 +31,8 @@ public class Main {
     }
 
     public static Shape getSecondLargestPerimeterShape(Shape[] shapes) {
-        AreaComparator areaComparator = new AreaComparator();
-        Arrays.sort(shapes, areaComparator);
+        PerimeterComparator perimeterComparator = new PerimeterComparator();
+        Arrays.sort(shapes, perimeterComparator);
 
         return shapes[6];
     }
