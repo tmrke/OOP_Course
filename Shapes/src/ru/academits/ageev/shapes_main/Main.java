@@ -16,7 +16,7 @@ public class Main {
         shapes[3] = new Triangle(0, 0, 0, 6, 8, 0);
         shapes[4] = new Rectangle(4, 6);
         shapes[5] = new Rectangle(4, 7);
-        shapes[6] = new Circle(5);
+        shapes[6] = new Circle(10);
         shapes[7] = new Circle(10);
 
         if (shapes[0].equals(shapes[1])) {
