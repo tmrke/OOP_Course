@@ -36,4 +36,28 @@ public class Rectangle extends Square implements Shape {
                 "Площадь: " + this.getArea() + "\n" +
                 "Периметр: " + this.getPerimeter();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Rectangle r = (Rectangle) o;
+
+        return this.height == r.height && this.getWight() == super.getWight();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + Double.hashCode(height);
+        hash = prime * hash + Double.hashCode(getWight());
+        return hash;
+    }
 }

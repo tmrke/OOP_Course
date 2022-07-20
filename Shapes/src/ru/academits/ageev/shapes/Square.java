@@ -34,4 +34,26 @@ public class Square implements Shape {
                 "Площадь: " + this.getArea() + "\n" +
                 "Периметр: " + this.getPerimeter();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Square s = (Square) o;
+
+        return this.side == s.side;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 37;
+        int hash = 1;
+        return prime * hash + Double.hashCode(this.side);
+    }
 }

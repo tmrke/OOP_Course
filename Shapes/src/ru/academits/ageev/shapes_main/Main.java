@@ -10,18 +10,24 @@ public class Main {
     public static void main(String[] args) {
         Shape[] shapes = new Shape[8];
 
-        shapes[0] = new Square(5);
+        shapes[0] = new Square(10);
         shapes[1] = new Square(10);
         shapes[2] = new Triangle(0, 0, 0, 3, 4, 0);
         shapes[3] = new Triangle(0, 0, 0, 6, 8, 0);
         shapes[4] = new Rectangle(4, 6);
-        shapes[5] = new Rectangle(8, 12);
-        shapes[6] = new Circle(5);
+        shapes[5] = new Rectangle(4, 7);
+        shapes[6] = new Circle(10);
         shapes[7] = new Circle(10);
 
-        System.out.println(getMaxAreaShape(shapes) + "\n" +
+        if (shapes[0].equals(shapes[1])) {
+            System.out.println("Фигуры равны");
+        } else {
+            System.out.println("Фигуры не равны");
+        }
+
+        System.out.println("Максимальная по площади фигура:" + "\n" + getMaxAreaShape(shapes) + "\n" +
                 "=========================================" + "\n" +
-                getSecondLargestPerimeterShape(shapes));
+                "Вторая по величине периметра фигура:" + "\n" + getSecondLargestPerimeterShape(shapes));
     }
 
     public static Shape getMaxAreaShape(Shape[] shapes) {

@@ -35,4 +35,26 @@ public class Circle implements Shape {
                 "Площадь: " + this.getArea() + "\n" +
                 "Длина окружности: " + this.getPerimeter();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Circle c = (Circle) o;
+
+        return this.radius == c.radius;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 37;
+        int hash = 1;
+        return prime * hash + Double.hashCode(radius);
+    }
 }

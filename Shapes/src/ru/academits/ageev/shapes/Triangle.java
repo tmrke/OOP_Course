@@ -65,4 +65,34 @@ public class Triangle implements Shape {
                 "Площадь: " + this.getArea() + "\n" +
                 "Периметр: " + this.getPerimeter();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (o == null || o.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Triangle t = (Triangle) o;
+
+        return this.x1 == t.x1 && this.x2 == t.x2 && this.x3 == t.x3 &&
+                this.y1 == t.y1 && this.y2 == t.y2 && this.y3 == t.y3;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + Double.hashCode(x1);
+        hash = prime * hash + Double.hashCode(x2);
+        hash = prime * hash + Double.hashCode(x3);
+        hash = prime * hash + Double.hashCode(y1);
+        hash = prime * hash + Double.hashCode(y2);
+        hash = prime * hash + Double.hashCode(y3);
+
+        return hash;
+    }
 }
