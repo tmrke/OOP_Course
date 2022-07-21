@@ -1,6 +1,13 @@
 package ru.academits.ageev.shapes;
 
-public record Rectangle(double weight, double height) implements Shape {
+public class Rectangle implements Shape {
+    private final double weight;
+    private final double height;
+
+    public Rectangle(double weight, double height) {
+        this.weight = weight;
+        this.height = height;
+    }
 
     @Override
     public double getWight() {
