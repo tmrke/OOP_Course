@@ -13,7 +13,7 @@ public class Main {
         shapes[0] = new Square(10);
         shapes[1] = new Square(10);
         shapes[2] = new Triangle(0, 0, 0, 3, 4, 0);
-        shapes[3] = new Triangle(0, 0, 0, 6, 8, 0);
+        shapes[3] = new Triangle(5, 0, 0, 5, 8, 0);
         shapes[4] = new Rectangle(4, 6);
         shapes[5] = new Rectangle(4, 7);
         shapes[6] = new Circle(10);
