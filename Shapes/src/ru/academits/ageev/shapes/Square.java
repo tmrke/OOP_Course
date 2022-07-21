@@ -1,11 +1,6 @@
 package ru.academits.ageev.shapes;
 
-public class Square implements Shape {
-    private final double side;
-
-    public Square(double side) {
-        this.side = side;
-    }
+public record Square(double side) implements Shape {
 
     @Override
     public double getWight() {

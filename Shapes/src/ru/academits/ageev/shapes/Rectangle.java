@@ -1,16 +1,10 @@
 package ru.academits.ageev.shapes;
 
-public class Rectangle extends Square implements Shape {
-    private final double height;
-
-    public Rectangle(double weight, double height) {
-        super(weight);
-        this.height = height;
-    }
+public record Rectangle(double weight, double height) implements Shape {
 
     @Override
     public double getWight() {
-        return super.getWight();
+        return weight;
     }
 
     @Override
@@ -49,7 +43,7 @@ public class Rectangle extends Square implements Shape {
 
         Rectangle r = (Rectangle) o;
 
-        return this.height == r.height && this.getWight() == super.getWight();
+        return this.height == r.height && this.weight == r.weight;
     }
 
     @Override
