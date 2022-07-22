@@ -18,22 +18,22 @@ public class Main {
         System.out.println("Длина диапазона 1 = " + range1.getLength());
         System.out.println("Длина диапазона 2 = " + range2.getLength());
 
-//        System.out.println("Измените начало первого диапазона:");
-//        range1.setFrom(scanner.nextDouble());
-//
-//        System.out.println("Измените конец первого диапазона:");
-//        range1.setTo(scanner.nextDouble());
-//
-//        System.out.println("Новый диапазон от " + range1.getFrom() + " до " + range1.getTo());
-//
-//        System.out.println("Введите число для проверки вхождения в диапазон:");
-//        double number = scanner.nextDouble();
-//
-//        if (range1.isInside(number)) {
-//            System.out.println("Число в диапазоне");
-//        } else {
-//            System.out.println("Число не в диапазоне");
-//        }
+        System.out.println("Измените начало первого диапазона:");
+        range1.setFrom(scanner.nextDouble());
+
+        System.out.println("Измените конец первого диапазона:");
+        range1.setTo(scanner.nextDouble());
+
+        System.out.println("Новый диапазон от " + range1.getFrom() + " до " + range1.getTo());
+
+        System.out.println("Введите число для проверки вхождения в диапазон:");
+        double number = scanner.nextDouble();
+
+        if (range1.isInside(number)) {
+            System.out.println("Число в диапазоне");
+        } else {
+            System.out.println("Число не в диапазоне");
+        }
 
         Range intersectionRange = range1.getIntersection(range2);
 
