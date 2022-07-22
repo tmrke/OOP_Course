@@ -1,8 +1,8 @@
 package ru.academits.ageev.range;
 
 public class Range {
-    private final double from;
-    private final double to;
+    private double from;
+    private double to;
 
     public Range(double from, double to) {
         this.from = from;
@@ -17,6 +17,14 @@ public class Range {
         return to;
     }
 
+    public void setFrom(double from) {
+        this.from = from;
+    }
+
+    public void setTo(double to) {
+        this.to = to;
+    }
+
     public double getLength() {
         return to - from;
     }
@@ -25,60 +33,48 @@ public class Range {
         return number >= from && number <= to;
     }
 
-    public Range getIntersectionInterval(Range range2) {
-        if (this.to <= range2.from || this.from >= range2.to) {
+    public Range getIntersection(Range range) {
+        if (to <= range.from || from >= range.to) {
             return null;
         }
 
-        double newFrom = Math.max(this.from, range2.from);
-        double newTo = Math.min(this.to, range2.to);
-
-        return new Range(newFrom, newTo);
+        return new Range(Math.max(from, range.from), Math.min(to, range.to));
     }
 
-    public Range[] getMergingIntervals(Range range2) {
-        Range newRange1;
-        Range newRange2;
-
-        if (this.to < range2.from || this.from > range2.to) {
-            newRange1 = this;
-            newRange2 = range2;
-        } else {
-            double newFrom1 = Math.min(this.from, range2.from);
-            double newTo1 = Math.max(this.to, range2.to);
-
-            newRange1 = new Range(newFrom1, newTo1);
-            newRange2 = null;
+    public Range[] getUnion(Range range) {
+        if (to < range.from || from > range.to) {
+            return new Range[]{new Range(from, to), new Range(range.from, range.to)};
         }
 
-        return new Range[]{newRange1, newRange2};
+        return new Range[]{new Range(Math.min(from, range.from), Math.max(to, range.to))};
     }
 
-    public Range[] getDifferenceIntervals(Range range2) {
-        if (this.from >= range2.from && this.to <= range2.to) {
+    public Range[] getDifference(Range range) {
+        if (to <= range.from ||
+                range.to <= from ||
+                (range.from <= from && to <= range.to)) {
             return null;
         }
 
-        if (this.from < range2.from && this.to > range2.to) {
-            Range newRange1 = new Range(this.from, range2.from);
-            Range newRange2 = new Range(range2.to, this.to);
-
-            return new Range[]{newRange1, newRange2};
+        if (from < range.from && to > range.to) {
+            return new Range[]{
+                    new Range(from, range.from),
+                    new Range(range.to, to)};
         }
 
-        Range newRange1;
-
-        if (this.from > range2.from && this.to > range2.to && range2.to > this.from) {
-            newRange1 = new Range(range2.to, this.to);
-        } else {
-            newRange1 = new Range(this.from, range2.from);
+        if (from > range.from && to > range.to && range.to > from) {
+            return new Range[]{new Range(range.to, to)};
         }
 
-        return new Range[]{newRange1, null};
+        if (to < range.from) {
+            return new Range[]{new Range(from, to)};
+        }
+
+        return new Range[]{new Range(from, range.from)};
     }
 
     @Override
     public String toString() {
-        return "от " + from + " до " + to;
+        return "(" + from + "; " + to + ")";
     }
 }
