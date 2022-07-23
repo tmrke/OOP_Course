@@ -2,43 +2,78 @@ package ru.academits.ageev.vector;
 
 import java.util.Arrays;
 
-public class Vector {       //TODO сделать исключения и тест в main
+public class Vector {
     private double[] array;
-
-    private final int n;
+    private int n;
 
     public Vector(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("vector size can't be <= 0");
+        }
+
         array = new double[n];
         this.n = n;
     }
 
     public Vector(double[] array) {
+        if (array == null) {
+            throw new NullPointerException("vector array can't be null");
+        }
+
+        if (array.length == 0) {
+            throw new IllegalArgumentException("vector size can't be <= 0");
+        }
+
         this.array = array;
         n = array.length;
     }
 
     public Vector(Vector vector) {
+        if (vector == null) {
+            throw new NullPointerException("vector can't be null");
+        }
+
+        if (vector.getSize() <= 0) {
+            throw new IllegalArgumentException("vector size can't be <= 0");
+        }
+
         this.array = vector.array;
         this.n = vector.n;
     }
 
     public Vector(int n, double[] array) {
+        if (array == null) {
+            throw new NullPointerException("vector array can't be null");
+        }
+
+        if (array.length == 0 || n <= 0) {
+            throw new IllegalArgumentException("vector size can't be <= 0");
+        }
+
         this.n = n;
         this.array = Arrays.copyOf(array, n);
     }
 
-    public int getN() {
-        return n;
+    public void setN(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("vector size can't be <= 0");
+        }
+
+        this.n = n;
+        this.array = Arrays.copyOf(array, n);
     }
 
     public void add(Vector vector) {
-        double[] temp = array.length > vector.array.length ? array : vector.array;
+        int maxLength = Math.max(array.length, vector.array.length);
+        double[] tempThis = Arrays.copyOf(array, maxLength);
+        double[] temp = Arrays.copyOf(vector.array, maxLength);
 
-        for (int i = 0; i < Math.min(array.length, vector.array.length); i++) {
-            temp[i] = array[i] + vector.array[i];
+        for (int i = 0; i < tempThis.length; i++) {
+            tempThis[i] += temp[i];
         }
 
-        array = temp;
+        array = tempThis;
+        setN(array.length);
     }
 
     public void subtract(Vector vector) {
@@ -51,6 +86,7 @@ public class Vector {       //TODO сделать исключения и тес
         }
 
         array = tempThis;
+        setN(array.length);
     }
 
     public void multiply(double number) {
@@ -66,21 +102,32 @@ public class Vector {       //TODO сделать исключения и тес
     }
 
     public int getSize() {
-        return array.length;
+        return n;
     }
 
     public double getComponentByIndex(int index) {
+        if (index > this.getSize()) {
+            throw new ArrayIndexOutOfBoundsException("index can't be >= vector size");
+        }
+
         return array[index];
     }
 
-    public void setComponentByIndex(int index) {
-        this.array[index] = array[index];
+    public void setComponentByIndex(int index, double value) {
+        if (index > this.getSize()) {
+            throw new ArrayIndexOutOfBoundsException("index can't be >= vector size");
+        }
+
+        this.array[index] = value;
     }
 
     public static Vector add(Vector vector1, Vector vector2) {
+        if (vector1 == null || vector2 == null) {
+            throw new NullPointerException("vector array can't be null");
+        }
+
         int maxN = Math.max(vector1.getSize(), vector2.getSize());
         double[] tempArray = vector1.array.length > vector2.array.length ? vector1.array : vector2.array;
-
         Vector resultVector = new Vector(maxN);
         resultVector.array = Arrays.copyOf(tempArray, maxN);
 
@@ -92,15 +139,16 @@ public class Vector {       //TODO сделать исключения и тес
     }
 
     public static Vector subtract(Vector vector1, Vector vector2) {
+        if (vector1 == null || vector2 == null) {
+            throw new NullPointerException("vector array can't be null");
+        }
+
         int maxN = Math.max(vector1.getSize(), vector2.getSize());
         Vector resultVector = new Vector(maxN);
+        double[] temp1 = Arrays.copyOf(vector1.array, maxN);
+        double[] temp2 = Arrays.copyOf(vector2.array, maxN);
 
-        double[] temp1 = vector1.array.length <= vector2.array.length ? Arrays.copyOf(vector1.array, maxN) :
-                Arrays.copyOf(vector2.array, maxN);
-        double[] temp2 = vector1.array.length > vector2.array.length ? Arrays.copyOf(vector1.array, maxN) :
-                Arrays.copyOf(vector2.array, maxN);
-
-        for (int i = 0; i < Math.min(vector1.getSize(), vector2.getSize()); i++) {
+        for (int i = 0; i < maxN; i++) {
             resultVector.array[i] = temp1[i] - temp2[i];
         }
 
@@ -108,6 +156,10 @@ public class Vector {       //TODO сделать исключения и тес
     }
 
     public static Vector multiply(Vector vector, double number) {
+        if (vector == null) {
+            throw new NullPointerException("vector array can't be null");
+        }
+
         Vector resultVector = new Vector(vector);
 
         for (int i = 0; i < resultVector.getSize(); i++) {
@@ -116,7 +168,6 @@ public class Vector {       //TODO сделать исключения и тес
 
         return vector;
     }
-
 
     @Override
     public String toString() {
