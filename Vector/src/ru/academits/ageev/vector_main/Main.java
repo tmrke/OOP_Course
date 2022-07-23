@@ -8,7 +8,7 @@ public class Main {
         Vector vector2 = new Vector(new double[]{1, 2, 3, 4, 5, 6});
 
         System.out.println("Размер vector1 = " + vector1.getSize());
-        vector1.setN(3);
+        vector1.setSize(3);
         System.out.println("Новый размер vector1 = " + vector1.getSize());
 
         vector2.subtract(vector1);

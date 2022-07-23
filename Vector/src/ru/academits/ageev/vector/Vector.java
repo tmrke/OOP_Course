@@ -54,7 +54,7 @@ public class Vector {
         this.array = Arrays.copyOf(array, n);
     }
 
-    public void setN(int n) {
+    public void setSize(int n) {
         if (n <= 0) {
             throw new IllegalArgumentException("vector size can't be <= 0");
         }
@@ -73,7 +73,7 @@ public class Vector {
         }
 
         array = tempThis;
-        setN(array.length);
+        setSize(array.length);
     }
 
     public void subtract(Vector vector) {
@@ -86,7 +86,7 @@ public class Vector {
         }
 
         array = tempThis;
-        setN(array.length);
+        setSize(array.length);
     }
 
     public void multiply(double number) {
