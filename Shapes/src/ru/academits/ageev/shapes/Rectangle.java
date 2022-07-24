@@ -1,17 +1,17 @@
 package ru.academits.ageev.shapes;
 
 public class Rectangle implements Shape {
-    private final double weight;
+    private final double width;
     private final double height;
 
-    public Rectangle(double weight, double height) {
-        this.weight = weight;
+    public Rectangle(double width, double height) {
+        this.width = width;
         this.height = height;
     }
 
     @Override
-    public double getWight() {
-        return weight;
+    public double getWidth() {
+        return width;
     }
 
     @Override
@@ -21,21 +21,20 @@ public class Rectangle implements Shape {
 
     @Override
     public double getArea() {
-        return height * getWight();
+        return height * width;
     }
 
     @Override
     public double getPerimeter() {
-        return (height + getWight()) * 2;
+        return (height + width) * 2;
     }
 
     @Override
     public String toString() {
-        return "Фигура: прямоугольник" + "\n" +
-                "Ширина: " + this.getWight() + "\n" +
-                "Высота: " + this.getHeight() + "\n" +
-                "Площадь: " + this.getArea() + "\n" +
-                "Периметр: " + this.getPerimeter();
+        return "Фигура: прямоугольник; ширина: " + width +
+                "; высота: " + height +
+                "; площадь: " + getArea() +
+                "; периметр: " + getPerimeter();
     }
 
     @Override
@@ -44,13 +43,13 @@ public class Rectangle implements Shape {
             return true;
         }
 
-        if (o == null || o.getClass() != this.getClass()) {
+        if (o == null || o.getClass() != getClass()) {
             return false;
         }
 
         Rectangle r = (Rectangle) o;
 
-        return this.height == r.height && this.weight == r.weight;
+        return height == r.height && width == r.width;
     }
 
     @Override
@@ -58,7 +57,7 @@ public class Rectangle implements Shape {
         final int prime = 37;
         int hash = 1;
         hash = prime * hash + Double.hashCode(height);
-        hash = prime * hash + Double.hashCode(getWight());
+        hash = prime * hash + Double.hashCode(width);
         return hash;
     }
 }

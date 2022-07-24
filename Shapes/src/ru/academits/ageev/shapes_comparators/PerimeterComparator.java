@@ -1,4 +1,4 @@
-package ru.academits.ageev.comparator;
+package ru.academits.ageev.shapes_comparators;
 
 import ru.academits.ageev.shapes.Shape;
 

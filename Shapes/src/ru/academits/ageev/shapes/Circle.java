@@ -7,8 +7,12 @@ public class Circle implements Shape {
         this.radius = radius;
     }
 
+    public double getRadius() {
+        return radius;
+    }
+
     @Override
-    public double getWight() {
+    public double getWidth() {
         return radius * 2;
     }
 
@@ -29,11 +33,10 @@ public class Circle implements Shape {
 
     @Override
     public String toString() {
-        return "Фигура: круг" + "\n" +
-                "Радиус: " + radius + "\n" +
-                "Диаметр: " + this.getHeight() + "\n" +
-                "Площадь: " + this.getArea() + "\n" +
-                "Длина окружности: " + this.getPerimeter();
+        return "Фигура: круг; радиус: " + radius +
+                "; диаметр: " + getWidth() +
+                "; площадь: " + getArea() +
+                "; длина окружности: " + getPerimeter();
     }
 
     @Override
@@ -42,13 +45,13 @@ public class Circle implements Shape {
             return true;
         }
 
-        if (o == null || o.getClass() != this.getClass()) {
+        if (o == null || o.getClass() != getClass()) {
             return false;
         }
 
         Circle c = (Circle) o;
 
-        return this.radius == c.radius;
+        return radius == c.radius;
     }
 
     @Override

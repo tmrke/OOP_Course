@@ -1,38 +1,41 @@
 package ru.academits.ageev.shapes;
 
 public class Square implements Shape {
-    private final double side;
+    private final double sideLength;
 
-    public Square(double side) {
-        this.side = side;
+    public Square(double sideLength) {
+        this.sideLength = sideLength;
+    }
+
+    public double getSideLength() {
+        return sideLength;
     }
 
     @Override
-    public double getWight() {
-        return side;
+    public double getWidth() {
+        return sideLength;
     }
 
     @Override
     public double getHeight() {
-        return side;
+        return sideLength;
     }
 
     @Override
     public double getArea() {
-        return side * side;
+        return sideLength * sideLength;
     }
 
     @Override
     public double getPerimeter() {
-        return side * 4;
+        return sideLength * 4;
     }
 
     @Override
     public String toString() {
-        return "Фигура: квадрат" + "\n" +
-                "Сторона: " + this.getHeight() + "\n" +
-                "Площадь: " + this.getArea() + "\n" +
-                "Периметр: " + this.getPerimeter();
+        return "Фигура: квадрат; сторона: " + sideLength +
+                "; площадь: " + getArea() +
+                "; периметр: " + getPerimeter();
     }
 
     @Override
@@ -41,19 +44,19 @@ public class Square implements Shape {
             return true;
         }
 
-        if (o == null || o.getClass() != this.getClass()) {
+        if (o == null || o.getClass() != getClass()) {
             return false;
         }
 
         Square s = (Square) o;
 
-        return this.side == s.side;
+        return sideLength == s.sideLength;
     }
 
     @Override
     public int hashCode() {
         final int prime = 37;
         int hash = 1;
-        return prime * hash + Double.hashCode(this.side);
+        return prime * hash + Double.hashCode(sideLength);
     }
 }

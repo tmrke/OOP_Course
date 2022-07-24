@@ -1,7 +1,7 @@
 package ru.academits.ageev.shapes;
 
 public interface Shape {
-    double getWight();
+    double getWidth();
 
     double getHeight();
 
