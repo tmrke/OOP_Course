@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Range range1 = new Range(10, 40);
-        Range range2 = new Range(30, 40);
+        Range range2 = new Range(20, 30);
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Диапазон 1: " + range1.getFrom() + " до " + range1.getTo());
