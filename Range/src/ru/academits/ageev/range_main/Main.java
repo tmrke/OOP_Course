@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Range range1 = new Range(10, 40);
-        Range range2 = new Range(20, 30);
+        Range range1 = new Range(30, 50);
+        Range range2 = new Range(20, 40);
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Диапазон 1: " + range1.getFrom() + " до " + range1.getTo());
@@ -37,18 +37,13 @@ public class Main {
 
         Range intersectionRange = range1.getIntersection(range2);
 
-        if (intersectionRange == null) {
-            System.out.println("Результат пересечения диапазонов: " + Arrays.toString(new Range[0]));
-        } else {
-            System.out.println("Результат пересечения диапазонов: " + Arrays.toString(new Range[]{intersectionRange}));
-        }
+        System.out.println("Результат пересечения диапазонов: " + Objects.requireNonNullElseGet(intersectionRange,
+                () -> Arrays.toString(new Range[0])));
 
         Range[] unionRanges = range1.getUnion(range2);
-        System.out.println("Результат объединения диапазонов: " +
-                Arrays.toString(Objects.requireNonNullElseGet(unionRanges, () -> new Range[0])));
+        System.out.println("Результат объединения диапазонов: " + Arrays.toString(unionRanges));
 
         Range[] differenceRanges = range1.getDifference(range2);
-        System.out.println("Результат разности диапазонов: " +
-                Arrays.toString(Objects.requireNonNullElseGet(differenceRanges, () -> new Range[0])));
+        System.out.println("Результат разности диапазонов: " + Arrays.toString(differenceRanges));
     }
 }

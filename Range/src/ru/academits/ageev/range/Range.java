@@ -13,12 +13,12 @@ public class Range {
         return from;
     }
 
-    public double getTo() {
-        return to;
-    }
-
     public void setFrom(double from) {
         this.from = from;
+    }
+
+    public double getTo() {
+        return to;
     }
 
     public void setTo(double to) {
@@ -53,7 +53,7 @@ public class Range {
         if (to <= range.from ||
                 range.to <= from ||
                 (range.from <= from && to <= range.to)) {
-            return null;
+            return new Range[0];
         }
 
         if (from < range.from && to > range.to) {
@@ -62,7 +62,7 @@ public class Range {
                     new Range(range.to, to)};
         }
 
-        if (from > range.from && to > range.to && range.to > from) {
+        if (from >= range.from && to >= range.to && range.to > from) {
             return new Range[]{new Range(range.to, to)};
         }
 
