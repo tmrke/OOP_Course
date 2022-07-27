@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Range range1 = new Range(30, 50);
+        Range range1 = new Range(30, 40);
         Range range2 = new Range(20, 40);
         Scanner scanner = new Scanner(System.in);
 
