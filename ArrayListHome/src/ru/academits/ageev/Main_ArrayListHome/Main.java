@@ -11,7 +11,7 @@ public class Main {
         ArrayList<String> stringsList = readFileToArrayList();
         System.out.println(stringsList);
 
-        ArrayList<Integer> numbersList = new ArrayList<>(Arrays.asList(7, 7, 1, 1, 2, 4, 3, 4, 3, 5, 6, 7, 8, 2, 2, 4, 7));
+        ArrayList<Integer> numbersList = new ArrayList<>(Arrays.asList(7, 7, 1, 1, 2, 4, 3, 4, 3, 5, 6, 7, 8, 2, 4, 7));
         ArrayList<Integer> newNumbersList = deleteDuplicateElements(numbersList);
         System.out.println(newNumbersList);
 
