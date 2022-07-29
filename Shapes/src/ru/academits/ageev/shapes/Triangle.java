@@ -24,20 +24,20 @@ public class Triangle implements Shape {
         return x1;
     }
 
-    public double getX2() {
-        return x2;
-    }
-
-    public double getX3() {
-        return x3;
-    }
-
     public double getY1() {
         return y1;
     }
 
+    public double getX2() {
+        return x2;
+    }
+
     public double getY2() {
         return y2;
+    }
+
+    public double getX3() {
+        return x3;
     }
 
     public double getY3() {
@@ -54,37 +54,36 @@ public class Triangle implements Shape {
         return Math.max(Math.max(y1, y2), y3) - Math.min(Math.min(y1, y2), y3);
     }
 
-    public double getSideLength(double x1, double x2, double y1, double y2) {
+    public double getSideLength(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
     @Override
     public double getArea() {
-        double sideLength1 = getSideLength(x1, x2, y1, y2);
-        double sideLength2 = getSideLength(x2, x3, y2, y3);
-        double sideLength3 = getSideLength(x3, x1, y3, y1);
+        double side1Length = getSideLength(x1, y1, x2, y2);
+        double side2Length = getSideLength(x2, y2, x3, y3);
+        double side3Length = getSideLength(x3, y3, x1, y1);
 
-        double triangleHalfPerimeter = (sideLength1 + sideLength2 + sideLength3) / 2;
+        double triangleHalfPerimeter = (side1Length + side2Length + side3Length) / 2;
 
-        return Math.sqrt(triangleHalfPerimeter * (triangleHalfPerimeter - sideLength1) *
-                (triangleHalfPerimeter - sideLength2) * (triangleHalfPerimeter - sideLength3));
+        return Math.sqrt(triangleHalfPerimeter * (triangleHalfPerimeter - side1Length) *
+                (triangleHalfPerimeter - side2Length) * (triangleHalfPerimeter - side3Length));
     }
 
     @Override
     public double getPerimeter() {
-        double side1 = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-        double side2 = Math.sqrt(Math.pow(x2 - x3, 2) + Math.pow(y2 - y3, 2));
-        double side3 = Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
+        double side1Length = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+        double side2Length = Math.sqrt(Math.pow(x2 - x3, 2) + Math.pow(y2 - y3, 2));
+        double side3Length = Math.sqrt(Math.pow(x3 - x1, 2) + Math.pow(y3 - y1, 2));
 
-        return side1 + side2 + side3;
+        return side1Length + side2Length + side3Length;
     }
 
     @Override
     public String toString() {
-        return "Фигура: треугольник; координаты точки 1: " + x1 + ", " + y1 + "; координаты точки 2: " +
-                +x2 + ", " + y2 + "; координаты точки 3: " +
-                +x3 + ", " + y3 +
-                "; площадь: " + getArea() +
+        return "Фигура: треугольник; координаты: ("
+                + x1 + "; " + y1 + "), (" + x2 + "; " + y2 + "), (" + x3 + "; " + y3 +
+                "); площадь: " + getArea() +
                 "; периметр: " + getPerimeter();
     }
 
@@ -100,8 +99,8 @@ public class Triangle implements Shape {
 
         Triangle t = (Triangle) o;
 
-        return x1 == t.x1 && x2 == t.x2 && x3 == t.x3 &&
-                y1 == t.y1 && y2 == t.y2 && y3 == t.y3;
+        return x1 == t.x1 && x2 == t.x2 && x3 == t.x3
+                && y1 == t.y1 && y2 == t.y2 && y3 == t.y3;
     }
 
     @Override
