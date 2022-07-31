@@ -5,6 +5,10 @@ import java.util.Arrays;
 public class Vector {
     private double[] vectorsArray;
 
+    public double[] getVectorsArray() {
+        return vectorsArray;
+    }
+
     public Vector(int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("Size = " + size + "; size can't be <= 0");
@@ -77,7 +81,7 @@ public class Vector {
 
     public double getComponentByIndex(int index) {
         if (index >= vectorsArray.length || index < 0) {
-            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= vectorsArray.length or < 0");
+            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= " + vectorsArray.length + " or < 0");
         }
 
         return vectorsArray[index];
@@ -85,7 +89,7 @@ public class Vector {
 
     public void setComponentByIndex(int index, double value) {
         if (index >= vectorsArray.length || index < 0) {
-            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= vectorsArray.length or < 0");
+            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= " + vectorsArray.length + " or < 0");
         }
 
         vectorsArray[index] = value;
