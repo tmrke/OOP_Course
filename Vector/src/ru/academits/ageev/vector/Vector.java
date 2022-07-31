@@ -77,7 +77,7 @@ public class Vector {
 
     public double getComponentByIndex(int index) {
         if (index >= vectorsArray.length || index < 0) {
-            throw new IllegalArgumentException("Index = " + index + "; index can't be >= vectorsArray.length or < 0");
+            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= vectorsArray.length or < 0");
         }
 
         return vectorsArray[index];
@@ -85,7 +85,7 @@ public class Vector {
 
     public void setComponentByIndex(int index, double value) {
         if (index >= vectorsArray.length || index < 0) {
-            throw new IllegalArgumentException("Index = " + index + "; index can't be >= vectorsArray.length or < 0");
+            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= vectorsArray.length or < 0");
         }
 
         vectorsArray[index] = value;
