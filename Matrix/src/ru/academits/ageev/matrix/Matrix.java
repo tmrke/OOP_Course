@@ -2,140 +2,152 @@ package ru.academits.ageev.matrix;
 
 import ru.academits.ageev.vector.Vector;
 
-import java.util.Arrays;
-
 public class Matrix {
-    private Vector[] vectorArray;
+    private Vector[] strings;
 
-    public Matrix(int n, int m) {
-        if (n <= 0 || m <= 0) {
-            throw new IllegalArgumentException("matrix size can't be < 0");
+    public Matrix(int rowsCount, int columnsCount) {
+        if (columnsCount <= 0) {
+            throw new IllegalArgumentException("Matrix column size can't be < 0, columnsCount = " + columnsCount + ";");
         }
 
-        vectorArray = new Vector[n];
+        if (rowsCount <= 0) {
+            throw new IllegalArgumentException("Matrix column size can't be < 0, rowsCount = " + rowsCount + ";");
+        }
 
-        for (int i = 0; i < vectorArray.length; i++) {
-            vectorArray[i] = new Vector(m);
+        strings = new Vector[rowsCount];
+
+        for (int i = 0; i < strings.length; i++) {
+            strings[i] = new Vector(columnsCount);
         }
     }
 
     public Matrix(Matrix matrix) {
-        if (matrix == null) {
-            throw new NullPointerException("matrix can't be null");
-        }
-
-        vectorArray = matrix.vectorArray;
+        strings = new Vector[matrix.strings.length];
+        System.arraycopy(matrix.strings, 0, strings, 0, strings.length);
     }
 
-    public Matrix(double[][] numberArray) {
-        if (numberArray.length == 0) {
-            throw new IllegalArgumentException("matrix size can't be < 0");
+    public Matrix(double[][] numbersArray) {
+        if (numbersArray.length == 0) {
+            throw new IllegalArgumentException("Numbers array length can't be = 0");
         }
 
-        vectorArray = new Vector[numberArray.length];
+        strings = new Vector[numbersArray.length];
 
-        int maxSize = numberArray[0].length;
+        int maxSize = 0;
 
-        for (int i = 0; i < numberArray.length; i++) {
-            vectorArray[i] = new Vector(maxSize);
-
-            for (int j = 0; j < numberArray[i].length; j++) {
-                vectorArray[i].setComponentByIndex(j, numberArray[i][j]);
+        for (double[] array : numbersArray) {
+            if (array.length > maxSize) {
+                maxSize = array.length;
             }
         }
+
+        for (int i = 0; i < numbersArray.length; i++) {
+            strings[i] = new Vector(maxSize, numbersArray[i]);
+        }
     }
 
-    public Matrix(Vector[] vectorArray) {
-        if (vectorArray == null) {
-            throw new NullPointerException("matrix array can't be null");
-        }
-
-        if (vectorArray.length == 0) {
-            throw new IllegalArgumentException("matrix size can't be < 0");
+    public Matrix(Vector[] vectorsArray) {
+        if (vectorsArray.length == 0) {
+            throw new IllegalArgumentException("Vectors array length can't be = 0");
         }
 
         int maxSize = 0;
 
-        for (Vector vector : vectorArray) {
+        for (Vector vector : vectorsArray) {
             if (vector.getSize() > maxSize) {
                 maxSize = vector.getSize();
             }
         }
 
-        Vector emptyVector = new Vector(maxSize);
+        strings = new Vector[vectorsArray.length];
 
-        for (Vector vector : vectorArray) {
-            vector.add(emptyVector);
+        for (int i = 0; i < strings.length; i++) {
+            strings[i] = new Vector(maxSize, vectorsArray[i].getVectorsArray());
         }
-
-        this.vectorArray = vectorArray;
     }
 
-    public int getRowSize() {
-        return vectorArray[0].getSize();
+    public int getRowCount() {
+        return strings.length;
     }
 
-    public int getColumnSize() {
-        return vectorArray.length;
-    }
+    public int getColumnCount() {
+        int maxRowCount = 0;
 
-    public Vector getVectorRow(int index) {
-        if (index >= vectorArray.length || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("index can't be >= length of vector or < 0");
-        }
-
-        return vectorArray[index];
-    }
-
-    public void setVectorRow(int index, Vector vector) {
-        if (vector == null) {
-            throw new NullPointerException("vector can't be null");
-        }
-
-        if (index >= vectorArray.length || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("index can't be >= length of vector or < 0");
-        }
-
-        vectorArray[index] = vector;
-    }
-
-    public Vector getVectorColumn(int index) {
-        if (index < 0) {
-            throw new IllegalArgumentException("index can't be < 0");
-        }
-
-        Vector currentVector = new Vector(vectorArray.length);
-
-        for (int i = 0; i < vectorArray.length; i++) {
-            if (index > vectorArray[i].getSize()) {
-                throw new IllegalArgumentException("index can't be > vector size");
+        for (Vector vector : strings) {
+            if (vector.getSize() > maxRowCount) {
+                maxRowCount = vector.getSize();
             }
-            currentVector.setComponentByIndex(i, vectorArray[i].getComponentByIndex(index));
         }
 
-        return currentVector;
+        return maxRowCount;
+    }
+
+    public Vector getRow(int index) {
+        if (index < 0 || index >= strings.length) {
+            throw new IndexOutOfBoundsException("Index of row = " + index
+                    + "; Index of row can't be < 0 or >= " + getRowCount() + ";");
+        }
+
+        return new Vector(strings[index]);
+    }
+
+    public void setRow(int index, Vector vector) {
+        if (index < 0 || index >= strings.length) {
+            throw new IndexOutOfBoundsException("Index of row = " + index
+                    + "; Index of row can't be < 0 or >= " + getRowCount() + ";");
+        }
+
+        if (vector.getSize() != strings[index].getSize()) {
+            throw new IllegalArgumentException("Size of the vector = " + vector.getSize()
+                    + "; Size of the vector can't be different from the size of the matrix strings");
+        }
+
+        strings[index] = new Vector(vector);
+    }
+
+    public Vector getColumn(int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Index of column = " + index
+                    + "; Index of column can't be < 0 or >= " + getColumnCount() + ";");
+        }
+
+        Vector columnVector = new Vector(getRowCount());
+
+        for (int i = 0; i < getRowCount(); i++) {
+            columnVector.setComponentByIndex(i, strings[i].getComponentByIndex(index));
+        }
+
+        return columnVector;
     }
 
     public void transpose() {
-        Matrix tempMatrix = new Matrix(getRowSize(), getColumnSize());
+        Vector[] transposedMatrixStrings = new Vector[getColumnCount()];
 
-        for (int i = 0; i < tempMatrix.getColumnSize(); i++) {
-            tempMatrix.setVectorRow(i, this.getVectorColumn(i));
+        for (int i = 0; i < getColumnCount(); i++) {
+            transposedMatrixStrings[i] = getColumn(i);
         }
 
-        this.vectorArray = tempMatrix.vectorArray;
+        strings = new Vector[getColumnCount()];
+
+        if (strings.length >= 0) System.arraycopy(transposedMatrixStrings, 0, strings, 0, strings.length);
     }
 
     public void multiplyByScalar(double scalar) {
-        for (Vector vector : vectorArray) {
-            for (int i = 0; i < vector.getSize(); i++) {
-                vector.setComponentByIndex(i, vector.getComponentByIndex(i) * scalar);
-            }
+        for (Vector vector : strings) {
+            vector.multiply(scalar);
         }
     }
 
     @Override
     public String toString() {
-        return Arrays.toString(vectorArray);
+        StringBuilder resultString = new StringBuilder("{ ");
+
+        for (int i = 0; i < getRowCount() - 1; i++) {
+            resultString.append(strings[i].toString()).append(", ");
+        }
+
+        resultString.append(strings[getRowCount() - 1].toString()).append(" }");
+
+        return resultString.toString();
     }
 }
