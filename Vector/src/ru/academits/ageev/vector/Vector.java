@@ -166,7 +166,7 @@ public class Vector {
     public String toString() {
         StringBuilder resultString = new StringBuilder("{");
 
-        for (int i = 0; i < vectorsArray.length - 2; i++) {
+        for (int i = 0; i < vectorsArray.length - 1; i++) {
             resultString.append(vectorsArray[i]).append(", ");
         }
 
