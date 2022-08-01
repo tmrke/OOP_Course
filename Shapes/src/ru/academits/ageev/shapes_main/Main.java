@@ -31,8 +31,7 @@ public class Main {
 
     public static Shape getMaxAreaShape(Shape[] shapes) {
         if (shapes.length == 0) {
-            System.out.println("В массиве нет фигур");
-            return null;
+            throw new IllegalArgumentException("В массиве нет фигур");
         }
 
         Arrays.sort(shapes, new AreaComparator());
@@ -42,8 +41,7 @@ public class Main {
 
     public static Shape getSecondLargestPerimeterShape(Shape[] shapes) {
         if (shapes.length < 2) {
-            System.out.println("В массиве нет или недостаточно фигур");
-            return null;
+            throw new IllegalArgumentException("Количество фигур в массиве: " + shapes.length + "; В массиве должно быть 2 и более фигур");
         }
 
         Arrays.sort(shapes, new PerimeterComparator());
