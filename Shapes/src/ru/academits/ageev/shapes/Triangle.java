@@ -81,10 +81,10 @@ public class Triangle implements Shape {
 
     @Override
     public String toString() {
-        return "Фигура: треугольник; координаты: ("
-                + x1 + "; " + y1 + "), (" + x2 + "; " + y2 + "), (" + x3 + "; " + y3 +
-                "); площадь: " + getArea() +
-                "; периметр: " + getPerimeter();
+        return "Треугольник; координаты: ("
+                + x1 + "; " + y1 + "), (" + x2 + "; " + y2 + "), (" + x3 + "; " + y3
+                + "); площадь: " + getArea()
+                + "; периметр: " + getPerimeter();
     }
 
     @Override

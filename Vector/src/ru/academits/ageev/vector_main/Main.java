@@ -18,7 +18,7 @@ public class Main {
         vector1.reverse();
         System.out.println("vector1 = " + vector1);
 
-        vector1.multiply(-10);
+        vector1.multiplyByScalar(-10);
         System.out.println("vector1 = " + vector1);
 
         System.out.println("component by index 5 from vector1 = " + vector1.getComponentByIndex(5));
@@ -31,7 +31,9 @@ public class Main {
         Vector vector4 = Vector.getDifference(new Vector(4), new Vector(vector3));
         System.out.println("vector4 = " + vector4);
 
-        Vector vector5 = Vector.multiply(vector2, vector3);
-        System.out.println("vector5 = " + vector5);
+        double scalarMultiplication = Vector.getScalarMultiplication(vector2, vector3);
+        System.out.println("Скалярное произведение vector2 и vector3 = " + scalarMultiplication);
+
+        System.out.println("Длина vector1 = " + vector1.getLength());
     }
 }
