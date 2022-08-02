@@ -13,7 +13,7 @@ public class Main {
         Vector[] vectors = {vector1, vector2, vector3};
 
         Matrix matrix1 = new Matrix(vectors);
-        Matrix matrix2 = new Matrix(2, 10);
+        Matrix matrix2 = new Matrix(3, 3);
         Matrix matrix3 = new Matrix(matrix2);
         Matrix matrix4 = new Matrix(new double[][]{{1, 2, 3, 4, 5}, {4, 5, 6, 7, 8}, {7, 8, 9, 10, 11}, {7, 8, 9, 10, 11}, {7, 8, 9, 10, 11}});
         Matrix matrix5 = new Matrix(new double[][]{{1, 0, 2}, {-1, 3, 4}, {-2, 1, 5}});
@@ -21,9 +21,9 @@ public class Main {
         Matrix matrix7 = new Matrix(new double[][]{{3, -1, 2}, {4, 2, 0}, {-5, 6, 1}});
         Matrix matrix8 = new Matrix(new double[][]{{8, 1}, {7, 2}, {2, -3}});
 
-        System.out.println("Вектор-строка по индексу 2: " + matrix1.getRow(2));
-        matrix1.setRow(2, matrix4.getRow(1));
-        System.out.println("Новый вектор-строка по индексу 2: " + matrix1.getRow(2));
+        System.out.println("Вектор-строка матрицы 3 по индексу 2: " + matrix3.getRow(2));
+        matrix3.setRow(2, matrix5.getRow(1));
+        System.out.println("Новый вектор-строка матрицы 3 по индексу 3: " + matrix3.getRow(2));
 
         System.out.println("Матрица 4: " + matrix4);
         matrix4.transpose();
