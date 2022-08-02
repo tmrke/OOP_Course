@@ -7,7 +7,8 @@ public class Main {
     public static void main(String[] args) {
         Vector vector1 = new Vector(new double[]{3, 10, 5});
         Vector vector2 = new Vector(4);
-        Vector vector3 = new Vector(new double[]{1, 2, 3, 4, 5, 6, 7, 8});
+        Vector vector3 = new Vector(new double[]{1, 2, 3, 4, 5});
+        Vector vector4 = new Vector(new double[]{3, 10, 5});
 
         Vector[] vectors = {vector1, vector2, vector3};
 
@@ -21,7 +22,7 @@ public class Main {
         Matrix matrix8 = new Matrix(new double[][]{{8, 1}, {7, 2}, {2, -3}});
 
         System.out.println("Вектор-строка по индексу 2: " + matrix1.getRow(2));
-        matrix1.setRow(2, matrix3.getRow(2));
+        matrix1.setRow(2, matrix4.getRow(1));
         System.out.println("Новый вектор-строка по индексу 2: " + matrix1.getRow(2));
 
         System.out.println("Матрица 4: " + matrix4);
@@ -39,11 +40,11 @@ public class Main {
         matrix5.subtract(matrix6);
         System.out.println("Матрица 5 - матрица 6 = " + matrix5);
 
-        matrix5.multiplyByVector(vector1);
-        System.out.println("матрица 5, умноженная на вектор 1 = " + matrix5);
+        matrix6.multiplyByVector(vector4);
+        System.out.println("матрица 6, умноженная на вектор 4 = " + matrix6);
 
-        System.out.println("Результат сложения матрицы 5  с матрицей 6 = " + Matrix.getSum(matrix5, matrix6));
-        System.out.println("Результат вычитания из матрицы 5  матрицы 6 = " + Matrix.getDifference(matrix5, matrix6));
+        System.out.println("Результат сложения матрицы 5  с матрицей 7 = " + Matrix.getSum(matrix5, matrix7));
+        System.out.println("Результат вычитания из матрицы 5  матрицы 7= " + Matrix.getDifference(matrix5, matrix7));
         System.out.println("Результат умножения матрицы 7 на матрицу 8 = " + Matrix.multiply(matrix7, matrix8));
     }
 }
