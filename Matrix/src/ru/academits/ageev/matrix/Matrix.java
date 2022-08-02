@@ -46,23 +46,24 @@ public class Matrix {
         }
     }
 
-    public Matrix(Vector[] vectorsArray) {
-        if (vectorsArray.length == 0) {
+    public Matrix(Vector[] vectors) {
+        if (vectors.length == 0) {
             throw new IllegalArgumentException("Vectors array length can't be = 0");
         }
 
         int maxSize = 0;
 
-        for (Vector vector : vectorsArray) {
+        for (Vector vector : vectors) {
             if (vector.getSize() > maxSize) {
                 maxSize = vector.getSize();
             }
         }
 
-        strings = new Vector[vectorsArray.length];
+        strings = new Vector[vectors.length];
 
-        for (int i = 0; i < strings.length; i++) {
-            strings[i] = new Vector(maxSize, vectorsArray[i].getVectorsArray());
+        for (int i = 0; i < vectors.length; i++) {
+            strings[i] = new Vector(maxSize);
+            strings[i].add(vectors[i]);
         }
     }
 
@@ -134,7 +135,7 @@ public class Matrix {
 
     public void multiplyByScalar(double scalar) {
         for (Vector vector : strings) {
-            vector.multiply(scalar);
+            vector.multiplyByScalar(scalar);
         }
     }
 
@@ -149,5 +150,194 @@ public class Matrix {
         resultString.append(strings[getRowCount() - 1].toString()).append(" }");
 
         return resultString.toString();
+    }
+
+    private static double[][] generateSubArray(double[][] numbersArray, int j1) {
+        int size = numbersArray.length;
+        double[][] subArray = new double[size - 1][];
+
+        for (int k = 0; k < (size - 1); k++) {
+            subArray[k] = new double[size - 1];
+        }
+
+        for (int i = 1; i < size; i++) {
+            int j2 = 0;
+
+            for (int j = 0; j < size; j++) {
+                if (j == j1) {
+                    continue;
+                }
+
+                subArray[i - 1][j2] = numbersArray[i][j];
+                j2++;
+            }
+        }
+
+        return subArray;
+    }
+
+    public double getDeterminant() {
+        if (getRowCount() != getColumnCount()) {
+            throw new IllegalArgumentException("Matrix is not square; Row count = " + getRowCount() + "; Column count = " + getColumnCount() + ".");
+        }
+
+        if (getColumnCount() == 0) {
+            throw new IllegalArgumentException("Matrix column size can't be == 0, columnsCount = " + getColumnCount() + ";");
+        }
+
+        if (getRowCount() == 0) {
+            throw new IllegalArgumentException("Matrix row size can't be == 0, rowCount = " + getRowCount() + ";");
+        }
+
+        return getDeterminantRecursively(getNumbersArray(), strings.length);
+    }
+
+    private double[][] getNumbersArray() {
+        int maxSize = 0;
+
+        for (Vector vector : strings) {
+            if (vector.getSize() > maxSize) {
+                maxSize = vector.getSize();
+            }
+        }
+
+        double[][] numbersArray = new double[strings.length][maxSize];
+
+        for (int i = 0; i < strings.length; i++) {
+            for (int j = 0; j < strings[i].getSize(); j++) {
+                numbersArray[i][j] = strings[i].getComponentByIndex(j);
+            }
+        }
+
+        return numbersArray;
+    }
+
+    private double getDeterminantRecursively(double[][] numbersArray, int size) {
+        double determinant;
+
+        if (size == 1) {
+            return numbersArray[0][0];
+        }
+
+        if (size == 2) {
+            return numbersArray[0][0] * numbersArray[1][1] - numbersArray[1][0] * numbersArray[0][1];
+        }
+
+        determinant = 0;
+
+        for (int j1 = 0; j1 < size; j1++) {
+            double[][] subArray = generateSubArray(numbersArray, j1);
+            determinant += Math.pow(-1.0, 1.0 + j1 + 1.0) * numbersArray[0][j1] * getDeterminantRecursively(subArray, size - 1);
+        }
+
+        return determinant;
+    }
+
+    public void add(Matrix matrix) {
+        if (getRowCount() != getColumnCount()) {
+            throw new IllegalArgumentException("Matrix is not square; Row count = " + getRowCount() + "; Column count = " + getColumnCount() + ".");
+        }
+
+        if (getColumnCount() == 0) {
+            throw new IllegalArgumentException("Matrix column size can't be == 0, columnsCount = " + getColumnCount() + ";");
+        }
+
+        if (getRowCount() == 0) {
+            throw new IllegalArgumentException("Matrix row size can't be == 0, rowCount = " + getRowCount() + ";");
+        }
+
+        for (int i = 0; i < strings.length; i++) {
+            strings[i].add(matrix.getRow(i));
+        }
+    }
+
+    public void subtract(Matrix matrix) {
+        if (getRowCount() != getColumnCount()) {
+            throw new IllegalArgumentException("Matrix is not square; Row count = " + getRowCount() + "; Column count = " + getColumnCount() + ".");
+        }
+
+        if (getColumnCount() == 0) {
+            throw new IllegalArgumentException("Matrix column size can't be == 0, columnsCount = " + getColumnCount() + ";");
+        }
+
+        if (getRowCount() == 0) {
+            throw new IllegalArgumentException("Matrix row size can't be == 0, rowCount = " + getRowCount() + ";");
+        }
+
+        for (int i = 0; i < strings.length; i++) {
+            strings[i].subtract(matrix.getRow(i));
+        }
+    }
+
+    public void multiplyByVector(Vector vector) {
+        if (vector.getSize() != getColumnCount()) {
+            throw new IllegalArgumentException("Vector size can be = matrix size; vector size = " + vector.getSize());
+        }
+
+        Vector resultColumnVector = new Vector(strings.length);
+
+        for (int i = 0; i < strings.length; i++) {
+            int rowSumNumbers = 0;
+
+            for (int j = 0; j < vector.getSize(); j++) {
+                rowSumNumbers += strings[i].getComponentByIndex(j) * vector.getComponentByIndex(j);
+            }
+
+            resultColumnVector.setComponentByIndex(i, rowSumNumbers);
+        }
+
+        strings = new Vector[]{resultColumnVector};
+    }
+
+    public static Matrix getSum(Matrix matrix1, Matrix matrix2) {
+        if (matrix1.getRowCount() != matrix2.getRowCount()) {
+            throw new IllegalArgumentException("row count matrix 1 != row count matrix 2");
+        }
+
+        if (matrix1.getColumnCount() != matrix2.getColumnCount()) {
+            throw new IllegalArgumentException("column count of the matrix 1 != column count of the matrix 2");
+        }
+
+        Matrix matrixSum = new Matrix(matrix1.getRowCount(), matrix1.getColumnCount());
+
+        for (int i = 0; i < matrixSum.getRowCount(); i++) {
+            matrixSum.setRow(i, Vector.getSum(matrix1.getRow(i), matrix2.getRow(i)));
+        }
+
+        return matrixSum;
+    }
+
+    public static Matrix getDifference(Matrix matrix1, Matrix matrix2) {
+        if (matrix1.getRowCount() != matrix2.getRowCount()) {
+            throw new IllegalArgumentException("row count matrix 1 != row count matrix 2");
+        }
+
+        if (matrix1.getColumnCount() != matrix2.getColumnCount()) {
+            throw new IllegalArgumentException("column count of the matrix 1 != column count of the matrix 2");
+        }
+
+        Matrix matrixDifference = new Matrix(matrix1.getRowCount(), matrix1.getColumnCount());
+
+        for (int i = 0; i < matrixDifference.getRowCount(); i++) {
+            matrixDifference.setRow(i, Vector.getDifference(matrix1.getRow(i), matrix2.getRow(i)));
+        }
+
+        return matrixDifference;
+    }
+
+    public static Matrix multiply(Matrix matrix1, Matrix matrix2) {
+        if (matrix1.getColumnCount() != matrix2.getRowCount()) {
+            throw new IllegalArgumentException("Column count matrix 1 != row count matrix 2");
+        }
+
+        Matrix matrixMultiply = new Matrix(matrix1.getRowCount(), matrix2.getColumnCount());
+
+        for (int i = 0; i < matrix1.getRowCount(); i++) {
+            for (int j = 0; j < matrix2.getColumnCount(); j++) {
+                matrixMultiply.strings[i].setComponentByIndex(j, Vector.getScalarMultiplication(matrix1.getRow(i), matrix2.getColumn(j)));
+            }
+        }
+
+        return matrixMultiply;
     }
 }
