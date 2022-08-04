@@ -23,13 +23,18 @@ public class Main {
 
         System.out.println("===========================================");
 
-        System.out.println("Первый элемент листа: " + list.getFirstElementData());
-        System.out.println("Новое значение элемента по индексу 2: "
+        System.out.println("Первый элемент списка: " + list.getFirstElementData());
+        System.out.println("Установлено новое значение элемента по индексу 2; Прежнее значение: "
                 + list.setElementDataByIndex(2, "Новое значение второго элемента"));
         list.setElementByIndex(3, stringListItem5);
         System.out.println("Был ли удален элемент со значением \"Новое значение второго элемента\"? Ответ: "
                 + list.hasDeleteByData("Новое значение второго элемента"));
+        System.out.println("Удален элемент с индексом 1 со значением: " + list.deleteElementByIndex(1));
         System.out.println("Удален первый элемент со значением: " + list.deleteFirstElement());
+
+        list.setElementByIndex(1, stringListItem4);
+        list.setElementByIndex(2, stringListItem3);
+        list.setElementByIndex(3, stringListItem2);
 
         System.out.println("===========================================");
         System.out.println("Развернутый список:");

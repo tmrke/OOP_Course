@@ -97,17 +97,17 @@ public class SinglyLinkedList<String> {
         }
 
         ListItem<String> currentElement = new ListItem<>(head.getData(), head);
+        String deletableElementString = getElementDataByIndex(index);
 
         for (int i = 0; i < index; i++) {
             currentElement = currentElement.getNext();
         }
 
-        String deletableString = currentElement.getData();
 
         currentElement.setNext(currentElement.getNext().getNext());
         count--;
 
-        return deletableString;
+        return deletableElementString;
     }
 
     public String deleteFirstElement() {
