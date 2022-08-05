@@ -144,14 +144,28 @@ public class SinglyLinkedList<String> {
 
     public SinglyLinkedList<String> copyOf() {
         SinglyLinkedList<String> copiedList = new SinglyLinkedList<>();
-        ListItem<String> currentElement;
-        int count = 0;
 
-        for (currentElement = head; currentElement != null; currentElement = currentElement.getNext()) {
-            copiedList.setElementByIndex(count, new ListItem<>(currentElement.getData(), currentElement.getNext()));
-            count++;
-        }
+        ListItem<String> currentElement = head;
+        copiedList.addFirstElement(new ListItem<>(currentElement.getData(), currentElement.getNext()));
+        copiedList.reverse();
 
         return copiedList;
+    }
+
+    @Override
+    public java.lang.String toString() {
+        StringBuilder resultString = new StringBuilder("{ ");
+
+        for (ListItem<String> currentElement = head; currentElement != null; currentElement = currentElement.getNext()) {
+            resultString.append(currentElement.getData());
+
+            if (currentElement.getNext() != null) {
+                resultString.append(", ");
+            }
+        }
+
+        resultString.append(" }");
+
+        return resultString.toString();
     }
 }

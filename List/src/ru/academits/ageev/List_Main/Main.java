@@ -17,9 +17,7 @@ public class Main {
         list.addFirstElement(stringListItem3);
         list.addFirstElement(stringListItem4);
 
-        for (int i = 0; i < list.getSize(); i++) {
-            System.out.println(list.getElementDataByIndex(i));
-        }
+        System.out.println(list);
 
         System.out.println("===========================================");
 
@@ -41,17 +39,13 @@ public class Main {
 
         list.reverse();
 
-        for (int i = 0; i < list.getSize(); i++) {
-            System.out.println(list.getElementDataByIndex(i));
-        }
+        System.out.println(list);
+
 
         SinglyLinkedList<String> newList = list.copyOf();
 
         System.out.println("===========================================");
         System.out.println("Новый копированный список:");
-
-        for (int i = 0; i < newList.getSize(); i++) {
-            System.out.println(newList.getElementDataByIndex(i));
-        }
+        System.out.println(newList);
     }
 }
