@@ -8,29 +8,30 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<String> stringsList = getFileStrings();
-        System.out.println("Строки из файла: " + stringsList);
+        String path = "ArrayListHome/src/ru/academits/ageev/Strings.txt";
+        ArrayList<String> fileLinesList = getFileLinesList(path);
+        System.out.println("Строки из файла: " + fileLinesList);
 
         ArrayList<Integer> numbersList = new ArrayList<>(Arrays.asList(7, 7, 1, 1, 2, 4, 3, 4, 3, 5, 6, 7, 8, 2, 4, 7));
-        ArrayList<Integer> newNumbersList = getUniqueElementsList(numbersList);
-        System.out.println("Новый список без повторяющихся элементов : " + newNumbersList);
+        ArrayList<Integer> uniqueNumbersList = getUniqueElementsList(numbersList);
+        System.out.println("Новый список без повторяющихся элементов : " + uniqueNumbersList);
 
         deleteEvenNumbers(numbersList);
-        System.out.println("Сипсок \"numberList\" без нечетных чисел: " + numbersList);
+        System.out.println("Список \"numberList\" без нечетных чисел: " + numbersList);
     }
 
-    public static ArrayList<String> getFileStrings() {
-        ArrayList<String> stringsList = new ArrayList<>();
+    public static ArrayList<String> getFileLinesList(String path) {
+        ArrayList<String> fileLinesList = new ArrayList<>();
 
-        try (Scanner scanner = new Scanner(new FileInputStream("ArrayListHome/src/ru/academits/ageev/Strings.txt"))) {
+        try (Scanner scanner = new Scanner(new FileInputStream(path))) {
             while (scanner.hasNextLine()) {
-                stringsList.add(scanner.nextLine());
+                fileLinesList.add(scanner.nextLine());
             }
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
 
-        return stringsList;
+        return fileLinesList;
     }
 
     public static void deleteEvenNumbers(ArrayList<Integer> numbersList) {
