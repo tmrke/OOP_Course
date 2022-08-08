@@ -30,10 +30,6 @@ public class Vector {
             throw new NullPointerException("Vector is null; Vector can't be null");
         }
 
-        if (vector.getSize() == 0) {
-            throw new IllegalArgumentException("Vector size = " + vector.getSize() + "; Vector size can't be = 0");
-        }
-
         components = Arrays.copyOf(vector.components, vector.components.length);
     }
 
@@ -42,12 +38,8 @@ public class Vector {
             throw new NullPointerException("Components is null; Components can't be null");
         }
 
-        if (size < 0) {
-            throw new IllegalArgumentException("Size = " + size + "; size can't be < 0");
-        }
-
-        if (components.length == 0) {
-            throw new IllegalArgumentException("Components length = " + components.length + "; Components length can't be = 0");
+        if (size <= 0) {
+            throw new IllegalArgumentException("Size = " + size + "; size can't be <= 0");
         }
 
         this.components = Arrays.copyOf(components, size);
@@ -59,7 +51,7 @@ public class Vector {
         }
 
         if (components.length > vector.components.length) {
-            vector.components = Arrays.copyOf(vector.components, components.length);
+            vector.components = Arrays.copyOf(vector.components, vector.components.length);
         }
 
         for (int i = 0; i < components.length; i++) {
@@ -88,13 +80,13 @@ public class Vector {
     }
 
     public double getLength() {
-        double squareOfLength = 0;
+        double lengthSquare = 0;
 
         for (double component : components) {
-            squareOfLength += Math.pow(component, 2);
+            lengthSquare += component * component;
         }
 
-        return Math.sqrt(squareOfLength);
+        return Math.sqrt(lengthSquare);
     }
 
     public int getSize() {
@@ -147,7 +139,7 @@ public class Vector {
         return resultVector;
     }
 
-    public static double getScalarMultiplication(Vector vector1, Vector vector2) {
+    public static double getScalarMultiplicationResult(Vector vector1, Vector vector2) {
         if (vector1 == null) {
             throw new NullPointerException("Vector1 is null; vector1 can't be null");
         }
@@ -158,7 +150,9 @@ public class Vector {
 
         double result = 0;
 
-        for (int i = 0; i < Math.min(vector1.components.length, vector2.components.length); i++) {
+        int minVectorComponentsLength = Math.min(vector1.components.length, vector2.components.length);
+
+        for (int i = 0; i < minVectorComponentsLength; i++) {
             result += vector1.components[i] * vector2.components[i];
         }
 
@@ -197,8 +191,7 @@ public class Vector {
     public int hashCode() {
         final int prime = 37;
         int hash = 1;
-        hash *= prime + Arrays.hashCode(components);
 
-        return hash;
+        return hash * prime + Arrays.hashCode(components);
     }
 }
