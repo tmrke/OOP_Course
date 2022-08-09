@@ -40,11 +40,10 @@ public class Main {
         matrix5.subtract(matrix6);
         System.out.println("Матрица 5 - матрица 6 = " + matrix5);
 
-        matrix6.multiplyByVector(vector4);
-        System.out.println("матрица 6, умноженная на вектор 4 = " + matrix6);
+        System.out.println("Результат умножения матрицы 6 на вектор 4 = " + matrix6.multiplyByVector(vector4));
 
         System.out.println("Результат сложения матрицы 5  с матрицей 7 = " + Matrix.getSum(matrix5, matrix7));
         System.out.println("Результат вычитания из матрицы 5  матрицы 7= " + Matrix.getDifference(matrix5, matrix7));
-        System.out.println("Результат умножения матрицы 7 на матрицу 8 = " + Matrix.multiply(matrix7, matrix8));
+        System.out.println("Результат умножения матрицы 7 на матрицу 8 = " + Matrix.getMultiplicationResult(matrix7, matrix8));
     }
 }
