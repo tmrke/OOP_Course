@@ -7,11 +7,11 @@ public class Matrix {
 
     public Matrix(int rowsCount, int columnsCount) {
         if (columnsCount <= 0) {
-            throw new IllegalArgumentException("Matrix columns count can't be < 0, columnsCount = " + columnsCount);
+            throw new IllegalArgumentException("Matrix columns count can't be <= 0, columnsCount = " + columnsCount);
         }
 
         if (rowsCount <= 0) {
-            throw new IllegalArgumentException("Matrix rows count can't be < 0, rowsCount = " + rowsCount);
+            throw new IllegalArgumentException("Matrix rows count can't be <= 0, rowsCount = " + rowsCount);
         }
 
         rows = new Vector[rowsCount];
@@ -24,8 +24,8 @@ public class Matrix {
     public Matrix(Matrix matrix) {
         rows = new Vector[matrix.rows.length];
 
-        for (int i = 0; i < matrix.getRowsCount(); i++) {
-            rows[i] = new Vector(matrix.getRow(i));
+        for (int i = 0; i < matrix.rows.length; i++) {
+            rows[i] = new Vector(matrix.rows.length);
         }
     }
 
@@ -79,7 +79,7 @@ public class Matrix {
     }
 
     public int getColumnsCount() {
-        return getRow(0).getSize();
+        return rows[0].getSize();
     }
 
     public Vector getRow(int index) {
@@ -108,8 +108,11 @@ public class Matrix {
 
     public Vector getColumn(int index) {
         if (index < 0) {
-            throw new IndexOutOfBoundsException("Index of column = " + index
-                    + "; Index of column can't be < 0 or >= " + getColumnsCount());
+            throw new IndexOutOfBoundsException("Index of column = " + index + "; Index of column can't be < 0");
+        }
+
+        if (index >= getColumnsCount()) {
+            throw new IndexOutOfBoundsException("Index of column = " + index + "; Index of column can't be >= " + getColumnsCount());
         }
 
         Vector columnVector = new Vector(getRowsCount());
@@ -150,21 +153,21 @@ public class Matrix {
         return stringBuilder.toString();
     }
 
-    private static double[][] getMinor(double[][] coefficientsMatrix, int inputColumnIndex) {
-        int sizeCoefficientsMatrix = coefficientsMatrix.length;
-        int subArraySize = sizeCoefficientsMatrix - 1;
+    private static double[][] getMinor(double[][] matrixCoefficients, int inputColumnIndex) {
+        int matrixCoefficientsSize = matrixCoefficients.length;
+        int minorSize = matrixCoefficientsSize - 1;
 
-        double[][] minor = new double[subArraySize][subArraySize];
+        double[][] minor = new double[minorSize][minorSize];
 
-        for (int i = 1; i < sizeCoefficientsMatrix; i++) {
+        for (int i = 1; i < matrixCoefficientsSize; i++) {
             int columnIndex = 0;
 
-            for (int j = 0; j < sizeCoefficientsMatrix; j++) {
+            for (int j = 0; j < matrixCoefficientsSize; j++) {
                 if (j == inputColumnIndex) {
                     continue;
                 }
 
-                minor[i - 1][columnIndex] = coefficientsMatrix[i][j];
+                minor[i - 1][columnIndex] = matrixCoefficients[i][j];
                 columnIndex++;
             }
         }
@@ -174,7 +177,8 @@ public class Matrix {
 
     public double getDeterminant() {
         if (getRowsCount() != getColumnsCount()) {
-            throw new UnsupportedOperationException("Matrix is not square; rowsCount = " + getRowsCount() + "; columnsCount = " + getColumnsCount());
+            throw new UnsupportedOperationException("Matrix is not square; rowsCount = " + getRowsCount()
+                    + "; columnsCount = " + getColumnsCount());
         }
 
         return getDeterminant(getMatrixComponents());
@@ -192,7 +196,7 @@ public class Matrix {
         return numbersArray;
     }
 
-    private double getDeterminant(double[][] numbersArray) {
+    private static double getDeterminant(double[][] numbersArray) {
         if (numbersArray.length == 1) {
             return numbersArray[0][0];
         }
@@ -203,51 +207,27 @@ public class Matrix {
 
         double determinant = 0;
 
-        for (int j1 = 0; j1 < numbersArray.length; j1++) {
-            double[][] minor = getMinor(numbersArray, j1);
-            determinant += Math.pow(-1.0, j1) * numbersArray[0][j1] * getDeterminant(minor);
+        for (int j = 0; j < numbersArray.length; j++) {
+            double[][] minor = getMinor(numbersArray, j);
+            determinant += Math.pow(-1.0, j) * numbersArray[0][j] * getDeterminant(minor);
         }
 
         return determinant;
     }
 
     public void add(Matrix matrix) {
-        if (getRowsCount() != getColumnsCount()) {
-            throw new UnsupportedOperationException("Matrix is not square; rowsCount = " + getRowsCount() + "; columnsCount = " + getColumnsCount());
-        }
-
-        if (matrix.getRowsCount() != getRowsCount()) {
-            throw new UnsupportedOperationException("Matrix rows count must be = current matrix rows count; matrix rowsCount = " + matrix.getRowsCount()
-                    + "; current matrix rowsCount = " + getRowsCount());
-        }
-
-        if (matrix.getColumnsCount() != getColumnsCount()) {
-            throw new UnsupportedOperationException("Matrix columns count must be = current matrix columnsCount; matrix columnsCount = " + matrix.getRowsCount()
-                    + "; current matrix columnsCount = " + getRowsCount());
-        }
+        equalityCheck(this, matrix);
 
         for (int i = 0; i < rows.length; i++) {
-            rows[i].add(matrix.getRow(i));
+            rows[i].add(matrix.rows[i]);
         }
     }
 
     public void subtract(Matrix matrix) {
-        if (getRowsCount() != getColumnsCount()) {
-            throw new UnsupportedOperationException("Matrix is not square; rowsCount = " + getRowsCount() + "; columnsCount = " + getColumnsCount());
-        }
-
-        if (matrix.getRowsCount() != getRowsCount()) {
-            throw new UnsupportedOperationException("Matrix rows count must be = current matrix rows count; matrix rowsCount = " + matrix.getRowsCount()
-                    + "; current matrix rowsCount = " + getRowsCount());
-        }
-
-        if (matrix.getColumnsCount() != getColumnsCount()) {
-            throw new UnsupportedOperationException("Matrix columns count must be = current matrix columnsCount; matrix columnsCount = " + matrix.getRowsCount()
-                    + "; current matrix columnsCount = " + getRowsCount());
-        }
+        equalityCheck(this, matrix);
 
         for (int i = 0; i < rows.length; i++) {
-            rows[i].subtract(matrix.getRow(i));
+            rows[i].subtract(matrix.rows[i]);
         }
     }
 
@@ -260,22 +240,14 @@ public class Matrix {
         Vector resultColumnVector = new Vector(rows.length);
 
         for (int i = 0; i < rows.length; i++) {
-            resultColumnVector.setComponentByIndex(i, Vector.getScalarMultiplicationResult(rows[i], vector));
+            resultColumnVector.setComponentByIndex(i, Vector.getScalarProduct(rows[i], vector));
         }
 
         return resultColumnVector;
     }
 
     public static Matrix getSum(Matrix matrix1, Matrix matrix2) {
-        if (matrix1.getRowsCount() != matrix2.getRowsCount()) {
-            throw new IllegalArgumentException("Rows count matrix 1 != rows count matrix 2; matrix1 rowsCount = " + matrix1.getRowsCount()
-                    + "; matrix2 rowsCount = " + matrix2.getRowsCount());
-        }
-
-        if (matrix1.getColumnsCount() != matrix2.getColumnsCount()) {
-            throw new IllegalArgumentException("Columns count of the matrix 1 != columns count of the matrix 2; matrix2 columnsCount = "
-                    + matrix2.getColumnsCount() + "; matrix2 columnsCount = " + matrix2.getColumnsCount());
-        }
+        equalityCheck(matrix1, matrix2);
 
         Matrix matricesSum = new Matrix(matrix1);
         matricesSum.add(matrix2);
@@ -284,15 +256,7 @@ public class Matrix {
     }
 
     public static Matrix getDifference(Matrix matrix1, Matrix matrix2) {
-        if (matrix1.getRowsCount() != matrix2.getRowsCount()) {
-            throw new IllegalArgumentException("Rows count matrix 1 != rows count matrix 2; matrix1 rowsCount = " + matrix1.getRowsCount()
-                    + "; matrix2 rowsCount = " + matrix2.getRowsCount());
-        }
-
-        if (matrix1.getColumnsCount() != matrix2.getColumnsCount()) {
-            throw new IllegalArgumentException("Columns count of the matrix 1 != columns count of the matrix 2; matrix2 columnsCount = "
-                    + matrix2.getColumnsCount() + "; matrix2 columnsCount = " + matrix2.getColumnsCount());
-        }
+        equalityCheck(matrix1, matrix2);
 
         Matrix matricesDifference = new Matrix(matrix1);
         matricesDifference.subtract(matrix2);
@@ -300,19 +264,35 @@ public class Matrix {
         return matricesDifference;
     }
 
-    public static Matrix getMultiplicationResult(Matrix matrix1, Matrix matrix2) {
+    public static Matrix getProduct(Matrix matrix1, Matrix matrix2) {
         if (matrix1.getColumnsCount() != matrix2.getRowsCount()) {
             throw new IllegalArgumentException("Columns count matrix 1 != rows count matrix 2");
         }
 
-        Matrix matricesMultiplicationResult = new Matrix(matrix1.getRowsCount(), matrix2.getColumnsCount());
+        Matrix matricesProduct = new Matrix(matrix1.getRowsCount(), matrix2.getColumnsCount());
 
         for (int i = 0; i < matrix1.getRowsCount(); i++) {
             for (int j = 0; j < matrix2.getColumnsCount(); j++) {
-                matricesMultiplicationResult.rows[i].setComponentByIndex(j, Vector.getScalarMultiplicationResult(matrix1.getRow(i), matrix2.getColumn(j)));
+                matricesProduct.rows[i].setComponentByIndex(j, Vector.getScalarProduct(matrix1.getRow(i), matrix2.getColumn(j)));
             }
         }
 
-        return matricesMultiplicationResult;
+        return matricesProduct;
+    }
+
+    private static void equalityCheck(Matrix matrix1, Matrix matrix2) {
+        if (matrix1.getRowsCount() != matrix2.getRowsCount()) {
+            throw new UnsupportedOperationException("Matrix rows count must be = current matrix rows count; matrix rowsCount = "
+                    + matrix1.getRowsCount()
+                    + "; current matrix rowsCount = "
+                    + matrix2.getRowsCount());
+        }
+
+        if (matrix1.getColumnsCount() != matrix2.getColumnsCount()) {
+            throw new UnsupportedOperationException("Matrix columns count must be = current matrix columnsCount; matrix columnsCount = "
+                    + matrix1.getRowsCount()
+                    + "; current matrix columnsCount = "
+                    + matrix2.getRowsCount());
+        }
     }
 }

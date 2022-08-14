@@ -44,6 +44,6 @@ public class Main {
 
         System.out.println("Результат сложения матрицы 5  с матрицей 7 = " + Matrix.getSum(matrix5, matrix7));
         System.out.println("Результат вычитания из матрицы 5  матрицы 7= " + Matrix.getDifference(matrix5, matrix7));
-        System.out.println("Результат умножения матрицы 7 на матрицу 8 = " + Matrix.getMultiplicationResult(matrix7, matrix8));
+        System.out.println("Результат умножения матрицы 7 на матрицу 8 = " + Matrix.getProduct(matrix7, matrix8));
     }
 }
