@@ -50,10 +50,6 @@ public class Vector {
             components = Arrays.copyOf(components, vector.components.length);
         }
 
-        if (components.length > vector.components.length) {
-            vector.components = Arrays.copyOf(vector.components, vector.components.length);
-        }
-
         for (int i = 0; i < vector.components.length; i++) {
             components[i] += vector.components[i];
         }
@@ -95,7 +91,7 @@ public class Vector {
 
     public double getComponentByIndex(int index) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= " + components.length + " or < 0");
+            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be < 0 or >= " + components.length);
         }
 
         return components[index];
@@ -103,7 +99,7 @@ public class Vector {
 
     public void setComponentByIndex(int index, double value) {
         if (index < 0 || index >= components.length) {
-            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be >= " + components.length + " or < 0");
+            throw new IndexOutOfBoundsException("Index = " + index + "; index can't be < 0 or >= " + components.length);
         }
 
         components[index] = value;
@@ -139,7 +135,7 @@ public class Vector {
         return resultVector;
     }
 
-    public static double getScalarMultiplicationResult(Vector vector1, Vector vector2) {
+    public static double getScalarProduct(Vector vector1, Vector vector2) {
         if (vector1 == null) {
             throw new NullPointerException("Vector1 is null; vector1 can't be null");
         }
@@ -150,9 +146,9 @@ public class Vector {
 
         double result = 0;
 
-        int minVectorComponentsLength = Math.min(vector1.components.length, vector2.components.length);
+        int minVectorSize = Math.min(vector1.components.length, vector2.components.length);
 
-        for (int i = 0; i < minVectorComponentsLength; i++) {
+        for (int i = 0; i < minVectorSize; i++) {
             result += vector1.components[i] * vector2.components[i];
         }
 
