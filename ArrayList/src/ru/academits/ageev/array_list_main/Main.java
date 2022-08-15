@@ -1,10 +1,9 @@
 package ru.academits.ageev.array_list_main;
 
-
 import ru.academits.ageev.array_list.ArrayList;
-import ru.academits.ageev.array_list.List;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -90,10 +89,6 @@ public class Main {
         arrayList5.add("3 элемент");
         arrayList5.add("1 элемент");
         arrayList5.add("5 элемент");
-
-        System.out.println("Заменяем все значения в arrayList5 \"1 элемент\" на значение \"Первый элемент\"");
-        arrayList5.replaceAll("1 элемент", "Первый элемент");
-        System.out.println(arrayList5);
 
         System.out.println("=========================================================================================");
 

@@ -1,6 +1,6 @@
 package ru.academits.ageev.array_list;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class ArrayList<T> implements List<T> {
     private T[] itemsArray;
@@ -29,19 +29,26 @@ public class ArrayList<T> implements List<T> {
         return itemsArray[index];
     }
 
-    public void set(int index, T item) {
+    @Override
+    public T set(int index, T item) {
         checkIndex(index);
+
+        T previouslyItem = itemsArray[index];
         itemsArray[index] = item;
+
+        return previouslyItem;
     }
 
     @Override
-    public void add(T item) {
+    public boolean add(T item) {
         if (length >= itemsArray.length) {
             ensureCapacity();
         }
 
         itemsArray[length] = item;
         length++;
+
+        return true;
     }
 
     @Override
@@ -71,20 +78,54 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public void addAll(List<T> list) {
-        if (length + list.size() >= itemsArray.length) {
+    public boolean addAll(int index, Collection<? extends T> collection) {
+        checkIndex(index);
+
+        if (length + collection.size() >= itemsArray.length) {
             ensureCapacity();
         }
 
-        for (int i = 0; i < list.size(); i++) {
-            //noinspection unchecked
-            add((T) list.get(i));
+        boolean hasChange = false;
+        //noinspection unchecked
+        T[] currentArray = (T[]) collection.toArray();
+
+        for (int i = index; i < collection.size(); i++) {
+            if (!get(i).equals(currentArray[i])) {
+                hasChange = true;
+            }
+
+            add(currentArray[i]);
         }
+
+        return hasChange;
     }
 
     @Override
-    public void remove(int index) {
+    public boolean addAll(Collection<? extends T> collection) {
+        if (length + collection.size() >= itemsArray.length) {
+            ensureCapacity();
+        }
+
+        boolean hasChange = false;
+        //noinspection unchecked
+        T[] currentArray = (T[]) collection.toArray();
+
+        for (int i = 0; i < collection.size(); i++) {
+            if (!get(i).equals(currentArray[i])) {
+                hasChange = true;
+            }
+
+            add(currentArray[i]);
+        }
+
+        return hasChange;
+    }
+
+    @Override
+    public T remove(int index) {
         checkIndex(index);
+
+        T previouslyItem = itemsArray[index];
 
         if (itemsArray.length - 1 - index >= 0) {
             System.arraycopy(itemsArray, index + 1, itemsArray, index, itemsArray.length - 1 - index);
@@ -92,6 +133,8 @@ public class ArrayList<T> implements List<T> {
 
         itemsArray[length - 1] = null;
         length--;
+
+        return previouslyItem;
     }
 
     @Override
@@ -119,18 +162,23 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public void removeAll(List<T> list) {
+    public boolean removeAll(Collection<?> list) {
         if (isEmpty() || list.size() == 0) {
-            return;
+            return false;
         }
+
+        boolean hasChange = false;
+        //noinspection unchecked
+        T[] currentArray = (T[]) list.toArray();
 
         int i = 0, j = 0;
         int listSize = list.size();
 
         while (i < length) {
             while (j < listSize) {
-                if (itemsArray[i] == null && list.get(j) == null || itemsArray[i].equals(list.get(j))) {
+                if (itemsArray[i] == null && currentArray[j] == null || Objects.equals(itemsArray[i], currentArray[j])) {
                     remove(i);
+                    hasChange = true;
                     j = 0;
 
                     if (i == length) {
@@ -144,20 +192,26 @@ public class ArrayList<T> implements List<T> {
             i++;
             j = 0;
         }
+
+        return hasChange;
     }
 
     @Override
-    public void retainAll(List<T> list) {
+    public boolean retainAll(Collection<?> list) {
         if (isEmpty() || list.size() == 0) {
-            return;
+            return false;
         }
+
+        boolean hasChange = false;
+        //noinspection unchecked
+        T[] currentArray = (T[]) list.toArray();
 
         int i = 0, j = 0;
         int listSize = list.size();
 
         while (i < length) {
             while (j < listSize && i < length) {
-                if (itemsArray[i] == null && list.get(j) == null || itemsArray[i].equals(list.get(j))) {
+                if (itemsArray[i] == null && currentArray[j] == null || Objects.equals(itemsArray[i], currentArray[j])) {
                     i++;
                     j = 0;
                 } else {
@@ -170,24 +224,29 @@ public class ArrayList<T> implements List<T> {
             }
 
             remove(i);
+            hasChange = true;
             j = 0;
         }
+        return hasChange;
     }
 
     @Override
-    public boolean contains(T item) {
+    public boolean contains(Object o) {
         if (isEmpty()) {
             return false;
         }
 
         for (int i = 0; i < length; i++) {
-            if (itemsArray[i] == null && item == null) {
+            if (itemsArray[i] == null && o == null) {
                 return true;
             }
 
             assert itemsArray[i] != null;
 
-            if (itemsArray[i].equals(item)) {
+            //noinspection unchecked
+            T t = (T) o;
+
+            if (itemsArray[i].equals(t)) {
                 return true;
             }
         }
@@ -196,13 +255,16 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public boolean containsAll(List<T> list) {
+    public boolean containsAll(Collection<?> list) {
         if (list.size() > length) {
             return false;
         }
 
+        //noinspection unchecked
+        T[] currentArray = (T[]) list.toArray();
+
         for (int i = 0; i < list.size(); i++) {
-            if (!this.contains((T) list.get(i))) {
+            if (!this.contains(currentArray[i])) {
                 return false;
             }
         }
@@ -211,34 +273,17 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public void replaceAll(T item1, T item2) {
-        if (isEmpty()) {
-            return;
-        }
-
+    public int indexOf(Object o) {
         for (int i = 0; i < length; i++) {
-            if (itemsArray[i] == null && item1 == null) {
-                set(i, item2);
-            }
-
-            assert itemsArray[i] != null;
-
-            if (itemsArray[i].equals(item1)) {
-                set(i, item2);
-            }
-        }
-    }
-
-    @Override
-    public int indexOf(T item) {
-        for (int i = 0; i < length; i++) {
-            if (itemsArray[i] == null && item == null) {
+            if (itemsArray[i] == null && o == null) {
                 return i;
             }
 
             assert itemsArray[i] != null;
+            //noinspection unchecked
+            T t = (T) o;
 
-            if (itemsArray[i].equals(item)) {
+            if (itemsArray[i].equals(t)) {
                 return i;
             }
         }
@@ -247,15 +292,17 @@ public class ArrayList<T> implements List<T> {
     }
 
     @Override
-    public int lastIndexOf(T item) {
+    public int lastIndexOf(Object o) {
         for (int i = length - 1; i >= 0; i--) {
-            if (itemsArray[i] == null && item == null) {
+            if (itemsArray[i] == null && o == null) {
                 return i;
             }
 
             assert itemsArray[i] != null;
+            //noinspection unchecked
+            T t = (T) o;
 
-            if (itemsArray[i].equals(item)) {
+            if (itemsArray[i].equals(t)) {
                 return i;
             }
         }
@@ -303,6 +350,7 @@ public class ArrayList<T> implements List<T> {
             return false;
         }
 
+        //noinspection unchecked
         T t = (T) o;
 
         return this.equals(t);
@@ -325,5 +373,63 @@ public class ArrayList<T> implements List<T> {
         if (index < 0) {
             throw new IndexOutOfBoundsException("Index can't be < 0; index = " + index);
         }
+    }
+
+    public void replaceAll(T item1, T item2) {
+        if (isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < length; i++) {
+            if (itemsArray[i] == null && item1 == null) {
+                set(i, item2);
+            }
+
+            assert itemsArray[i] != null;
+
+            if (itemsArray[i].equals(item1)) {
+                set(i, item2);
+            }
+        }
+    }
+
+    //===============================================================================================================
+    //===============================================================================================================
+    //===============================================================================================================
+
+
+    @Override
+    public void sort(Comparator<? super T> c) {
+        List.super.sort(c);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return null;
+    }
+
+    @Override
+    public <T1> T1[] toArray(T1[] a) {
+        return null;
+    }
+
+    @Override
+    public ListIterator<T> listIterator() {
+        return null;
+    }
+
+    @Override
+    public ListIterator<T> listIterator(int index) {
+        return null;
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return List.super.spliterator();
+    }
+
+    @Override
+    public List<T> subList(int fromIndex, int toIndex) {
+        return null;
     }
 }
