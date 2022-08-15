@@ -242,7 +242,6 @@ public class ArrayList<T> implements List<T> {
             }
 
             assert itemsArray[i] != null;
-
             //noinspection unchecked
             T t = (T) o;
 
@@ -375,28 +374,9 @@ public class ArrayList<T> implements List<T> {
         }
     }
 
-    public void replaceAll(T item1, T item2) {
-        if (isEmpty()) {
-            return;
-        }
-
-        for (int i = 0; i < length; i++) {
-            if (itemsArray[i] == null && item1 == null) {
-                set(i, item2);
-            }
-
-            assert itemsArray[i] != null;
-
-            if (itemsArray[i].equals(item1)) {
-                set(i, item2);
-            }
-        }
-    }
-
     //===============================================================================================================
     //===============================================================================================================
     //===============================================================================================================
-
 
     @Override
     public void sort(Comparator<? super T> c) {
