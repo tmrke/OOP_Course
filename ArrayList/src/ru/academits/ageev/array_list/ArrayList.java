@@ -374,6 +374,26 @@ public class ArrayList<T> implements List<T> {
         }
     }
 
+    private class MyIterator implements Iterator<T> {
+        private int currentIndex = -1;
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex + 1 < length;
+        }
+
+        @Override
+        public T next() {
+            currentIndex++;
+            return itemsArray[currentIndex];
+        }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new MyIterator();
+    }
+
     //===============================================================================================================
     //===============================================================================================================
     //===============================================================================================================
@@ -381,11 +401,6 @@ public class ArrayList<T> implements List<T> {
     @Override
     public void sort(Comparator<? super T> c) {
         List.super.sort(c);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return null;
     }
 
     @Override
