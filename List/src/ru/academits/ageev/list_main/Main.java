@@ -16,10 +16,10 @@ public class Main {
         System.out.println("===========================================");
 
         System.out.println("Первый элемент списка: " + list.getFirst());
-        System.out.println("Четвертый элемент списка: " + list.getItemDataByIndex(3));
+        System.out.println("Четвертый элемент списка: " + list.getByIndex(3));
         System.out.println("Установлено новое значение элемента по индексу 2; Прежнее значение: "
-                + list.setItemDataByIndex(2, "Новое значение второго элемента"));
-        list.addItemDataByIndex(3, "тоже третий элемент");
+                + list.setByIndex(2, "Новое значение второго элемента"));
+        list.addByIndex(3, "тоже третий элемент");
         System.out.println("Был ли удален элемент со значением \"Новое значение второго элемента\"? Ответ: "
                 + list.deleteByData("Новое значение второго элемента"));
         System.out.println("Удален элемент с индексом 1 со значением: " + list.deleteByIndex(1));
@@ -31,10 +31,10 @@ public class Main {
         list.reverse();
         System.out.println(list);
 
-        SinglyLinkedList<String> newList = list.copy();
+        SinglyLinkedList<String> copiedList = list.copy();
 
         System.out.println("===========================================");
         System.out.println("Новый копированный список:");
-        System.out.println(newList);
+        System.out.println(copiedList);
     }
 }
