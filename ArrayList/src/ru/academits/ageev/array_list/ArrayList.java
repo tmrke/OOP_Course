@@ -344,6 +344,7 @@ public class ArrayList<E> implements List<E> {
             }
 
             currentIndex++;
+
             return items[currentIndex];
         }
     }
