@@ -2,152 +2,156 @@ package ru.academits.ageev.array_list;
 
 import java.util.*;
 
-public class ArrayList<T> implements List<T> {
-    private T[] itemsArray;
-    private int length;
+public class ArrayList<E> implements List<E> {
+    private E[] items;
+    private int size;
+    static final int defaultCapacity = 10;
+    private int changesCount = 0;
 
     public ArrayList() {
-        int defaultCapacity = 10;
         //noinspection unchecked
-        itemsArray = (T[]) new Object[defaultCapacity];
+        items = (E[]) new Object[defaultCapacity];
     }
 
     public ArrayList(int capacity) {
+        if (capacity < 0) {
+            throw new IndexOutOfBoundsException("Capacity can't be < 0; capacity = " + capacity);
+        }
+
         //noinspection unchecked
-        itemsArray = (T[]) new Object[capacity];
+        items = (E[]) new Object[capacity];
     }
 
     @Override
     public int size() {
-        return length;
+        return size;
     }
 
     @Override
-    public T get(int index) {
+    public E get(int index) {
         checkIndex(index);
 
-        return itemsArray[index];
+        return items[index];
     }
 
     @Override
-    public T set(int index, T item) {
+    public E set(int index, E item) {
         checkIndex(index);
 
-        T previouslyItem = itemsArray[index];
-        itemsArray[index] = item;
+        E previouslyItem = items[index];
+        items[index] = item;
+        changesCount++;
 
         return previouslyItem;
     }
 
     @Override
-    public boolean add(T item) {
-        if (length >= itemsArray.length) {
-            ensureCapacity();
-        }
-
-        itemsArray[length] = item;
-        length++;
+    public boolean add(E item) {
+        add(size, item);
+        changesCount++;
 
         return true;
     }
 
     @Override
-    public void add(int index, T item) {
-        if (index > length) {
-            throw new IndexOutOfBoundsException("Index can't be > " + length + "; index = " + index);
+    public void add(int index, E item) {
+        if (index == 0 && size == 0) {
+            //noinspection unchecked
+            items = (E[]) new Object[defaultCapacity];
+        }
+
+        if (index > size) {
+            throw new IndexOutOfBoundsException("Index can't be > " + size + "; index = " + index);
         }
 
         if (index < 0) {
             throw new IndexOutOfBoundsException("Index can't be < 0; index = " + index);
         }
 
-        if (index >= itemsArray.length) {
-            ensureCapacity();
+        if (index >= items.length) {
+            boostCapacity();
         }
 
-        for (int i = length; i > index; i--) {
-            itemsArray[i] = itemsArray[i - 1];
-        }
+        System.arraycopy(items, index, items, index + 1, size - index);
 
-        itemsArray[index] = item;
-        length++;
+        items[index] = item;
+        changesCount++;
+        size++;
     }
 
-    private void ensureCapacity() {
-        itemsArray = Arrays.copyOf(itemsArray, itemsArray.length * 2);
+    private void boostCapacity() {
+        if (size == 0) {
+            //noinspection unchecked
+            items = (E[]) new Object[defaultCapacity];
+        }
+
+        items = Arrays.copyOf(items, items.length * 2);
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends T> collection) {
+    public boolean addAll(int index, Collection<? extends E> collection) {
+        if (index == 0 && size == 0) {
+            //noinspection unchecked
+            items = (E[]) new Object[defaultCapacity];
+        }
+
+        if (index > size) {
+            throw new IndexOutOfBoundsException("Index can't be > " + size + "; index = " + index);
+        }
+
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Index can't be < 0; index = " + index);
+        }
+
+        int sizeCollection = collection.size();
+
+        if (size + sizeCollection >= items.length) {
+            items = Arrays.copyOf(items, size + sizeCollection);
+        }
+
+        System.arraycopy(items, index, items, index + sizeCollection, size - index);
+        changesCount++;
+
+        int i = index;
+
+        for (E item : collection) {
+            items[i] = (E) item;
+            i++;
+            size++;
+            changesCount++;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> collection) {
+        return addAll(0, collection);
+    }
+
+    @Override
+    public E remove(int index) {
         checkIndex(index);
 
-        if (length + collection.size() >= itemsArray.length) {
-            ensureCapacity();
-        }
+        E previouslyItem = items[index];
 
-        boolean hasChange = false;
-        //noinspection unchecked
-        T[] currentArray = (T[]) collection.toArray();
-
-        for (int i = index; i < collection.size(); i++) {
-            if (!get(i).equals(currentArray[i])) {
-                hasChange = true;
-            }
-
-            add(currentArray[i]);
-        }
-
-        return hasChange;
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends T> collection) {
-        if (length + collection.size() >= itemsArray.length) {
-            ensureCapacity();
-        }
-
-        boolean hasChange = false;
-        //noinspection unchecked
-        T[] currentArray = (T[]) collection.toArray();
-
-        for (int i = 0; i < collection.size(); i++) {
-            if (!get(i).equals(currentArray[i])) {
-                hasChange = true;
-            }
-
-            add(currentArray[i]);
-        }
-
-        return hasChange;
-    }
-
-    @Override
-    public T remove(int index) {
-        checkIndex(index);
-
-        T previouslyItem = itemsArray[index];
-
-        if (itemsArray.length - 1 - index >= 0) {
-            System.arraycopy(itemsArray, index + 1, itemsArray, index, itemsArray.length - 1 - index);
-        }
-
-        itemsArray[length - 1] = null;
-        length--;
+        System.arraycopy(items, index + 1, items, index, items.length - 1 - index);
+        items[size - 1] = null;
+        changesCount++;
+        size--;
 
         return previouslyItem;
     }
 
     @Override
-    public boolean remove(Object item) {
-        for (int i = 0; i < length; i++) {
-            if (itemsArray[i].equals(item)) {
-                remove(i);
-
-                return true;
-            }
+    public boolean remove(Object object) {
+        if (indexOf(object) < 0) {
+            return false;
         }
 
-        return false;
+        changesCount++;
+
+        return Objects.equals(remove(indexOf(object)), object);
     }
 
     @Override
@@ -156,114 +160,68 @@ public class ArrayList<T> implements List<T> {
             return;
         }
 
-        for (int i = 0; i < length; i++) {
-            itemsArray[i] = null;
-        }
+        Arrays.fill(items, null);
+        changesCount++;
     }
 
     @Override
-    public boolean removeAll(Collection<?> list) {
-        if (isEmpty() || list.size() == 0) {
+    public boolean removeAll(Collection<?> collection) {
+        if (isEmpty() || collection.size() == 0) {
             return false;
         }
 
         boolean hasChange = false;
-        //noinspection unchecked
-        T[] currentArray = (T[]) list.toArray();
 
-        int i = 0, j = 0;
-        int listSize = list.size();
-
-        while (i < length) {
-            while (j < listSize) {
-                if (itemsArray[i] == null && currentArray[j] == null || Objects.equals(itemsArray[i], currentArray[j])) {
-                    remove(i);
-                    hasChange = true;
-                    j = 0;
-
-                    if (i == length) {
-                        break;
-                    }
-                } else {
-                    j++;
-                }
+        for (Object o : collection) {
+            if (contains(o)) {
+                remove(o);
+                hasChange = true;
+                changesCount++;
             }
-
-            i++;
-            j = 0;
         }
 
         return hasChange;
     }
 
     @Override
-    public boolean retainAll(Collection<?> list) {
-        if (isEmpty() || list.size() == 0) {
-            return false;
+    public boolean retainAll(Collection<?> collection) {
+        if (collection.isEmpty()) {
+            if (isEmpty()) {
+                return false;
+            }
+
+            clear();
+            changesCount++;
+
+            return true;
         }
 
         boolean hasChange = false;
-        //noinspection unchecked
-        T[] currentArray = (T[]) list.toArray();
 
-        int i = 0, j = 0;
-        int listSize = list.size();
-
-        while (i < length) {
-            while (j < listSize && i < length) {
-                if (itemsArray[i] == null && currentArray[j] == null || Objects.equals(itemsArray[i], currentArray[j])) {
-                    i++;
-                    j = 0;
-                } else {
-                    j++;
-                }
+        for (int i = 0; i < size; i++) {
+            if (!collection.contains(items[i])) {
+                remove(items[i]);
+                hasChange = true;
+                i--;
             }
-
-            if (i >= length) {
-                break;
-            }
-
-            remove(i);
-            hasChange = true;
-            j = 0;
         }
+
         return hasChange;
     }
 
     @Override
-    public boolean contains(Object o) {
-        if (isEmpty()) {
-            return false;
-        }
-
-        for (int i = 0; i < length; i++) {
-            if (itemsArray[i] == null && o == null) {
-                return true;
-            }
-
-            assert itemsArray[i] != null;
-            //noinspection unchecked
-            T t = (T) o;
-
-            if (itemsArray[i].equals(t)) {
-                return true;
-            }
-        }
-
-        return false;
+    public boolean contains(Object object) {
+        return indexOf(object) >= 0;
     }
 
     @Override
-    public boolean containsAll(Collection<?> list) {
-        if (list.size() > length) {
+    public boolean containsAll(Collection<?> collection) {
+        if (collection.isEmpty() || isEmpty()) {
             return false;
         }
 
-        //noinspection unchecked
-        T[] currentArray = (T[]) list.toArray();
-
-        for (int i = 0; i < list.size(); i++) {
-            if (!this.contains(currentArray[i])) {
+        for (Object o : collection) {
+            if (!contains(o)) {
                 return false;
             }
         }
@@ -273,16 +231,8 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public int indexOf(Object o) {
-        for (int i = 0; i < length; i++) {
-            if (itemsArray[i] == null && o == null) {
-                return i;
-            }
-
-            assert itemsArray[i] != null;
-            //noinspection unchecked
-            T t = (T) o;
-
-            if (itemsArray[i].equals(t)) {
+        for (int i = 0; i < size; i++) {
+            if (Objects.equals(items[i], o)) {
                 return i;
             }
         }
@@ -292,16 +242,8 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public int lastIndexOf(Object o) {
-        for (int i = length - 1; i >= 0; i--) {
-            if (itemsArray[i] == null && o == null) {
-                return i;
-            }
-
-            assert itemsArray[i] != null;
-            //noinspection unchecked
-            T t = (T) o;
-
-            if (itemsArray[i].equals(t)) {
+        for (int i = size - 1; i >= 0; i--) {
+            if (Objects.equals(items[i], o)) {
                 return i;
             }
         }
@@ -311,30 +253,40 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean isEmpty() {
-        return length == 0;
+        return size == 0;
     }
 
     @Override
-    public T[] toArray() {
-        return Arrays.copyOf(itemsArray, length);
+    public E[] toArray() {
+        return Arrays.copyOf(items, size);
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        if (a.length <= size) {
+            //noinspection unchecked
+            return (T[]) Arrays.copyOf(items, size);
+        }
+
+        //noinspection unchecked
+        return (T[]) Arrays.copyOf(items, a.length);
     }
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("{");
-
         if (isEmpty()) {
             return "{}";
-        } else if (length == 1) {
-            return "{" + itemsArray[0] + "}";
         }
 
-        for (int i = 0; i < length - 1; i++) {
-            stringBuilder.append(itemsArray[i]);
+        StringBuilder stringBuilder = new StringBuilder("{");
+        int sizeLimit = size - 1;
+
+        for (int i = 0; i < sizeLimit; i++) {
+            stringBuilder.append(items[i]);
             stringBuilder.append(", ");
         }
 
-        stringBuilder.append(itemsArray[length - 1]).append("}");
+        stringBuilder.append(items[sizeLimit]).append("}");
 
         return stringBuilder.toString();
     }
@@ -350,23 +302,21 @@ public class ArrayList<T> implements List<T> {
         }
 
         //noinspection unchecked
-        T t = (T) o;
+        ArrayList<E> arrayList = (ArrayList<E>) o;
 
-        return this.equals(t);
+        return Arrays.equals(items, arrayList.items) && size == arrayList.size;
     }
 
     @Override
     public int hashCode() {
         final int prime = 37;
-        int hash = 1;
-        hash *= prime + Arrays.hashCode(itemsArray);
 
-        return hash;
+        return prime + Arrays.hashCode(Arrays.copyOf(items, size));
     }
 
     private void checkIndex(int index) {
-        if (index >= length) {
-            throw new IndexOutOfBoundsException("Index can't be >= " + length + "; index = " + index);
+        if (index >= size) {
+            throw new IndexOutOfBoundsException("Index can't be >= " + size + "; index = " + index);
         }
 
         if (index < 0) {
@@ -374,24 +324,33 @@ public class ArrayList<T> implements List<T> {
         }
     }
 
-    private class MyIterator implements Iterator<T> {
+    private class Iterator implements java.util.Iterator<E> {
         private int currentIndex = -1;
+        private final int currentChangesCount = changesCount;
 
         @Override
         public boolean hasNext() {
-            return currentIndex + 1 < length;
+            return currentIndex + 1 < size;
         }
 
         @Override
-        public T next() {
+        public E next() {
+            if (currentIndex + 1 >= size) {
+                throw new NoSuchElementException();
+            }
+
+            if (currentChangesCount != changesCount) {
+                throw new ConcurrentModificationException("List has change during the runtime");
+            }
+
             currentIndex++;
-            return itemsArray[currentIndex];
+            return items[currentIndex];
         }
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return new MyIterator();
+    public java.util.Iterator<E> iterator() {
+        return new Iterator();
     }
 
     //===============================================================================================================
@@ -399,32 +358,17 @@ public class ArrayList<T> implements List<T> {
     //===============================================================================================================
 
     @Override
-    public void sort(Comparator<? super T> c) {
-        List.super.sort(c);
-    }
-
-    @Override
-    public <T1> T1[] toArray(T1[] a) {
+    public ListIterator<E> listIterator() {
         return null;
     }
 
     @Override
-    public ListIterator<T> listIterator() {
+    public ListIterator<E> listIterator(int index) {
         return null;
     }
 
     @Override
-    public ListIterator<T> listIterator(int index) {
-        return null;
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return List.super.spliterator();
-    }
-
-    @Override
-    public List<T> subList(int fromIndex, int toIndex) {
+    public List<E> subList(int fromIndex, int toIndex) {
         return null;
     }
 }

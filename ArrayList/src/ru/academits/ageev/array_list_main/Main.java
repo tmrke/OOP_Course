@@ -14,6 +14,8 @@ public class Main {
         arrayList1.add("Четвертый элемент");
         arrayList1.add("Пятый элемент");
 
+        System.out.println(arrayList1);
+
         List<String> arrayList2 = new ArrayList<>();
         arrayList2.add("Седьмой элемент");
         arrayList2.add("Восьмой элемент");
@@ -98,5 +100,6 @@ public class Main {
         System.out.println("=========================================================================================");
 
         System.out.println("arrayList5 как массив: " + Arrays.toString(arrayList5.toArray()));
+        System.out.println("arrayList5 как массив: " + Arrays.toString(arrayList5.toArray(new String[10])));
     }
 }
