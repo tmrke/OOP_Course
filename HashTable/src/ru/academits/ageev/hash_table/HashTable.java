@@ -4,9 +4,10 @@ import java.util.*;
 
 public class HashTable<V> implements Collection<V> {
     private ArrayList<V>[] arrayLists;
+    private static final int defaultSize = 10;
+    private int changesCount = 0;
 
     public HashTable() {
-        int defaultSize = 10;
         //noinspection unchecked
         arrayLists = new ArrayList[defaultSize];
     }
@@ -16,7 +17,7 @@ public class HashTable<V> implements Collection<V> {
         arrayLists = new ArrayList[size];
     }
 
-    private void ensureCapacity() {
+    private void boostCapacity() {
         arrayLists = Arrays.copyOf(arrayLists, arrayLists.length * 2);
     }
 
@@ -27,7 +28,17 @@ public class HashTable<V> implements Collection<V> {
 
     @Override
     public boolean isEmpty() {
-        return arrayLists.length == 0;
+        for (int i = 0; i < arrayLists.length; i++) {
+            while (i < arrayLists.length && arrayLists[i] == null) {
+                i++;
+            }
+
+            if (i < arrayLists.length && !arrayLists[i].isEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -70,8 +81,10 @@ public class HashTable<V> implements Collection<V> {
         return Arrays.hashCode(arrayLists);
     }
 
-    private class MyIterator implements Iterator<V> {
+    private class Iterator implements java.util.Iterator<V> {
         private int currentIndex = -1;
+        private final int currentChangesCount = changesCount;
+
 
         @Override
         public boolean hasNext() {
@@ -88,9 +101,13 @@ public class HashTable<V> implements Collection<V> {
                 throw new NoSuchElementException();
             }
 
+//            if (currentChangesCount != changesCount) {
+//                throw new ConcurrentModificationException("List has change during the runtime");
+//            }
+
             currentIndex++;
 
-            while (currentIndex < arrayLists.length - 1 && arrayLists[currentIndex] == null) {
+            while (currentIndex < arrayLists.length - 1 && arrayLists[currentIndex] == null) {      //TODO опять тут хуйня какая то
                 currentIndex++;
             }
 
@@ -99,8 +116,8 @@ public class HashTable<V> implements Collection<V> {
     }
 
     @Override
-    public Iterator<V> iterator() {
-        return new MyIterator();
+    public java.util.Iterator<V> iterator() {
+        return new Iterator();
     }
 
     @Override
@@ -125,6 +142,7 @@ public class HashTable<V> implements Collection<V> {
         }
 
         arrayLists[index].add(item);
+        changesCount++;
 
         return true;
     }
@@ -132,16 +150,21 @@ public class HashTable<V> implements Collection<V> {
     @Override
     public boolean remove(Object o) {
         for (int i = 0; i < arrayLists.length; i++) {
-            while (arrayLists[i] == null) {
+            while (i < arrayLists.length && arrayLists[i] == null) {
                 i++;
             }
 
-            V currentItem = arrayLists[i].iterator().next();
+            try {
+                V currentItem = arrayLists[i].iterator().next();
 
-            if (currentItem.equals(o)) {
-                arrayLists[i].remove(currentItem);
+                if (i < arrayLists.length && currentItem.equals(o)) {
+                    arrayLists[i].remove(currentItem);
+                    changesCount++;
 
-                return true;
+                    return true;
+                }
+            } catch (NoSuchElementException e) {
+                break;
             }
         }
 
@@ -150,8 +173,10 @@ public class HashTable<V> implements Collection<V> {
 
     @Override
     public boolean addAll(Collection c) {
+        //noinspection unchecked
         for (V item : (Iterable<V>) c) {
             add(item);
+            changesCount++;
         }
 
         return true;
@@ -162,19 +187,28 @@ public class HashTable<V> implements Collection<V> {
         for (ArrayList<V> arrayList : arrayLists) {
             if (arrayList != null) {
                 arrayList.clear();
+                changesCount++;
             }
         }
     }
 
     @Override
-    public boolean retainAll(Collection c) {
-        for (Iterator<V> iterator = iterator(); iterator.hasNext(); ) {
-            V currentItem = iterator.next();
-
-
+    public boolean retainAll(Collection collection) {
+        if (isEmpty() || collection.isEmpty()) {
+            return false;
         }
 
-        return false;
+        boolean hasChange = false;
+
+        for (V currentItem : this) {
+            if (!collection.contains(currentItem)) {
+                remove(currentItem);
+                hasChange = true;
+                changesCount++;
+            }
+        }
+
+        return hasChange;
     }
 
 
