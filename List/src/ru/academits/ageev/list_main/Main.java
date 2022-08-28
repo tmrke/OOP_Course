@@ -12,6 +12,7 @@ public class Main {
         list.addFirst("Пятый элемент");
 
         System.out.println(list);
+
         System.out.println("Размер списка = " + list.getSize());
         System.out.println("===========================================");
 
