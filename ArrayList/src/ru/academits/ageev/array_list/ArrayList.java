@@ -6,7 +6,7 @@ public class ArrayList<E> implements List<E> {
     private E[] items;
     private int size;
     static final int defaultCapacity = 10;
-    private int changesCount = 0;
+    private int modCount = 0;
 
     public ArrayList() {
         //noinspection unchecked
@@ -40,7 +40,7 @@ public class ArrayList<E> implements List<E> {
 
         E previouslyItem = items[index];
         items[index] = item;
-        changesCount++;
+        modCount++;
 
         return previouslyItem;
     }
@@ -48,7 +48,7 @@ public class ArrayList<E> implements List<E> {
     @Override
     public boolean add(E item) {
         add(size, item);
-        changesCount++;
+        modCount++;
 
         return true;
     }
@@ -75,7 +75,7 @@ public class ArrayList<E> implements List<E> {
         System.arraycopy(items, index, items, index + 1, size - index);
 
         items[index] = item;
-        changesCount++;
+        modCount++;
         size++;
     }
 
@@ -110,7 +110,7 @@ public class ArrayList<E> implements List<E> {
         }
 
         System.arraycopy(items, index, items, index + sizeCollection, size - index);
-        changesCount++;
+        modCount++;
 
         int i = index;
 
@@ -118,7 +118,7 @@ public class ArrayList<E> implements List<E> {
             items[i] = (E) item;
             i++;
             size++;
-            changesCount++;
+            modCount++;
         }
 
         return true;
@@ -137,7 +137,7 @@ public class ArrayList<E> implements List<E> {
 
         System.arraycopy(items, index + 1, items, index, items.length - 1 - index);
         items[size - 1] = null;
-        changesCount++;
+        modCount++;
         size--;
 
         return previouslyItem;
@@ -149,7 +149,7 @@ public class ArrayList<E> implements List<E> {
             return false;
         }
 
-        changesCount++;
+        modCount++;
 
         return Objects.equals(remove(indexOf(object)), object);
     }
@@ -161,7 +161,7 @@ public class ArrayList<E> implements List<E> {
         }
 
         Arrays.fill(items, null);
-        changesCount++;
+        modCount++;
     }
 
     @Override
@@ -176,7 +176,7 @@ public class ArrayList<E> implements List<E> {
             if (contains(o)) {
                 remove(o);
                 hasChange = true;
-                changesCount++;
+                modCount++;
             }
         }
 
@@ -191,7 +191,7 @@ public class ArrayList<E> implements List<E> {
             }
 
             clear();
-            changesCount++;
+            modCount++;
 
             return true;
         }
@@ -326,7 +326,7 @@ public class ArrayList<E> implements List<E> {
 
     private class Iterator implements java.util.Iterator<E> {
         private int currentIndex = -1;
-        private final int currentChangesCount = changesCount;
+        private final int currentModCount = modCount;
 
         @Override
         public boolean hasNext() {
@@ -339,7 +339,7 @@ public class ArrayList<E> implements List<E> {
                 throw new NoSuchElementException();
             }
 
-            if (currentChangesCount != changesCount) {
+            if (currentModCount != modCount) {
                 throw new ConcurrentModificationException("List has change during the runtime");
             }
 

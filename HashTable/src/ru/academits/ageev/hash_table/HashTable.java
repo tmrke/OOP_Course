@@ -5,7 +5,7 @@ import java.util.*;
 public class HashTable<V> implements Collection<V> {
     private ArrayList<V>[] arrayLists;
     private static final int defaultSize = 10;
-    private int changesCount = 0;
+    private int modCount = 0;
 
     public HashTable() {
         //noinspection unchecked
@@ -83,8 +83,7 @@ public class HashTable<V> implements Collection<V> {
 
     private class Iterator implements java.util.Iterator<V> {
         private int currentIndex = -1;
-        private final int currentChangesCount = changesCount;
-
+        private final int currentModCount = modCount;
 
         @Override
         public boolean hasNext() {
@@ -101,7 +100,7 @@ public class HashTable<V> implements Collection<V> {
                 throw new NoSuchElementException();
             }
 
-            if (currentChangesCount != changesCount) {
+            if (currentModCount != modCount) {
                 throw new ConcurrentModificationException("HashTable has change during the runtime");
             }
 
@@ -159,7 +158,7 @@ public class HashTable<V> implements Collection<V> {
         }
 
         arrayLists[index].add(item);
-        changesCount++;
+        modCount++;
 
         return true;
     }
@@ -177,7 +176,7 @@ public class HashTable<V> implements Collection<V> {
 
                 if (Objects.equals(currentItem, o)) {
                     arrayLists[i].remove(currentItem);
-                    changesCount++;
+                    modCount++;
 
                     return true;
                 }
@@ -192,7 +191,7 @@ public class HashTable<V> implements Collection<V> {
         //noinspection unchecked
         for (V item : (Iterable<V>) collection) {
             add(item);
-            changesCount++;
+            modCount++;
         }
 
         return true;
@@ -203,7 +202,7 @@ public class HashTable<V> implements Collection<V> {
         for (ArrayList<V> arrayList : arrayLists) {
             if (arrayList != null) {
                 arrayList.clear();
-                changesCount++;
+                modCount++;
             }
         }
     }
@@ -227,7 +226,7 @@ public class HashTable<V> implements Collection<V> {
                 if (!collection.contains(currentItem)) {
                     remove(currentItem);
                     hasChange = true;
-                    changesCount++;
+                    modCount++;
                 }
             }
         }
@@ -247,7 +246,7 @@ public class HashTable<V> implements Collection<V> {
             if (contains(currentItem)) {
                 remove(currentItem);
                 hasChange = true;
-                changesCount++;
+                modCount++;
             }
         }
 
