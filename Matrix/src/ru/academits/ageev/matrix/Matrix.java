@@ -279,13 +279,13 @@ public class Matrix {
 
     private static void checkEquality(Matrix matrix1, Matrix matrix2) {
         if (matrix1.getRowsCount() != matrix2.getRowsCount()) {
-            throw new IllegalArgumentException("Matrix1 rows count must not be = matrix2 rows count; matrix1 rows count = " + matrix1.getRowsCount()
+            throw new IllegalArgumentException("Matrix1 rows count must be = matrix2 rows count; matrix1 rows count = " + matrix1.getRowsCount()
                     + "; matrix2 rows count = " + matrix2.getRowsCount());
         }
 
         if (matrix1.getColumnsCount() != matrix2.getColumnsCount()) {
-            throw new IllegalArgumentException("Matrix1 columns count must not be = matrix2 columns count; matrix1 columns count = " + matrix1.getRowsCount()
-                    + "; matrix2 columns count = " + matrix2.getRowsCount());
+            throw new IllegalArgumentException("Matrix1 columns count must be = matrix2 columns count; matrix1 columns count = " + matrix1.getColumnsCount()
+                    + "; matrix2 columns count = " + matrix2.getColumnsCount());
         }
     }
 }
