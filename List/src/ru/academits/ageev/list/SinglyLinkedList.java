@@ -17,17 +17,13 @@ public class SinglyLinkedList<T> {
     }
 
     public T getFirst() {
-        checkEmptiness();
+        checkEmpty();
 
         return head.getData();
     }
 
     public T getByIndex(int index) {
         checkIndex(index);
-
-        if (index == 0) {
-            return head.getData();
-        }
 
         return getItemByIndex(index).getData();
     }
@@ -78,7 +74,7 @@ public class SinglyLinkedList<T> {
     }
 
     public T deleteFirst() {
-        checkEmptiness();
+        checkEmpty();
 
         T deletedData = head.getData();
         head = head.getNext();
@@ -131,18 +127,21 @@ public class SinglyLinkedList<T> {
     }
 
     public SinglyLinkedList<T> copy() {
+        if (size == 0) {
+            return new SinglyLinkedList<>();
+        }
+
         SinglyLinkedList<T> copiedList = new SinglyLinkedList<>();
-        copiedList.size = 0;
 
         ListItem<T> currentItem = new ListItem<>(head.getData());
         copiedList.head = currentItem;
-        copiedList.size++;
 
         for (ListItem<T> p = head.getNext(); p != null; p = p.getNext()) {
             currentItem.setNext(new ListItem<>(p.getData()));
             currentItem = currentItem.getNext();
-            copiedList.size++;
         }
+
+        copiedList.size = size;
 
         return copiedList;
     }
@@ -186,7 +185,7 @@ public class SinglyLinkedList<T> {
         }
     }
 
-    private void checkEmptiness() {
+    private void checkEmpty() {
         if (size == 0) {
             throw new NoSuchElementException("List is empty");
         }
