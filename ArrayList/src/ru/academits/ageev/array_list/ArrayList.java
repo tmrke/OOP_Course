@@ -7,7 +7,7 @@ public class ArrayList<E> implements List<E> {
 
     private E[] items;
     private int size;
-    private int modCount = 0;
+    private int modCount;
 
     public ArrayList() {
         //noinspection unchecked
