@@ -65,7 +65,7 @@ public class HashTable<E> implements Collection<E> {
         return Arrays.hashCode(lists);
     }
 
-    private class HashTableIterator implements Iterator<E> {            //TODO переделать!!!!!!
+    private class HashTableIterator implements Iterator<E> {            //TODO переделать!
         private int currentIndex = -1;
         private final int currentModCount = modCount;
 
