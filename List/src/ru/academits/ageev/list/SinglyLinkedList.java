@@ -49,12 +49,14 @@ public class SinglyLinkedList<T> {
 
         if (index == 0) {
             addFirst(data);
-        } else {
-            ListItem<T> previousItem = getItemByIndex(index - 1);
-            ListItem<T> currentItem = previousItem.getNext();
-            previousItem.setNext(new ListItem<>(data, currentItem));
-            size++;
+            return;
         }
+
+        ListItem<T> previousItem = getItemByIndex(index - 1);
+        ListItem<T> currentItem = previousItem.getNext();
+        previousItem.setNext(new ListItem<>(data, currentItem));
+        size++;
+
     }
 
     public T deleteByIndex(int index) {
@@ -65,12 +67,12 @@ public class SinglyLinkedList<T> {
         }
 
         ListItem<T> previousItem = getItemByIndex(index - 1);
-        T deletableItemData = previousItem.getNext().getData();
+        T deletedData = previousItem.getNext().getData();
 
         previousItem.setNext(previousItem.getNext().getNext());
         size--;
 
-        return deletableItemData;
+        return deletedData;
     }
 
     public T deleteFirst() {
