@@ -103,6 +103,13 @@ public class Tree<T> {
         }
 
         if (deletedNode.getLeft() == null && deletedNode.getRight() == null) {
+            if (root == deletedNode) {
+                root = null;
+                size--;
+
+                return true;
+            }
+
             deletedNodeParent.setLeft(null);
             deletedNodeParent.setRight(null);
             size--;
@@ -111,6 +118,13 @@ public class Tree<T> {
         }
 
         if (deletedNode.getLeft() == null) {
+            if (root == deletedNode) {
+                root = root.getRight();
+                size--;
+
+                return true;
+            }
+
             deletedNodeParent.setRight(deletedNode.getRight());
             size--;
 
@@ -118,6 +132,13 @@ public class Tree<T> {
         }
 
         if (deletedNode.getRight() == null) {
+            if (root == deletedNode) {
+                root = root.getLeft();
+                size--;
+
+                return true;
+            }
+
             deletedNodeParent.setLeft(deletedNode.getLeft());
             size--;
 
