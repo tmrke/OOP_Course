@@ -1,4 +1,198 @@
 package ru.academits.ageev.tree;
 
-public class Tree {
+import ru.academits.ageev.tree_main.Node;
+
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
+public class Tree<T> {
+    public Node<T> root;
+    private int size;
+
+    public int getSize() {
+        return size;
+    }
+
+    private int compare(T t1, T t2) {
+        if (t1 == null || t2 == null) {
+            throw new NullPointerException("Arguments can't be null, t1 = " + t1 + "; t2 = " + t2);
+        }
+
+        //noinspection unchecked
+        return ((Comparable<? super T>) t1).compareTo(t2);
+    }
+
+    public void add(T data) {
+        Node<T> addedNode = new Node<>(data);
+
+        if (root == null) {
+            root = addedNode;
+            size++;
+        } else {
+            Node<T> currentNode = root;
+
+            while (true) {
+                if (compare(addedNode.getData(), currentNode.getData()) >= 0) {
+                    if (currentNode.getRight() == null) {
+                        currentNode.setRight(addedNode);
+                        size++;
+
+                        return;
+                    }
+
+                    currentNode = currentNode.getRight();
+                } else {
+                    if (currentNode.getLeft() == null) {
+                        currentNode.setLeft(addedNode);
+                        size++;
+
+                        return;
+                    }
+
+                    currentNode = currentNode.getLeft();
+                }
+            }
+        }
+    }
+
+    public Node<T> getByData(T data) {
+        checkEmpty();
+
+        Node<T> currentNode = root;
+
+        while (currentNode != null) {
+            if (Objects.equals(currentNode.getData(), data)) {
+                return currentNode;
+            }
+
+            if (compare(data, currentNode.getData()) >= 0) {
+                currentNode = currentNode.getRight();
+            } else {
+                currentNode = currentNode.getLeft();
+            }
+        }
+
+        return null;
+    }
+
+
+    public boolean removeByData(T data) {
+        checkEmpty();
+
+        Node<T> deletedNode = root;
+        Node<T> deletedNodeParent = null;
+
+        int comparatorResult = compare(data, deletedNode.getData());
+        boolean isLeftChildren = false;
+
+        while (comparatorResult != 0) {
+            deletedNodeParent = deletedNode;
+
+            if (comparatorResult < 0) {
+                deletedNode = deletedNode.getLeft();
+                isLeftChildren = true;
+            } else {
+                deletedNode = deletedNode.getRight();
+            }
+
+            if (deletedNode == null) {
+                return false;
+            }
+
+            comparatorResult = compare(data, deletedNode.getData());
+        }
+
+        if (deletedNode.getLeft() == null && deletedNode.getRight() == null) {
+            deletedNodeParent.setLeft(null);
+            deletedNodeParent.setRight(null);
+            size--;
+
+            return true;
+        }
+
+        if (deletedNode.getLeft() == null) {
+            deletedNodeParent.setRight(deletedNode.getRight());
+            size--;
+
+            return true;
+        }
+
+        if (deletedNode.getRight() == null) {
+            deletedNodeParent.setLeft(deletedNode.getLeft());
+            size--;
+
+            return true;
+        }
+
+        Node<T> smallestLeftNode = deletedNode.getRight();
+        Node<T> smallestLeftNodeParent = deletedNode;
+        boolean isLeftSmallestLeftNode = false;
+
+        while (smallestLeftNode.getLeft() != null) {
+            smallestLeftNodeParent = smallestLeftNode;
+            smallestLeftNode = smallestLeftNode.getLeft();
+            isLeftSmallestLeftNode = true;
+        }
+
+        if (root == deletedNode) {
+            if (root.getLeft() == null && root.getRight() == null) {
+                root = null;
+            } else if (root.getRight() != null && root.getLeft() == null) {
+                root = root.getRight();
+            } else if (root.getLeft() != null && root.getRight() == null) {
+                root = root.getLeft();
+            } else {
+                Node<T> rootLeftNode = root.getLeft();
+
+                if (isLeftSmallestLeftNode) {
+                    if (smallestLeftNode.getRight() == null) {
+                        root = smallestLeftNode;
+                    } else {
+                        root = smallestLeftNode.getRight();
+                    }
+                } else {
+                    root = smallestLeftNode;
+                }
+
+                root.setLeft(rootLeftNode);
+
+            }
+
+            size--;
+
+            return true;
+        }
+
+        if (isLeftSmallestLeftNode) {
+            if (smallestLeftNode.getRight() != null) {
+                smallestLeftNodeParent.setRight(smallestLeftNode.getRight());
+            } else {
+                smallestLeftNodeParent.setLeft(null);
+            }
+        } else {
+            if (smallestLeftNode.getRight() != null) {
+                smallestLeftNodeParent.setRight(smallestLeftNode.getRight());
+            } else {
+                smallestLeftNodeParent.setRight(null);
+            }
+        }
+
+        if (isLeftChildren) {
+            deletedNodeParent.setLeft(smallestLeftNode);
+            smallestLeftNode.setLeft(deletedNode.getLeft());
+        } else {
+            deletedNodeParent.setRight(smallestLeftNode);
+        }
+
+        size--;
+
+        return true;
+    }
+
+
+    private void checkEmpty() {
+        if (size == 0) {
+            throw new NoSuchElementException("Tree is empty");
+        }
+    }
 }
