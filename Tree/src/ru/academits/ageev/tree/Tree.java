@@ -5,7 +5,7 @@ import ru.academits.ageev.tree_main.Node;
 import java.util.*;
 
 public class Tree<T> {
-    public Node<T> root;
+    private Node<T> root;
     private int size;
 
     public int getSize() {
