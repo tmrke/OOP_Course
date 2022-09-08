@@ -2,8 +2,7 @@ package ru.academits.ageev.tree;
 
 import ru.academits.ageev.tree_main.Node;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class Tree<T> {
     public Node<T> root;
@@ -210,6 +209,69 @@ public class Tree<T> {
         return true;
     }
 
+    public void widthVisit() {
+        checkEmpty();
+
+        Queue<Node<T>> queue = new LinkedList<>();
+        queue.add(root);
+
+        Node<T> queueCurrentNode;
+
+        while (!queue.isEmpty()) {
+            queueCurrentNode = queue.poll();
+            System.out.println(queueCurrentNode.getData());
+
+            if (queueCurrentNode.getLeft() != null) {
+                queue.add(queueCurrentNode.getLeft());
+            }
+
+            if (queueCurrentNode.getRight() != null) {
+                queue.add(queueCurrentNode.getRight());
+            }
+        }
+    }
+
+    public void deepVisit() {
+        checkEmpty();
+
+        Stack<Node<T>> stack = new Stack<>();
+        stack.push(root);
+
+        Node<T> stackCurrentNode;
+
+        while (!stack.isEmpty()) {
+            stackCurrentNode = stack.pop();
+            System.out.println(stackCurrentNode.getData());
+
+            if (stackCurrentNode.getRight() != null) {
+                stack.push(stackCurrentNode.getRight());
+            }
+
+            if (stackCurrentNode.getLeft() != null) {
+                stack.push(stackCurrentNode.getLeft());
+            }
+        }
+    }
+
+    public void deepVisitRecursively() {
+        checkEmpty();
+
+        deepVisitRecursivelySupport(root);
+    }
+
+    private void deepVisitRecursivelySupport(Node<T> node) {
+        if (node != null) {
+            System.out.println(node.getData());
+
+            if (node.getLeft() != null) {
+                deepVisitRecursivelySupport(node.getLeft());
+            }
+
+            if (node.getRight() != null) {
+                deepVisitRecursivelySupport(node.getRight());
+            }
+        }
+    }
 
     private void checkEmpty() {
         if (size == 0) {

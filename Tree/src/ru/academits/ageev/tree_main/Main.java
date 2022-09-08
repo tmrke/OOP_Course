@@ -15,7 +15,19 @@ public class Main {
         tree.add(6);
         tree.add(8);
 
-        System.out.println(tree.removeByData(7));
-        System.out.println(tree.root.getRight().getLeft().getData());
+        System.out.println("Размер дерева = " + tree.getSize());
+        System.out.println("Получаем данные узла дерева со значением \"8\": " + tree.getByData(8).getData());
+        System.out.println("Был ли удален узел дерева со значением \"2\"? Ответ: " + tree.removeByData(2));
+
+        System.out.println("Обход дерева в ширину:");
+        tree.widthVisit();
+        System.out.println("===============================================================================");
+
+        System.out.println("Обход дерева в глубину без рекурсии:");
+        tree.deepVisit();
+        System.out.println("===============================================================================");
+
+        System.out.println("Обход дерева в глубину c рекурсией:");
+        tree.deepVisitRecursively();
     }
 }
