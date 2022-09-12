@@ -41,7 +41,6 @@ public class ArrayList<E> implements List<E> {
 
         E oldItem = items[index];
         items[index] = item;
-        modCount++;
 
         return oldItem;
     }
@@ -95,27 +94,37 @@ public class ArrayList<E> implements List<E> {
             throw new IndexOutOfBoundsException("Index can't be < 0; index = " + index);
         }
 
-        final int currentModCount = modCount;
-
         int finalSize = size + collection.size();
+        ensureCapacity(finalSize);
 
-        if (finalSize >= items.length) {
-            ensureCapacity(finalSize);
-        }
-
-        System.arraycopy(items, index, items, index + collection.size(), size - index);
-        modCount++;
-
+        boolean hasChange = false;
         int i = index;
 
-        for (E item : collection) {
-            items[i] = item;
+        for (Iterator<? extends E> iterator = collection.iterator(); iterator.hasNext() || i < size; ) {
+            if (!items[i].equals(iterator.next())) {
+                hasChange = true;
+
+                break;
+            }
+
             i++;
         }
 
-        size = finalSize;
+        if (hasChange) {
+            System.arraycopy(items, index, items, index + collection.size(), size - index);
+            modCount++;
 
-        return currentModCount != modCount;
+            int j = index;
+
+            for (E item : collection) {
+                items[j] = item;
+                j++;
+            }
+
+            size = finalSize;
+        }
+
+        return hasChange;
     }
 
     @Override
@@ -127,25 +136,25 @@ public class ArrayList<E> implements List<E> {
     public E remove(int index) {
         checkIndex(index);
 
-        E previouslyItem = items[index];
+        E remotelyItem = items[index];
 
-        System.arraycopy(items, index + 1, items, index, items.length - 1 - index);
+        System.arraycopy(items, index + 1, items, index, size - 1 - index);
         items[size - 1] = null;
         modCount++;
         size--;
 
-        return previouslyItem;
+        return remotelyItem;
     }
 
     @Override
     public boolean remove(Object object) {
-        int indexOfObject = indexOf(object);
+        int index = indexOf(object);
 
-        if (indexOfObject < 0) {
+        if (index < 0) {
             return false;
         }
 
-        remove(indexOfObject);
+        remove(index);
 
         return true;
     }
@@ -169,9 +178,11 @@ public class ArrayList<E> implements List<E> {
 
         boolean hasChange = false;
 
-        for (Object o : collection) {
-            if (remove(o)) {
+        for (int i = 0; i < size; i++) {
+            if (collection.contains(items[i])) {
+                remove(i);
                 hasChange = true;
+                i--;
             }
         }
 
@@ -210,14 +221,6 @@ public class ArrayList<E> implements List<E> {
 
     @Override
     public boolean containsAll(Collection<?> collection) {
-        if (isEmpty()) {
-            return false;
-        }
-
-        if (collection.isEmpty()) {
-            return true;
-        }
-
         for (Object o : collection) {
             if (!contains(o)) {
                 return false;
@@ -306,15 +309,13 @@ public class ArrayList<E> implements List<E> {
 
         //noinspection unchecked
         ArrayList<E> arrayList = (ArrayList<E>) o;
-        arrayList.trimToSize();
 
-        return size == arrayList.size && Arrays.equals(Arrays.copyOf(items, size), arrayList.items);
+        return size == arrayList.size && Arrays.equals(items, arrayList.items);
     }
 
     @Override
     public int hashCode() {
         final int prime = 37;
-        trimToSize();
 
         return prime + Arrays.hashCode(items);
     }
@@ -329,17 +330,21 @@ public class ArrayList<E> implements List<E> {
         }
     }
 
-    private void ensureCapacity(int minCapacity) {
-        items = Arrays.copyOf(items, minCapacity);
+    public void ensureCapacity(int minCapacity) {
+        if (minCapacity > items.length) {
+            items = Arrays.copyOf(items, minCapacity);
+        }
     }
 
-    private void trimToSize() {
-        items = Arrays.copyOf(items, size);
+    public void trimToSize() {
+        if (items.length > size) {
+            items = Arrays.copyOf(items, size);
+        }
     }
 
     private class ArrayListIterator implements Iterator<E> {
         private int currentIndex = -1;
-        private final int currentModCount = modCount;
+        private final int startModCount = modCount;
 
         @Override
         public boolean hasNext() {
@@ -352,7 +357,7 @@ public class ArrayList<E> implements List<E> {
                 throw new NoSuchElementException("List are no more elements");
             }
 
-            if (currentModCount != modCount) {
+            if (startModCount != modCount) {
                 throw new ConcurrentModificationException("List has change during the runtime");
             }
 
