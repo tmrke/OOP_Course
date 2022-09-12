@@ -101,7 +101,8 @@ public class ArrayList<E> implements List<E> {
         int i = index;
 
         for (Iterator<? extends E> iterator = collection.iterator(); iterator.hasNext() || i < size; ) {
-            if (!items[i].equals(iterator.next())) {
+
+            if (!Objects.equals(items[i], iterator.next())) {
                 hasChange = true;
 
                 break;
