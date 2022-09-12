@@ -16,7 +16,6 @@ public class Main {
         hashTable1.add("5");
         hashTable1.add("6");
         hashTable1.add("994");
-        hashTable1.add(null);
 
         System.out.println(hashTable1);
         System.out.println("Содержит ли хэш-таблица \"994\"? Ответ: " + hashTable1.contains("994"));
@@ -44,6 +43,6 @@ public class Main {
 
         System.out.println("Все ли элементы из \"hashTable2\" присутствует в \"hashTable1\"? Ответ: " + hashTable1.containsAll(hashTable2));
 
-        System.out.println("\"hashTable2\" как массив: " + Arrays.toString(hashTable2.toArray(new String[15])));
+        System.out.println("\"hashTable2\" как массив: " + Arrays.toString(hashTable2.toArray(new String[2])));
     }
 }
