@@ -1,10 +1,10 @@
-package ru.academits.ageev.tree_main;
+package ru.academits.ageev.tree;
 
-public class Node<T> {
+class Node<T> {
     private Node<T> left;
     private Node<T> right;
 
-    private T data;
+    private final T data;
 
     public Node(T data) {
         this.data = data;
@@ -14,8 +14,8 @@ public class Node<T> {
         return left;
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public void setLeft(Node<T> left) {
+        this.left = left;
     }
 
     public Node<T> getRight() {
@@ -28,9 +28,5 @@ public class Node<T> {
 
     public T getData() {
         return data;
-    }
-
-    public void setLeft(Node<T> left) {
-        this.left = left;
     }
 }
