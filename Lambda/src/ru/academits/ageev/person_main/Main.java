@@ -8,13 +8,13 @@ import java.util.stream.DoubleStream;
 
 public class Main {
     public static void main(String[] args) {
-        List<Person> persons = new ArrayList<>();
-
-        persons.add(new Person("Иван", 10));
-        persons.add(new Person("Петр", 15));
-        persons.add(new Person("Елена", 20));
-        persons.add(new Person("Ульяна", 30));
-        persons.add(new Person("Иван", 150));
+        List<Person> persons = Arrays.asList(
+                new Person("Иван", 10),
+                new Person("Петр", 15),
+                new Person("Елена", 20),
+                new Person("Ульяна", 30),
+                new Person("Иван", 150)
+        );
 
         System.out.println("Исходный список:");
         System.out.println(persons);
@@ -56,7 +56,7 @@ public class Main {
 
         String from20to45yearsPersons = persons
                 .stream()
-                .filter(p -> p.age() >= 20 && p.age() < 45)
+                .filter(p -> p.age() >= 20 && p.age() <= 45)
                 .sorted(Comparator.comparingInt(Person::age).reversed())
                 .map(Person::name)
                 .collect(Collectors.joining(", ", "Люди возрастом от 20 и до 45 лет: ", "."));
@@ -64,10 +64,11 @@ public class Main {
         System.out.println(from20to45yearsPersons);
 
         Scanner scanner = new Scanner(System.in);
+
         System.out.println("Сколько элементов нужно вычислить?");
         int elementsCount = scanner.nextInt();
 
-        DoubleStream squareRoots = DoubleStream.iterate(1, x -> x + 1).map(Math::sqrt).limit(elementsCount);
+        DoubleStream squareRoots = DoubleStream.iterate(0, x -> x + 1).map(Math::sqrt).limit(elementsCount);
         squareRoots.forEach(System.out::println);
     }
 }
