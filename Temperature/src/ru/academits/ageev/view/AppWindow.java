@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AppWindow {
-    private final JFrame window;
-
     private final JTextField leftTextField = new JTextField("25", 12);
     private final JTextField rightTextField = new JTextField(12);
     private final JComboBox<String> leftComboBox = new JComboBox<>(new String[]{
@@ -21,45 +19,43 @@ public class AppWindow {
     private final JButton convertButton = new JButton("convert");
 
     public AppWindow() {
-        window = new JFrame("Temperature convertor");
-        window.setSize(600, 400);
-        window.setVisible(true);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        SwingUtilities.invokeLater(() -> {
+            JFrame window = new JFrame("Temperature convertor");
+            window.setSize(600, 400);
+            window.setVisible(true);
+            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        buildWindow();
-    }
+            window.setLayout(new GridBagLayout());
+            GridBagConstraints constraints = new GridBagConstraints();
 
-    private void buildWindow() {
-        window.setLayout(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            window.add(new JLabel("Input temperature"), constraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        window.add(new JLabel("Input temperature"), constraints);
+            constraints.gridx = 0;
+            constraints.gridy = 1;
+            window.add(leftTextField, constraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        window.add(leftTextField, constraints);
+            constraints.gridx = 0;
+            constraints.gridy = 2;
+            window.add(leftComboBox, constraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        window.add(leftComboBox, constraints);
+            constraints.gridx = 2;
+            constraints.gridy = 1;
+            window.add(convertButton, constraints);
 
-        constraints.gridx = 2;
-        constraints.gridy = 1;
-        window.add(convertButton, constraints);
+            constraints.gridx = 4;
+            constraints.gridy = 0;
+            window.add(new JLabel("Result"), constraints);
 
-        constraints.gridx = 4;
-        constraints.gridy = 0;
-        window.add(new JLabel("Result"), constraints);
+            constraints.gridx = 4;
+            constraints.gridy = 1;
+            window.add(rightTextField, constraints);
 
-        constraints.gridx = 4;
-        constraints.gridy = 1;
-        window.add(rightTextField, constraints);
-
-        constraints.gridx = 4;
-        constraints.gridy = 2;
-        window.add(rightComboBox, constraints);
+            constraints.gridx = 4;
+            constraints.gridy = 2;
+            window.add(rightComboBox, constraints);
+        });
     }
 
     public JComboBox<String> getLeftComboBox() {
