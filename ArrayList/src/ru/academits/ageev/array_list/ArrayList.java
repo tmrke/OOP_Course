@@ -97,33 +97,19 @@ public class ArrayList<E> implements List<E> {
         int finalSize = size + collection.size();
         ensureCapacity(finalSize);
 
-        boolean hasChange = false;
+        System.arraycopy(items, index, items, index + collection.size(), size - index);
+        modCount++;
+
         int i = index;
+        boolean hasChange = false;
 
-        for (Iterator<? extends E> iterator = collection.iterator(); iterator.hasNext() || i < size; ) {
-
-            if (!Objects.equals(items[i], iterator.next())) {
-                hasChange = true;
-
-                break;
-            }
-
+        for (E item : collection) {
+            items[i] = item;
+            hasChange = true;
             i++;
         }
 
-        if (hasChange) {
-            System.arraycopy(items, index, items, index + collection.size(), size - index);
-            modCount++;
-
-            int j = index;
-
-            for (E item : collection) {
-                items[j] = item;
-                j++;
-            }
-
-            size = finalSize;
-        }
+        size = finalSize;
 
         return hasChange;
     }
@@ -137,14 +123,14 @@ public class ArrayList<E> implements List<E> {
     public E remove(int index) {
         checkIndex(index);
 
-        E remotelyItem = items[index];
+        E removedItem = items[index];
 
         System.arraycopy(items, index + 1, items, index, size - 1 - index);
         items[size - 1] = null;
         modCount++;
         size--;
 
-        return remotelyItem;
+        return removedItem;
     }
 
     @Override
@@ -311,14 +297,31 @@ public class ArrayList<E> implements List<E> {
         //noinspection unchecked
         ArrayList<E> arrayList = (ArrayList<E>) o;
 
-        return size == arrayList.size && Arrays.equals(items, arrayList.items);
+        return size == arrayList.size && equalsArrays(items, arrayList.items);
+    }
+
+    private boolean equalsArrays(E[] array1, E[] array2) {
+        for (int i = 0; i < size; i++) {
+            if (!Objects.equals(array1[i], array2[i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
     public int hashCode() {
         final int prime = 37;
+        int hashCode = 1;
 
-        return prime + Arrays.hashCode(items);
+        hashCode = prime * hashCode;
+
+        for (int i = 0; i < size; i++) {
+            hashCode += items[i].hashCode();
+        }
+
+        return hashCode;
     }
 
     private void checkIndex(int index) {

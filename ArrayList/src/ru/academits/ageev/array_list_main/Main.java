@@ -32,8 +32,8 @@ public class Main {
 
         System.out.println("=========================================================================================");
 
-        System.out.println("К arrayList1 прибавляем arrayList2");
-        arrayList1.addAll(arrayList2);
+        System.out.println("К arrayList1 прибавляем arrayList2 начиная с индекса 3");
+        arrayList1.addAll(3, arrayList2);
         System.out.println(arrayList1);
 
         System.out.println("=========================================================================================");
@@ -101,5 +101,12 @@ public class Main {
 
         System.out.println("arrayList5 как массив: " + Arrays.toString(arrayList5.toArray()));
         System.out.println("arrayList5 как массив: " + Arrays.toString(arrayList5.toArray(new String[10])));
+
+        List<String> arrayList6 = new ArrayList<>(3);
+        arrayList6.add("1 элемент");
+        arrayList6.add("2 элемент");
+        arrayList6.add("3 элемент");
+
+        System.out.println("Эквивалетны ли \"arrayList5\" и \"arrayList6?\" Ответ: " + arrayList5.equals(arrayList6));
     }
 }
