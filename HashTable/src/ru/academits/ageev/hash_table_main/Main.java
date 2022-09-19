@@ -8,13 +8,13 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) {
         HashTable<String> hashTable1 = new HashTable<>(10);
-
         hashTable1.add("1");
         hashTable1.add("2");
         hashTable1.add("3");
         hashTable1.add("4");
         hashTable1.add("5");
         hashTable1.add("6");
+        hashTable1.add(null);
         hashTable1.add("994");
 
         System.out.println(hashTable1);

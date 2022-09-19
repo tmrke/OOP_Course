@@ -39,9 +39,9 @@ public class HashTable<E> implements Collection<E> {
             return false;
         }
 
-        int objectIndex = getIndex(o);
+        int index = getIndex(o);
 
-        return lists[objectIndex] != null && lists[objectIndex].contains(o);
+        return lists[index] != null && lists[index].contains(o);
     }
 
     @Override
@@ -67,8 +67,8 @@ public class HashTable<E> implements Collection<E> {
 
     private class HashTableIterator implements Iterator<E> {
         private final int startModCount = modCount;
-        private int arrayCurrentIndex;
-        private int listCurrentIndex = -1;
+        private int arrayIndex;
+        private int listIndex = -1;
         private int passedItemsCount;
 
         @Override
@@ -86,24 +86,24 @@ public class HashTable<E> implements Collection<E> {
                 throw new ConcurrentModificationException("HashTable has change during the runtime");
             }
 
-            while (hasNext()) {
-                if (lists[arrayCurrentIndex] == null) {
-                    arrayCurrentIndex++;
+            while (true) {
+                if (lists[arrayIndex] == null) {
+                    arrayIndex++;
                 } else {
-                    listCurrentIndex++;
+                    listIndex++;
 
-                    if (listCurrentIndex >= lists[arrayCurrentIndex].size()) {
-                        arrayCurrentIndex++;
-                        listCurrentIndex = -1;
+                    if (listIndex >= lists[arrayIndex].size()) {
+                        arrayIndex++;
+                        listIndex = -1;
                     } else {
                         passedItemsCount++;
 
-                        return lists[arrayCurrentIndex].get(listCurrentIndex);
+                        break;
                     }
                 }
             }
 
-            return null;
+            return lists[arrayIndex].get(listIndex);
         }
     }
 
@@ -114,7 +114,7 @@ public class HashTable<E> implements Collection<E> {
 
     @Override
     public Object[] toArray() {
-        Object[] array = new Object[lists.length];
+        Object[] array = new Object[size];
         int i = 0;
 
         for (E e : this) {
@@ -159,18 +159,26 @@ public class HashTable<E> implements Collection<E> {
 
     @Override
     public boolean remove(Object o) {
-        if (o == null) {
+        if (lists[getIndex(o)] == null) {
             return false;
         }
 
-        modCount++;
-        size--;
+        boolean isRemoved = lists[getIndex(o)].remove(o);
 
-        return lists[getIndex(o)].remove(o);
+        if (isRemoved) {
+            modCount++;
+            size--;
+        }
+
+        return isRemoved;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> collection) {
+        if (collection.isEmpty()) {
+            return false;
+        }
+
         for (E item : collection) {
             add(item);
         }
@@ -197,27 +205,25 @@ public class HashTable<E> implements Collection<E> {
     @Override
     public boolean retainAll(Collection<?> collection) {
         if (collection.isEmpty()) {
-            return false;
-        }
+            if (isEmpty()) {
+                return false;
+            }
 
-        if (isEmpty()) {
-            return false;
+            clear();
+
+            return true;
         }
 
         boolean hasChange = false;
-        int startListSize;
-        int endListSize;
 
         for (ArrayList<E> list : lists) {
             if (list != null) {
-                startListSize = list.size();
+                int startListSize = list.size();
 
                 if (list.retainAll(collection)) {
                     hasChange = true;
+                    size -= startListSize - list.size();
                 }
-
-                endListSize = list.size();
-                size -= startListSize - endListSize;
             }
         }
 
@@ -235,19 +241,15 @@ public class HashTable<E> implements Collection<E> {
         }
 
         boolean hasChange = false;
-        int startListSize;
-        int endListSize;
 
         for (ArrayList<E> list : lists) {
             if (list != null) {
-                startListSize = list.size();
+                int startListSize = list.size();
 
                 if (list.removeAll(collection)) {
                     hasChange = true;
+                    size -= startListSize - list.size();
                 }
-
-                endListSize = list.size();
-                size -= startListSize - endListSize;
             }
         }
 
@@ -286,7 +288,7 @@ public class HashTable<E> implements Collection<E> {
 
     private int getIndex(Object o) {
         if (o == null) {
-            return (int) (Math.random() * lists.length);
+            return 0;
         }
 
         return Math.abs(o.hashCode() % lists.length);
