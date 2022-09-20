@@ -1,13 +1,10 @@
 package ru.academits.ageev.main;
 
-import ru.academits.ageev.model.Model;
-import ru.academits.ageev.view.View;
+import ru.academits.ageev.controller.Controller;
 
 public class Main {
     public static void main(String[] args) {
-        View view = new View();
-        Model model = new Model(view);
-
-        model.startProgram();
+        Controller controller = new Controller();
+        controller.startProgram();
     }
 }

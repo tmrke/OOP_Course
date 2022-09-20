@@ -1,71 +1,65 @@
 package ru.academits.ageev.model;
 
-import ru.academits.ageev.view.View;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import javax.swing.*;
+public class Model implements ModelInterface {
+    private final List<String> scaleList;
 
-public class Model {
-    private final View view;
-
-    public Model(View view) {
-        this.view = view;
+    public Model() {
+        scaleList = new ArrayList<>(Arrays.asList(
+                "Fahrenheit",
+                "Celsius",
+                "Kelvin"));
     }
 
-    public void startProgram() {
-        view.getWindow().getConvertButton().addActionListener(action -> {
-            try {
-                convert();
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(view.getWindow().getConvertButton(), "The temperature value should be in the form of a number");
-            }
-        });
+    @Override
+    public String[] getScales() {
+        return scaleList.toArray(new String[0]);
     }
 
-    public void convert() {
-        double inputValue = Integer.parseInt(view.getWindow().getLeftTextFieldValue());
+    @Override
+    public String getConvertValue(String inputValueString, String inputScale, String outputScale) {
+        double inputValue = Double.parseDouble(inputValueString);
+        double outputValue = getOutputValue(inputScale, outputScale, inputValue);
 
-        String leftComboBoxString = (String) view.getWindow().getLeftComboBox().getSelectedItem();
-        String rightComboBoxString = (String) view.getWindow().getRightComboBox().getSelectedItem();
-
-        //noinspection ConstantConditions
-        double outputValue = getOutputValue(leftComboBoxString, rightComboBoxString, inputValue);
-        String outputValueString = Double.toString(outputValue);
-
-        view.getWindow().setRightTextFieldValue(outputValueString);
+        return Double.toString(outputValue);
     }
 
-    public double getOutputValue(String left, String right, double inputValue) {
-        String fahrenheit = "Fahrenheit";
-        String celsius = "Celsius";
-        String kelvin = "Kelvin";
+    @Override
+    public double getOutputValue(String inputScale, String outputScale, double inputValue) {
+        String fahrenheit = scaleList.get(0);
+        String celsius = scaleList.get(1);
+        String kelvin = scaleList.get(2);
 
-        if (left.equals(celsius)) {
-            if (right.equals(fahrenheit)) {
+        if (inputScale.equals(celsius)) {
+            if (outputScale.equals(fahrenheit)) {
                 return 1.8 * inputValue + 32;
             }
 
-            if (right.equals(kelvin)) {
-                return inputValue + 273;
+            if (outputScale.equals(kelvin)) {
+                return inputValue + 273.15;
             }
         }
 
-        if (left.equals(fahrenheit)) {
-            if (right.equals(celsius)) {
+        if (inputScale.equals(fahrenheit)) {
+            if (outputScale.equals(celsius)) {
                 return 5 * (inputValue - 32) / 9;
             }
 
-            if (right.equals(kelvin)) {
-                return (inputValue + 459) / 1.8;
+            if (outputScale.equals(kelvin)) {
+                return (inputValue + 459.67) / 1.8;
             }
         }
 
-        if (left.equals(kelvin)) {
-            if (right.equals(celsius)) {
-                return inputValue - 273;
+        if (inputScale.equals(kelvin)) {
+            if (outputScale.equals(celsius)) {
+                return inputValue - 273.15;
             }
 
-            if (right.equals(fahrenheit)) {
-                return inputValue * 1.8 - 459;
+            if (outputScale.equals(fahrenheit)) {
+                return inputValue * 1.8 - 459.67;
             }
         }
 
