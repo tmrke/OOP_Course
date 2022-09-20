@@ -45,14 +45,15 @@ public class Main {
                 .mapToInt(Person::age)
                 .average();
 
+        assert (optionalDoubleLess18AgePersonsAverageAge.isPresent());
         double less18AgePersonsAverageAge = optionalDoubleLess18AgePersonsAverageAge.getAsDouble();
         System.out.println("Средний возраст людей младше 18 лет = " + less18AgePersonsAverageAge);
 
-        Map<String, Double> mapByAverageAge = persons
+        Map<String, Double> averageAgesByName = persons
                 .stream()
-                .collect(Collectors.groupingBy(Person::name, Collectors.averagingDouble(Person::age)));
+                .collect(Collectors.groupingBy(Person::name, Collectors.averagingInt(Person::age)));
 
-        System.out.println("Map<\"Имена\", \"Средний возраст\"> : " + mapByAverageAge);
+        System.out.println("Map<\"Имена\", \"Средний возраст\"> : " + averageAgesByName);
 
         String from20to45yearsPersons = persons
                 .stream()
