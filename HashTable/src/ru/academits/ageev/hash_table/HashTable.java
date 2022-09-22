@@ -159,11 +159,13 @@ public class HashTable<E> implements Collection<E> {
 
     @Override
     public boolean remove(Object o) {
-        if (lists[getIndex(o)] == null) {
+        int index = getIndex(o);
+
+        if (lists[index] == null) {
             return false;
         }
 
-        boolean isRemoved = lists[getIndex(o)].remove(o);
+        boolean isRemoved = lists[index].remove(o);
 
         if (isRemoved) {
             modCount++;
