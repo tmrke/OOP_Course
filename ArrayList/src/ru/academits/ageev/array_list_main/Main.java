@@ -106,6 +106,8 @@ public class Main {
         arrayList6.add("1 элемент");
         arrayList6.add("2 элемент");
         arrayList6.add("3 элемент");
+        arrayList6.add("1 элемент");
+        arrayList6.add("5 элемент");
 
         System.out.println("Эквивалетны ли \"arrayList5\" и \"arrayList6?\" Ответ: " + arrayList5.equals(arrayList6));
     }

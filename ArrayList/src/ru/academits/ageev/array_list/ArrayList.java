@@ -297,13 +297,17 @@ public class ArrayList<E> implements List<E> {
         //noinspection unchecked
         ArrayList<E> arrayList = (ArrayList<E>) o;
 
+        if (size != arrayList.size) {
+            return false;
+        }
+
         for (int i = 0; i < size; i++) {
             if (!Objects.equals(items[i], arrayList.items[i])) {
                 return false;
             }
         }
 
-        return size == arrayList.size;
+        return true;
     }
 
     @Override
