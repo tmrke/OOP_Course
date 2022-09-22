@@ -98,7 +98,6 @@ public class ArrayList<E> implements List<E> {
         ensureCapacity(finalSize);
 
         System.arraycopy(items, index, items, index + collection.size(), size - index);
-        modCount++;
 
         int i = index;
         boolean hasChange = false;
@@ -106,6 +105,7 @@ public class ArrayList<E> implements List<E> {
         for (E item : collection) {
             items[i] = item;
             hasChange = true;
+            modCount++;
             i++;
         }
 
@@ -297,17 +297,13 @@ public class ArrayList<E> implements List<E> {
         //noinspection unchecked
         ArrayList<E> arrayList = (ArrayList<E>) o;
 
-        return size == arrayList.size && equalsArrays(items, arrayList.items);
-    }
-
-    private boolean equalsArrays(E[] array1, E[] array2) {
         for (int i = 0; i < size; i++) {
-            if (!Objects.equals(array1[i], array2[i])) {
+            if (!Objects.equals(items[i], arrayList.items[i])) {
                 return false;
             }
         }
 
-        return true;
+        return size == arrayList.size;
     }
 
     @Override
@@ -315,10 +311,10 @@ public class ArrayList<E> implements List<E> {
         final int prime = 37;
         int hashCode = 1;
 
-        hashCode = prime * hashCode;
-
         for (int i = 0; i < size; i++) {
-            hashCode += items[i].hashCode();
+            if (items[i] != null) {
+                hashCode = prime * hashCode + items[i].hashCode();
+            }
         }
 
         return hashCode;
