@@ -105,10 +105,10 @@ public class ArrayList<E> implements List<E> {
         for (E item : collection) {
             items[i] = item;
             hasChange = true;
-            modCount++;
             i++;
         }
 
+        modCount++;
         size = finalSize;
 
         return hasChange;
@@ -316,7 +316,9 @@ public class ArrayList<E> implements List<E> {
         int hashCode = 1;
 
         for (int i = 0; i < size; i++) {
-            if (items[i] != null) {
+            if (items[i] == null) {
+                hashCode = prime * hashCode;
+            } else {
                 hashCode = prime * hashCode + items[i].hashCode();
             }
         }
