@@ -1,10 +1,9 @@
 package ru.academits.ageev.tree;
 
 class Node<T> {
+    private final T data;
     private Node<T> left;
     private Node<T> right;
-
-    private final T data;
 
     public Node(T data) {
         this.data = data;

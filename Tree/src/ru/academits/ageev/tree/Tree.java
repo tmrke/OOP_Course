@@ -6,18 +6,13 @@ import java.util.function.Consumer;
 public class Tree<T> {
     private Node<T> root;
     private int size;
-    private final Comparator<? super T> comparator;
+    private Comparator<? super T> comparator;
 
     public Tree() {
-        root = null;
-        comparator = null;
-        size = 0;
     }
 
     public Tree(Comparator<T> comparator) {
-        root = null;
         this.comparator = comparator;
-        size = 0;
     }
 
     public int getSize() {
@@ -86,13 +81,14 @@ public class Tree<T> {
         }
 
         Node<T> currentNode = root;
+        int compareResult = compare(currentNode.getData(), data);
 
         while (currentNode != null) {
-            if (compare(currentNode.getData(), data) == 0) {
+            if (compareResult == 0) {
                 return true;
             }
 
-            if (compare(data, currentNode.getData()) >= 0) {
+            if (compareResult > 0) {
                 currentNode = currentNode.getRight();
             } else {
                 currentNode = currentNode.getLeft();
@@ -212,9 +208,32 @@ public class Tree<T> {
             smallestLeftNode = smallestLeftNode.getLeft();
         }
 
+
         if (smallestLeftNode.getRight() == null) {
+            if (removedNode == root) {
+                root = smallestLeftNode;
+                root.setLeft(leftRemovedNodeChild);
+                root.setRight(rightRemovedNodeChild);
+
+                smallestLeftNodeParent.setLeft(null);
+                size--;
+
+                return true;
+            }
+
             smallestLeftNodeParent.setLeft(null);
         } else {
+            if (removedNode == root) {
+                root = smallestLeftNode;
+                root.setLeft(leftRemovedNodeChild);
+                root.setRight(rightRemovedNodeChild);
+
+                smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
+                size--;
+
+                return true;
+            }
+
             smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
         }
 
@@ -226,7 +245,11 @@ public class Tree<T> {
         return true;
     }
 
-    public void traverseLevelOrder(Consumer<T> consumer) {
+    public void traverseInWide(Consumer<T> consumer) {
+        if (isEmpty()) {
+            return;
+        }
+
         Queue<Node<T>> queue = new LinkedList<>();
         queue.add(root);
 
@@ -244,7 +267,11 @@ public class Tree<T> {
         }
     }
 
-    public void traverseInOrder(Consumer<T> consumer) {
+    public void traverseInDeep(Consumer<T> consumer) {
+        if (isEmpty()) {
+            return;
+        }
+
         Deque<Node<T>> stack = new LinkedList<>();
         stack.push(root);
 
@@ -262,11 +289,11 @@ public class Tree<T> {
         }
     }
 
-    public void traverseInOrderRecursively(Consumer<T> consumer) {
-        traverseInOrderRecursively(root, consumer);
+    public void traverseInDeepRecursively(Consumer<T> consumer) {
+        traverseInDeepRecursively(root, consumer);
     }
 
-    private void traverseInOrderRecursively(Node<T> node, Consumer<T> consumer) {
+    private void traverseInDeepRecursively(Node<T> node, Consumer<T> consumer) {
         if (node == null) {
             return;
         }
@@ -274,11 +301,11 @@ public class Tree<T> {
         consumer.accept(node.getData());
 
         if (node.getLeft() != null) {
-            traverseInOrderRecursively(node.getLeft(), consumer);
+            traverseInDeepRecursively(node.getLeft(), consumer);
         }
 
         if (node.getRight() != null) {
-            traverseInOrderRecursively(node.getRight(), consumer);
+            traverseInDeepRecursively(node.getRight(), consumer);
         }
     }
 
