@@ -6,9 +6,16 @@ public class Cage extends JButton {
     private boolean isBomb;
     private boolean isMarkedBomb;
 
-    public Cage() {
+    private final int index;
+
+    public Cage(int index) {
+        this.index = index;
         isBomb = false;
         isMarkedBomb = false;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public boolean isBomb() {

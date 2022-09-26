@@ -1,41 +1,58 @@
 package ru.academits.ageev.view;
 
+import ru.academits.ageev.model.ModelInterface;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
-public class View {
-    private int row;
-    private int column;
+public class View implements ViewInterface {
+    private final Menu menu;
+    private Field field;
+    private final JFrame frame;
 
-    public View() {
-        JFrame frame = new JFrame("Minesweeper");
-        frame.setSize(680, 700);
+    public View(ModelInterface model) {
+        frame = new JFrame("Minesweeper");
+        frame.setSize(1200, 700);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(450, 450));
 
-        Menu menu = new Menu();
+        menu = new Menu(model.getSizesString(), model.getFlagCount());
         frame.add(menu, BorderLayout.NORTH);
 
-        row = menu.getRowCount();
-        column = menu.getColumnCount();
+        String selectedItem = (String) menu.getFieldSizeComboBox().getSelectedItem();
 
-        frame.add(new Field(row, column), BorderLayout.CENTER);
+        field = new Field(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
+        frame.add(field, BorderLayout.CENTER);
     }
 
-    public int getRow() {
-        return row;
+    @Override
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setRow(int row) {
-        this.row = row;
+    @Override
+    public void setField(Integer[] size, ArrayList<Cage> cageList) {
+        frame.remove(field);
+        field = new Field(size, cageList);
+        frame.add(field);
     }
 
-    public int getColumn() {
-        return column;
+    @Override
+    public void setSizeFrame(String sizeFrame) {
+        if (sizeFrame.equals("16 x 30")) {
+            frame.setSize(1200, 700);
+        } else if (sizeFrame.equals("16 x 16")) {
+            frame.setSize(680, 700);
+        } else {
+            frame.setSize(450, 470);
+        }
     }
 
-    public void setColumn(int column) {
-        this.column = column;
+    @Override
+    public Field getField() {
+        return field;
     }
 }
 
