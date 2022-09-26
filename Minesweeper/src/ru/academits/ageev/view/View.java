@@ -13,7 +13,7 @@ public class View implements ViewInterface {
 
     public View(ModelInterface model) {
         frame = new JFrame("Minesweeper");
-        frame.setSize(1200, 700);
+        frame.setSize(450, 470);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(450, 450));
