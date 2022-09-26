@@ -19,7 +19,7 @@ public class Model implements ModelInterface {
         sizesHashMap = new LinkedHashMap<>();
         sizesHashMap.put("9 x 9", new Integer[]{9, 9});
         sizesHashMap.put("16 x 16", new Integer[]{16, 16});
-        sizesHashMap.put("16 x 30", new Integer[]{16, 30});
+        sizesHashMap.put("16 x 30", new Integer[]{16, 30});     //Везде [0] это координата по X, кроме размеров в sizeHashMap, тут наоборот
     }
 
     @Override
@@ -66,6 +66,10 @@ public class Model implements ModelInterface {
 
     @Override
     public void leftMouseClick(Cage cage, ViewInterface view) {
+        if (!cage.isEnabled()) {
+            return;
+        }
+
         if (cage.isBomb()) {
             cage.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
             JOptionPane.showMessageDialog(view.getField(), "Game over");
@@ -119,7 +123,6 @@ public class Model implements ModelInterface {
     }
 
     private void openWithoutBombZone(Cage cage) {       //TODO описать приближение к границам
-
         int[] clickCageCoordinate = getClickCageCoordinate(cage.getIndex());
         int x = clickCageCoordinate[0];
         int y = clickCageCoordinate[1];
@@ -129,44 +132,42 @@ public class Model implements ModelInterface {
         int sizeY = size[0];
 
         int offset = 1;
-        boolean hasNotBomb = true;
+        boolean hasBomb = false;
 
-        while (hasNotBomb) {
+        while (!hasBomb) {
             int borderFromX = x - offset;
             int borderToX = x + offset;
 
-            if (x == 1) {
+            if (x == 1 || borderFromX < 1) {
                 borderFromX = 1;
-            } else if (x == sizeX) {
+            } else if (x == sizeX || borderToX > sizeX) {
                 borderToX = sizeX;
             }
 
             int borderFromY = y - offset;
             int borderToY = y + offset;
 
-            if (y == 1) {
+            if (y == 1 || borderFromY < 1) {
                 borderFromY = 1;
-            } else if (y == sizeY) {
+            } else if (y == sizeY || borderToY > sizeY) {
                 borderToY = sizeY;
             }
 
-            for (int i = borderFromX; i < borderToX; i++) {
-                for (int j = borderFromY; j < borderToY; j++) {
+            for (int i = borderFromX; i <= borderToX; i++) {
+                for (int j = borderFromY; j <= borderToY; j++) {
                     int currentIndex = getClickCageIndex(new int[]{i, j});
                     Cage currentCage = cageList.get(currentIndex);
 
                     if (!currentCage.isBomb()) {
                         currentCage.setEnabled(false);
                     } else {
-                        hasNotBomb = false;
+                        hasBomb = true;
                     }
                 }
             }
 
             offset++;
         }
-
-
     }
 
     private int[] getClickCageCoordinate(int index) {
