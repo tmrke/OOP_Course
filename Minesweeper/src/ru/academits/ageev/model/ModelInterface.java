@@ -4,6 +4,8 @@ import ru.academits.ageev.view.Cage;
 import ru.academits.ageev.view.Menu;
 import ru.academits.ageev.view.ViewInterface;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public interface ModelInterface {
@@ -20,5 +22,5 @@ public interface ModelInterface {
 
     void leftMouseClick(Cage cage, ViewInterface view);
 
-    void rightMouseClick(Cage cage, Menu menu);
+    void rightMouseClick(Cage cage, Menu menu) throws IOException;
 }

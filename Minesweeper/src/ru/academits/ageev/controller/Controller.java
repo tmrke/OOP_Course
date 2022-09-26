@@ -8,7 +8,9 @@ import ru.academits.ageev.view.ViewInterface;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
+
 
 public class Controller {
     ModelInterface model = new Model();
@@ -40,6 +42,10 @@ public class Controller {
         });
     }
 
+    public void clickToHighScore() {
+
+    }
+
     public void clickToCage() {
         ArrayList<Cage> cageList = model.getCageList();
 
@@ -50,7 +56,11 @@ public class Controller {
                     if (e.getButton() == MouseEvent.BUTTON1) {
                         model.leftMouseClick(cage, view);
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
-                        model.rightMouseClick(cage, view.getMenu());
+                        try {
+                            model.rightMouseClick(cage, view.getMenu());
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
             });
