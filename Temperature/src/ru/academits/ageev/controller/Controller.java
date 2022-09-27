@@ -1,33 +1,39 @@
 package ru.academits.ageev.controller;
 
-import ru.academits.ageev.model.Model;
 import ru.academits.ageev.model.ModelInterface;
 import ru.academits.ageev.view.View;
-import ru.academits.ageev.view.ViewInterface;
 
-import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Controller {
-    private final ViewInterface view;
+    private final View guiView;
     private final ModelInterface model;
 
-    public Controller() {
-        model = new Model();
-        view = new View(model);
+    public Controller(ModelInterface model, View guiView) {
+        this.model = model;
+        this.guiView = guiView;
     }
 
-    public void startProgram() {
-        view.getConvertButton().addActionListener(action -> {
-            try {
-                String inputScale = view.getInputScaleString();
-                String outputScale = view.getOutputScaleString();
-                String inputValueString = view.getLeftTextFieldValue();
+    public void start() {
+        guiView.convert(getActionListener());
+    }
 
-                String outputValueString = model.getConvertValue(inputValueString, inputScale, outputScale);
-                view.setRightTextFieldValue(outputValueString);
+    private ActionListener getActionListener() {
+        List<ActionListener> actionListeners = new LinkedList<>();
+
+        actionListeners.add(action -> {
+            try {
+                double inputValue = Double.parseDouble(guiView.getInputTextFieldValue());
+                double outputValue = model.getOutputValue(guiView.getInputScale(), guiView.getOutputScale(), inputValue);
+
+                guiView.setOutputTextFieldValue(outputValue);
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(view.getConvertButton(), "The temperature value should be in the form of a number");
+                guiView.showMessageDialog();
             }
         });
+
+        return actionListeners.get(0);
     }
 }

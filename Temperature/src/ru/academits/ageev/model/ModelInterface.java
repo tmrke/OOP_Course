@@ -1,9 +1,9 @@
 package ru.academits.ageev.model;
 
+import java.util.List;
+
 public interface ModelInterface {
-    String[] getScales();
+    List<Scale> getScalesList();
 
-    String getConvertValue(String inputValueString, String inputScale, String outputScale);
-
-    double getOutputValue(String inputValueString, String outputValueString, double inputValue);
+    double getOutputValue(Scale inputScale, Scale outputScale, double inputValue);
 }
