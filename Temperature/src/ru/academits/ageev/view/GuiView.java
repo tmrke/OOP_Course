@@ -77,11 +77,6 @@ public class GuiView implements View {
     }
 
     @Override
-    public JButton getConverterButton() {
-        return converterButton;
-    }
-
-    @Override
     public String getInputTextFieldValue() {
         return leftTextField.getText();
     }
@@ -93,6 +88,6 @@ public class GuiView implements View {
 
     @Override
     public void showMessageDialog() {
-        JOptionPane.showMessageDialog(getConverterButton(), "The temperature value should be in the form of a number");
+        JOptionPane.showMessageDialog(converterButton, "The temperature value should be in the form of a number");
     }
 }
