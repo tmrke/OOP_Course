@@ -4,8 +4,6 @@ import ru.academits.ageev.model.ModelInterface;
 import ru.academits.ageev.view.View;
 
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Controller {
     private final View guiView;
@@ -21,9 +19,7 @@ public class Controller {
     }
 
     private ActionListener getActionListener() {
-        List<ActionListener> actionListeners = new LinkedList<>();
-
-        actionListeners.add(action -> {
+        return e -> {
             try {
                 double inputValue = Double.parseDouble(guiView.getInputTextFieldValue());
                 double outputValue = model.getOutputValue(guiView.getInputScale(), guiView.getOutputScale(), inputValue);
@@ -32,8 +28,6 @@ public class Controller {
             } catch (NumberFormatException ex) {
                 guiView.showMessageDialog();
             }
-        });
-
-        return actionListeners.get(0);
+        };
     }
 }
