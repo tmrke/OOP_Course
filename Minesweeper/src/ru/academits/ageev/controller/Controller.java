@@ -9,8 +9,9 @@ import ru.academits.ageev.view.ViewInterface;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class Controller {
@@ -20,6 +21,7 @@ public class Controller {
     public void startProgram() {
         clickToHighScore();
         clickNewGame();
+        clickToAbout();
         clickToCage();
         clickExit();
     }
@@ -46,7 +48,7 @@ public class Controller {
 
     public void clickToHighScore() {
         view.getMenu().getHighScoresButton().addActionListener(e -> {
-            SwingUtilities.invokeLater(() ->{
+            SwingUtilities.invokeLater(() -> {
                 try {
                     JFrame highScoreFrame = new GameRecords(true);
                     highScoreFrame.setVisible(true);
@@ -55,6 +57,32 @@ public class Controller {
                 }
             });
         });
+    }
+
+    public void clickToAbout() {
+        view.getMenu().getAbout().addActionListener(e ->
+                SwingUtilities.invokeLater(() -> {
+                    JFrame frameAbout = new JFrame();
+                    JLabel aboutLabel = new JLabel();
+                    aboutLabel.setSize(250, 300);
+                    frameAbout.setVisible(true);
+
+                    //TODO прочитать файлы в столбик и вывести в Jpanel
+
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    try {
+                        Scanner scanner = new Scanner(new FileInputStream("Minesweeper/src/ru/academits/ageev/resources/about.txt"));
+                        while (scanner.hasNextLine()) {
+                            stringBuilder.append(aboutLabel.getText()).append(System.lineSeparator()).append(scanner.nextLine());
+                        }
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+
+                    frameAbout.add(aboutLabel);
+                }));
     }
 
     public void clickToCage() {
