@@ -6,6 +6,7 @@ import ru.academits.ageev.view.Cage;
 import ru.academits.ageev.view.View;
 import ru.academits.ageev.view.ViewInterface;
 
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class Controller {
     ViewInterface view = new View(model);
 
     public void startProgram() {
+        clickToHighScore();
         clickNewGame();
         clickToCage();
         clickExit();
@@ -43,7 +45,16 @@ public class Controller {
     }
 
     public void clickToHighScore() {
-
+        view.getMenu().getHighScoresButton().addActionListener(e -> {
+            SwingUtilities.invokeLater(() ->{
+                try {
+                    JFrame highScoreFrame = new GameRecords(true);
+                    highScoreFrame.setVisible(true);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        });
     }
 
     public void clickToCage() {

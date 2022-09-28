@@ -8,14 +8,14 @@ import java.io.IOException;
 
 public class GameRecords extends JFrame {
     private final boolean visible;
-    JFrame gameRecordsList = new JFrame("Рекорды");
+    JFrame gameRecordsList = new JFrame("High Score");
     JPanel grid = new JPanel();
     private final String[] results = new String[10];
 
     public GameRecords(boolean visible) throws IOException {
 
         this.visible = visible;
-        setSize(320, 320);
+        setSize(400, 320);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -24,14 +24,14 @@ public class GameRecords extends JFrame {
 
         for (int i = 0; i < 10; i++) {
             if (getResults()[i] == null) {
-                grid.add(new JLabel(i + 1 + " место: - "));
+                grid.add(new JLabel(i + 1 + " position: - "));
             } else {
-                grid.add(new JLabel(i + 1 + " место: " + getResults()[i]));
+                grid.add(new JLabel(i + 1 + " position: " + getResults()[i]));
             }
         }
 
         gameRecordsList.add(grid);
-        gameRecordsList.setSize(200, 400);
+        gameRecordsList.setSize(250, 400);
 
         setVisible(visible);
     }
@@ -46,7 +46,7 @@ public class GameRecords extends JFrame {
     }
 
     public String[] getResults() throws IOException {
-        final BufferedReader file = new BufferedReader(new FileReader("Minesweeper/src/ru/academits/ageev/resources/result.png"));
+        final BufferedReader file = new BufferedReader(new FileReader("Minesweeper/src/ru/academits/ageev/resources/result.txt"));
 
         for (int i = 0; i < results.length; i++) {
             results[i] = file.readLine();
