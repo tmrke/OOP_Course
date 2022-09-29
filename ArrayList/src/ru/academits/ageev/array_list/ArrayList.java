@@ -108,7 +108,10 @@ public class ArrayList<E> implements List<E> {
             i++;
         }
 
-        modCount++;
+        if(hasChange) {
+            modCount++;
+        }
+
         size = finalSize;
 
         return hasChange;
