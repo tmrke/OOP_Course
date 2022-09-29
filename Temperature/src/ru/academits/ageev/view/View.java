@@ -1,11 +1,12 @@
 package ru.academits.ageev.view;
 
+import ru.academits.ageev.model.ModelInterface;
 import ru.academits.ageev.model.Scale;
 
 import java.awt.event.ActionListener;
 
 public interface View {
-    void convert(ActionListener actionListener);
+    void start(ModelInterface model, ActionListener actionListener);
 
     Scale getInputScale();
 

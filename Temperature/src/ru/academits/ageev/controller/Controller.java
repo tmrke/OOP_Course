@@ -15,7 +15,7 @@ public class Controller {
     }
 
     public void start() {
-        guiView.convert(getActionListener());
+        guiView.start(model, getActionListener());
     }
 
     private ActionListener getActionListener() {

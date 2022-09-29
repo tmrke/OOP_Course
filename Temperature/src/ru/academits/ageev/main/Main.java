@@ -9,7 +9,7 @@ import ru.academits.ageev.view.View;
 public class Main {
     public static void main(String[] args) {
         ModelInterface model = new Model();
-        View guiView = new GuiView(model);
+        View guiView = new GuiView();
 
         Controller controller = new Controller(model, guiView);
         controller.start();

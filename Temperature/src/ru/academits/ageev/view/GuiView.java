@@ -12,9 +12,10 @@ public class GuiView implements View {
     private JTextField rightTextField;
     private JComboBox<Scale> inputScaleComboBox;
     private JComboBox<Scale> outputScaleComboBox;
-    private final JButton converterButton = new JButton("convert");
+    private JButton converterButton;
 
-    public GuiView(ModelInterface model) {
+    @Override
+    public void start(ModelInterface model, ActionListener actionListener){
         SwingUtilities.invokeLater(() -> {
             leftTextField = new JTextField("25.5", 12);
             rightTextField = new JTextField(12);
@@ -43,6 +44,8 @@ public class GuiView implements View {
             constraints.gridy = 2;
             window.add(inputScaleComboBox, constraints);
 
+            converterButton = new JButton("convert");
+            converterButton.addActionListener(actionListener);
             constraints.gridx = 2;
             constraints.gridy = 1;
             window.add(converterButton, constraints);
@@ -59,11 +62,6 @@ public class GuiView implements View {
             constraints.gridy = 2;
             window.add(outputScaleComboBox, constraints);
         });
-    }
-
-    @Override
-    public void convert(ActionListener actionListener) {
-        converterButton.addActionListener(actionListener);
     }
 
     @Override
