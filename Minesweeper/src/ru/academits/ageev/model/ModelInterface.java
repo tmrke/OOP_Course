@@ -2,9 +2,8 @@ package ru.academits.ageev.model;
 
 import ru.academits.ageev.view.Cage;
 import ru.academits.ageev.view.Menu;
-import ru.academits.ageev.view.ViewInterface;
+import ru.academits.ageev.view.View;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -20,7 +19,7 @@ public interface ModelInterface {
 
     Integer[] getSizeBySizeString(String sizeString);
 
-    void leftMouseClick(Cage cage, ViewInterface view);
+    void leftMouseClick(Cage cage, View view);
 
     void rightMouseClick(Cage cage, Menu menu) throws IOException;
 }

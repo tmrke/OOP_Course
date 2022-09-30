@@ -10,9 +10,9 @@ public class Menu extends JPanel {
     private final JButton aboutButton = new JButton("about");
     private final JButton highScoresButton = new JButton("high scores");
     private final JButton exitButton = new JButton("exit");
-    private JLabel flagCountLabel = new JLabel();
+    private final JLabel flagCountLabel = new JLabel();
 
-    private JLabel timeResult = new JLabel("00:00");
+    private final JLabel timeResult = new JLabel("00:00");
     private Timer timer;
     private long lastTickTime = System.currentTimeMillis();
 
@@ -63,10 +63,6 @@ public class Menu extends JPanel {
 
     public JButton getExitButton() {
         return exitButton;
-    }
-
-    public JLabel getFlagCountLabel() {
-        return flagCountLabel;
     }
 
     public String getTime() {

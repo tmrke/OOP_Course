@@ -2,7 +2,7 @@ package ru.academits.ageev.model;
 
 import ru.academits.ageev.view.Cage;
 import ru.academits.ageev.view.Menu;
-import ru.academits.ageev.view.ViewInterface;
+import ru.academits.ageev.view.View;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -65,7 +65,7 @@ public class Model implements ModelInterface {
     }
 
     @Override
-    public void leftMouseClick(Cage cage, ViewInterface view) {
+    public void leftMouseClick(Cage cage, View view) {
         if (!cage.isEnabled()) {
             return;
         }

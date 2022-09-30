@@ -3,20 +3,23 @@ package ru.academits.ageev.controller;
 import ru.academits.ageev.model.Model;
 import ru.academits.ageev.model.ModelInterface;
 import ru.academits.ageev.view.Cage;
+import ru.academits.ageev.view.GuiView;
 import ru.academits.ageev.view.View;
-import ru.academits.ageev.view.ViewInterface;
 
 import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class Controller {
     ModelInterface model = new Model();
-    ViewInterface view = new View(model);
+    View view = new GuiView(model);
 
     public void startProgram() {
         clickToHighScore();
@@ -26,24 +29,22 @@ public class Controller {
         clickExit();
     }
 
-    public void clickNewGame() {
+    public ActionListener clickNewGame() {
         //TODO при новой игре не активны кнопки поля
-        view.getMenu().getNewGameButton().addActionListener(e -> {
+
+        return e -> {
             view.setField(
-                    model.getSizeBySizeString(
-                            view.getMenu().getSelectedSizeString()),
+                    model.getSizeBySizeString(view.getMenu().getSelectedSizeString()),
                     model.getNewCageList(view.getMenu().getSelectedSizeString()));
 
             view.setSizeFrame(view.getMenu().getSelectedSizeString());
             view.getMenu().restartTimer();
             view.getMenu().setFlagCountLabel(model.getFlagCount());
-        });
+        };
     }
 
     public void clickExit() {
-        view.getMenu().getExitButton().addActionListener(e -> {
-            System.exit(0);
-        });
+        view.clickExit(e -> System.exit(0));
     }
 
     public void clickToHighScore() {
@@ -63,25 +64,24 @@ public class Controller {
         view.getMenu().getAbout().addActionListener(e ->
                 SwingUtilities.invokeLater(() -> {
                     JFrame frameAbout = new JFrame();
-                    JLabel aboutLabel = new JLabel();
-                    aboutLabel.setSize(250, 300);
+                    frameAbout.setSize(400, 150);
                     frameAbout.setVisible(true);
 
-                    //TODO прочитать файлы в столбик и вывести в Jpanel
-
+                    JTextArea aboutTextArea = new JTextArea();
                     StringBuilder stringBuilder = new StringBuilder();
 
                     try {
                         Scanner scanner = new Scanner(new FileInputStream("Minesweeper/src/ru/academits/ageev/resources/about.txt"));
                         while (scanner.hasNextLine()) {
-                            stringBuilder.append(aboutLabel.getText()).append(System.lineSeparator()).append(scanner.nextLine());
+                            stringBuilder.append(scanner.nextLine()).append("\n");
                         }
                     } catch (FileNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
 
-
-                    frameAbout.add(aboutLabel);
+                    aboutTextArea.append(String.valueOf(stringBuilder));
+                    aboutTextArea.setSize(300, 200);
+                    frameAbout.add(aboutTextArea);
                 }));
     }
 
