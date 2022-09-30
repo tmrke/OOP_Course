@@ -28,6 +28,8 @@ public class Controller {
     }
 
     private ActionListener getNewGameButtonActionListener() {
+        //TODO при отрисовке поля при новой игре кнопки поля не активны
+
         return e -> {
             view.setField(
                     model.getSizeBySizeString(view.getMenu().getSelectedSizeString()),

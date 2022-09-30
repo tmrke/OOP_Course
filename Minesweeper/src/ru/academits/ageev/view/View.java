@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public interface View {
-    void start(ArrayList actionListenerList);
+    void start(ArrayList<ActionListener> actionListenerList);
 
     Menu getMenu();
 

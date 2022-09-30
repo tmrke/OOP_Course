@@ -26,7 +26,7 @@ public class GuiView implements View {
     }
 
     @Override
-    public void start(ArrayList actionListenerList) {
+    public void start(ArrayList<ActionListener> actionListenerList) {
         SwingUtilities.invokeLater(() -> {
             frame = new JFrame("Minesweeper");
             frame.setSize(450, 470);
@@ -42,10 +42,10 @@ public class GuiView implements View {
             field = new Field(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
             frame.add(field, BorderLayout.CENTER);
 
-            clickNewGame((ActionListener) actionListenerList.get(0));
+            clickNewGame(actionListenerList.get(0));
             clickToAbout();
-            clickHighScore((ActionListener) actionListenerList.get(1));
-            clickExit((ActionListener) actionListenerList.get(2));
+            clickHighScore(actionListenerList.get(1));
+            clickExit(actionListenerList.get(2));
 
             clickToCage();
         });
