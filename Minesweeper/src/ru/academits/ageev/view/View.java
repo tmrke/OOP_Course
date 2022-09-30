@@ -11,9 +11,6 @@ public interface View {
     void setField(Integer[] size, ArrayList<Cage> cageList);
 
     void setSizeFrame(String sizeFrame);
-
-    Field getField();
-
     void clickExit(ActionListener actionListener);
 
     void clickHighScore(ActionListener actionListener);

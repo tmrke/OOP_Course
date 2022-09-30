@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-
 public class Controller {
     ModelInterface model = new Model();
     View view = new GuiView(model);

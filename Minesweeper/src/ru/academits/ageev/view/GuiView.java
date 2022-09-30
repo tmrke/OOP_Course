@@ -1,6 +1,7 @@
 package ru.academits.ageev.view;
 
 import ru.academits.ageev.model.ModelInterface;
+import ru.academits.ageev.model.ResultWriter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,11 +76,6 @@ public class GuiView implements View {
     }
 
     @Override
-    public Field getField() {
-        return field;
-    }
-
-    @Override
     public void clickExit(ActionListener actionListener) {
         menu.getExitButton().addActionListener(actionListener);
     }
@@ -128,6 +124,7 @@ public class GuiView implements View {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON1) {
+
                         //leftMouseClick
 
                         if (!cage.isEnabled()) {
@@ -142,11 +139,47 @@ public class GuiView implements View {
                             model.openWithoutBombZone(cage);
                         }
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
-                        try {
-                            model.rightMouseClick(cage, menu);
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+
+                        //rightMouseClick
+
+                        if (!cage.isMarkedBomb()) {
+                            cage.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
+                            cage.setMarkedBomb(true);
+                            model.setFlagCount(model.getFlagCount() - 1);
+
+                            if (cage.isBomb()) {
+                                model.setMarkedBombCount(model.getMarkedBombCount() + 1);
+                            }
+
+                            if (model.winGame()) {
+                                String resultString = menu.getTime();
+                                ResultWriter resultWriter;
+
+                                try {
+                                    resultWriter = new ResultWriter(resultString);
+                                } catch (FileNotFoundException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+
+                                try {
+                                    resultWriter.addResult();
+                                } catch (IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+
+                                JOptionPane.showMessageDialog(menu, "You win! Your result: " + resultString);
+                            }
+                        } else {
+                            cage.setIcon(null);
+                            cage.setMarkedBomb(false);
+                            model.setFlagCount(model.getFlagCount() + 1);
+
+                            if (cage.isBomb()) {
+                                model.setMarkedBombCount(model.getMarkedBombCount() - 1);
+                            }
                         }
+
+                        menu.setFlagCountLabel(model.getFlagCount());
                     }
                 }
             });

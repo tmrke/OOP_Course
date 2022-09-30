@@ -1,16 +1,16 @@
 package ru.academits.ageev.model;
 
 import ru.academits.ageev.view.Cage;
-import ru.academits.ageev.view.Menu;
-import ru.academits.ageev.view.View;
 
-import javax.swing.*;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Random;
 
 public class Model implements ModelInterface {
     private ArrayList<Cage> cageList;
     private final HashMap<String, Integer[]> sizesHashMap;
+
     private int flagCount = 10;
     private int markedBombCount;
     private String selectedSizeString = "9 x 9";
@@ -25,6 +25,21 @@ public class Model implements ModelInterface {
     @Override
     public int getFlagCount() {
         return flagCount;
+    }
+
+    @Override
+    public void setFlagCount(int flagCount) {
+        this.flagCount = flagCount;
+    }
+
+    @Override
+    public int getMarkedBombCount() {
+        return markedBombCount;
+    }
+
+    @Override
+    public void setMarkedBombCount(int markedBombCount) {
+        this.markedBombCount = markedBombCount;
     }
 
     @Override
@@ -48,9 +63,9 @@ public class Model implements ModelInterface {
             case "9 x 9", "16 x 16", "16 x 30" -> {
                 Integer[] rowAndColumnSize = getSizeBySizeString(sizeString);
                 int cageListSize = rowAndColumnSize[0] * rowAndColumnSize[1];
+
                 flagCount = getBombCount(cageListSize);
                 selectedSizeString = sizeString;
-
                 cageList = new ArrayList<>(cageListSize);
 
                 for (int i = 0; i < cageListSize; i++) {
@@ -65,52 +80,7 @@ public class Model implements ModelInterface {
     }
 
     @Override
-    public void leftMouseClick(Cage cage, View view) {
-        if (!cage.isEnabled()) {
-            return;
-        }
-
-        if (cage.isBomb()) {
-            cage.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
-            JOptionPane.showMessageDialog(view.getField(), "Game over");
-        } else {
-            cage.setEnabled(false);
-            openWithoutBombZone(cage);
-        }
-    }
-
-    @Override
-    public void rightMouseClick(Cage cage, Menu menu) throws IOException {
-        if (!cage.isMarkedBomb()) {
-            cage.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
-            cage.setMarkedBomb(true);
-            flagCount--;
-
-            if (cage.isBomb()) {
-                markedBombCount++;
-            }
-
-            if (winGame()) {
-                String resultString = menu.getTime();
-                ResultWriter resultWriter = new ResultWriter(resultString);
-                resultWriter.addResult();
-
-                JOptionPane.showMessageDialog(menu, "You win! Your result: " + resultString);
-            }
-        } else {
-            cage.setIcon(null);
-            cage.setMarkedBomb(false);
-            flagCount++;
-
-            if (cage.isBomb()) {
-                markedBombCount--;
-            }
-        }
-
-        menu.setFlagCountLabel(flagCount);
-    }
-
-    private boolean winGame() {
+    public boolean winGame() {
         return markedBombCount == getBombCount(getCageList().size());
     }
 

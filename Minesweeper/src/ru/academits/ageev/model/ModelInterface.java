@@ -1,10 +1,7 @@
 package ru.academits.ageev.model;
 
 import ru.academits.ageev.view.Cage;
-import ru.academits.ageev.view.Menu;
-import ru.academits.ageev.view.View;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public interface ModelInterface {
@@ -15,13 +12,17 @@ public interface ModelInterface {
 
     int getFlagCount();
 
+    void setFlagCount(int flagCount);
+
+    int getMarkedBombCount();
+
+    void setMarkedBombCount(int markedBombCount);
+
     String[] getSizesString();
 
     Integer[] getSizeBySizeString(String sizeString);
 
-    void leftMouseClick(Cage cage, View view);
-
-    void rightMouseClick(Cage cage, Menu menu) throws IOException;
+    boolean winGame();
 
     void openWithoutBombZone(Cage cage);
 }
