@@ -8,13 +8,23 @@ import ru.academits.ageev.view.View;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Controller {
     ModelInterface model = new Model();
     View view = new GuiView(model);
 
-    public void startProgram() {
-        view.start(getExitButtonActionListener(), getHighScoreButtonActionListener(), getNewGameButtonActionListener());
+    public void start() {
+        view.start(getActionListenerList());
+    }
+
+    public ArrayList<ActionListener> getActionListenerList() {
+        return new ArrayList<>(Arrays.asList(
+                getNewGameButtonActionListener(),
+                getHighScoreButtonActionListener(),
+                getExitButtonActionListener()
+        ));
     }
 
     private ActionListener getNewGameButtonActionListener() {

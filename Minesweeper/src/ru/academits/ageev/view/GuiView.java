@@ -15,41 +15,42 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GuiView implements View {
-    private final Menu menu;
+    private Menu menu;
     private Field field;
-    private final JFrame frame;
+    private JFrame frame;
 
     private final ModelInterface model;
 
     public GuiView(ModelInterface model) {
         this.model = model;
-
-        SwingUtilities.invokeLater(() -> {
-            //все сюда
-        });
-
-        frame = new JFrame("Minesweeper");
-        frame.setSize(450, 470);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(450, 450));
-
-        menu = new Menu(model.getSizesString(), model.getFlagCount());
-        frame.add(menu, BorderLayout.NORTH);
-
-        String selectedItem = (String) menu.getFieldSizeComboBox().getSelectedItem();
-
-        field = new Field(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
-        frame.add(field, BorderLayout.CENTER);
     }
 
     @Override
-    public void start(ActionListener actionListenerExit, ActionListener actionListenerHighScore, ActionListener actionListenerNewGame) {
-        clickToAbout();
-        clickExit(actionListenerExit);
-        clickHighScore(actionListenerHighScore);
-        clickNewGame(actionListenerNewGame);
-        clickToCage();
+    public void start(ArrayList actionListenerList) {
+        SwingUtilities.invokeLater(() -> {
+            frame = new JFrame("Minesweeper");
+            frame.setSize(450, 470);
+            frame.setVisible(true);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setMinimumSize(new Dimension(450, 450));
+
+            menu = new Menu(model.getSizesString(), model.getFlagCount());
+            frame.add(menu, BorderLayout.NORTH);
+
+            String selectedItem = (String) menu.getFieldSizeComboBox().getSelectedItem();
+
+            field = new Field(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
+            frame.add(field, BorderLayout.CENTER);
+
+            clickNewGame((ActionListener) actionListenerList.get(0));
+            clickToAbout();
+            clickHighScore((ActionListener) actionListenerList.get(1));
+            clickExit((ActionListener) actionListenerList.get(2));
+
+            clickToCage();
+        });
+
+
     }
 
     @Override

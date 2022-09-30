@@ -4,13 +4,14 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public interface View {
-    void start(ActionListener actionListenerExit, ActionListener actionListenerHighScore, ActionListener actionListenerNewGame);
+    void start(ArrayList actionListenerList);
 
     Menu getMenu();
 
     void setField(Integer[] size, ArrayList<Cage> cageList);
 
     void setSizeFrame(String sizeFrame);
+
     void clickExit(ActionListener actionListener);
 
     void clickHighScore(ActionListener actionListener);
