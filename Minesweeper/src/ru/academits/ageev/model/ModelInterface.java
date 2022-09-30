@@ -22,4 +22,6 @@ public interface ModelInterface {
     void leftMouseClick(Cage cage, View view);
 
     void rightMouseClick(Cage cage, Menu menu) throws IOException;
+
+    void openWithoutBombZone(Cage cage);
 }

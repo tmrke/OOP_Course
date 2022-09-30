@@ -77,11 +77,6 @@ public class Model implements ModelInterface {
             cage.setEnabled(false);
             openWithoutBombZone(cage);
         }
-
-        int[] coordinate = getClickCageCoordinate(cage.getIndex());
-
-        System.out.println(Arrays.toString(coordinate));
-        System.out.println(getClickCageIndex(coordinate));
     }
 
     @Override
@@ -142,7 +137,8 @@ public class Model implements ModelInterface {
         }
     }
 
-    private void openWithoutBombZone(Cage cage) {
+    @Override
+    public void openWithoutBombZone(Cage cage) {
         int[] clickCageCoordinate = getClickCageCoordinate(cage.getIndex());
         int x = clickCageCoordinate[0];
         int y = clickCageCoordinate[1];
