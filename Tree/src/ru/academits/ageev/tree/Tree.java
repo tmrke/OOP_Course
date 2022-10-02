@@ -193,17 +193,20 @@ public class Tree<T> {
         Node<T> removedNodeRightChild = removedNode.getRight();
 
         if (smallestLeftNode.getLeft() == null) {
+            if (removedNodeParent == null) {
+                root = smallestLeftNode;
+                root.setLeft(removedNodeLeftChild);
+                root.setRight(smallestLeftNode.getRight());
+
+                size--;
+
+                return true;
+            }
+
+
             if (isLeftChild) {
                 removedNodeParent.setLeft(removedNodeRightChild);
             } else {
-//                if (removedNodeParent == null) {
-//                    root = removedNodeRightChild;
-//                    removedNodeRightChild.setLeft(removedNodeLeftChild);
-//                    size--;
-//
-//                    return true;
-//                }
-
                 removedNodeParent.setRight(removedNodeRightChild);
             }
 
@@ -218,22 +221,23 @@ public class Tree<T> {
             smallestLeftNode = smallestLeftNode.getLeft();
         }
 
-        if (removedNode == root) {
-            root = smallestLeftNode;
-            root.setLeft(removedNodeLeftChild);
-            root.setRight(removedNodeRightChild);
-
+        if (smallestLeftNodeParent != null) {
             smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
-            size--;
-
-            return true;
+            smallestLeftNode.setRight(removedNodeRightChild);
         }
 
-        smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
-
-        removedNodeParent.setRight(smallestLeftNode);
         smallestLeftNode.setLeft(removedNodeLeftChild);
-        smallestLeftNode.setRight(removedNodeRightChild);
+
+        if (removedNodeParent == null) {
+            root = smallestLeftNode;
+        } else {
+            if (isLeftChild) {
+                removedNodeParent.setLeft(smallestLeftNode);
+            } else {
+                removedNodeParent.setRight(smallestLeftNode);
+            }
+        }
+
         size--;
 
         return true;
