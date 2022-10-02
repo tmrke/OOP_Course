@@ -108,7 +108,7 @@ public class ArrayList<E> implements List<E> {
             i++;
         }
 
-        if(hasChange) {
+        if (hasChange) {
             modCount++;
         }
 
