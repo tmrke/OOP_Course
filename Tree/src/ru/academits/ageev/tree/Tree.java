@@ -6,12 +6,17 @@ import java.util.function.Consumer;
 public class Tree<T> {
     private Node<T> root;
     private int size;
-    private Comparator<? super T> comparator;
+    private final Comparator<? super T> comparator;
 
     public Tree() {
+        comparator = (Comparator<T>) this::compare;
     }
 
     public Tree(Comparator<T> comparator) {
+        if (comparator == null) {
+            throw new IllegalArgumentException("Comparator can't be null");
+        }
+
         this.comparator = comparator;
     }
 
@@ -20,24 +25,20 @@ public class Tree<T> {
     }
 
     private int compare(T t1, T t2) {
-        if (comparator != null) {
-            return comparator.compare(t1, t2);
+        if (t1 == null && t2 == null) {
+            return 0;
         }
 
         if (t1 == null) {
-            if (t2 == null) {
-                return 0;
-            }
-
             return -1;
         }
 
         if (t2 == null) {
-            return -1;
+            return 1;
         }
 
         //noinspection unchecked
-        return ((Comparable<? super T>) t1).compareTo(t2);
+        return ((Comparable<T>) t1).compareTo(t2);
     }
 
     public void add(T data) {
@@ -81,17 +82,18 @@ public class Tree<T> {
         }
 
         Node<T> currentNode = root;
-        int compareResult = compare(currentNode.getData(), data);
 
         while (currentNode != null) {
+            int compareResult = compare(currentNode.getData(), data);
+
             if (compareResult == 0) {
                 return true;
             }
 
             if (compareResult > 0) {
-                currentNode = currentNode.getRight();
-            } else {
                 currentNode = currentNode.getLeft();
+            } else {
+                currentNode = currentNode.getRight();
             }
         }
 
@@ -107,17 +109,17 @@ public class Tree<T> {
         Node<T> removedNodeParent = null;
 
         int comparatorResult = compare(data, removedNode.getData());
-        boolean isLeftChildren = false;
+        boolean isLeftChild = false;
 
         while (comparatorResult != 0) {
             removedNodeParent = removedNode;
 
             if (comparatorResult < 0) {
                 removedNode = removedNode.getLeft();
-                isLeftChildren = true;
+                isLeftChild = true;
             } else {
                 removedNode = removedNode.getRight();
-                isLeftChildren = false;
+                isLeftChild = false;
             }
 
             if (removedNode == null) {
@@ -135,7 +137,7 @@ public class Tree<T> {
                 return true;
             }
 
-            if (isLeftChildren) {
+            if (isLeftChild) {
                 removedNodeParent.setLeft(null);
             } else {
                 removedNodeParent.setRight(null);
@@ -154,7 +156,7 @@ public class Tree<T> {
                 return true;
             }
 
-            if (isLeftChildren) {
+            if (isLeftChild) {
                 removedNodeParent.setLeft(removedNode.getRight());
             } else {
                 removedNodeParent.setRight(removedNode.getRight());
@@ -173,7 +175,7 @@ public class Tree<T> {
                 return true;
             }
 
-            if (isLeftChildren) {
+            if (isLeftChild) {
                 removedNodeParent.setLeft(removedNode.getLeft());
             } else {
                 removedNodeParent.setRight(removedNode.getLeft());
@@ -187,17 +189,25 @@ public class Tree<T> {
         Node<T> smallestLeftNodeParent = null;
         Node<T> smallestLeftNode = removedNode.getRight();
 
-        Node<T> leftRemovedNodeChild = removedNode.getLeft();
-        Node<T> rightRemovedNodeChild = removedNode.getRight();
+        Node<T> removedNodeLeftChild = removedNode.getLeft();
+        Node<T> removedNodeRightChild = removedNode.getRight();
 
         if (smallestLeftNode.getLeft() == null) {
-            if (isLeftChildren) {
-                removedNodeParent.setLeft(rightRemovedNodeChild);
+            if (isLeftChild) {
+                removedNodeParent.setLeft(removedNodeRightChild);
             } else {
-                removedNodeParent.setRight(rightRemovedNodeChild);
+//                if (removedNodeParent == null) {
+//                    root = removedNodeRightChild;
+//                    removedNodeRightChild.setLeft(removedNodeLeftChild);
+//                    size--;
+//
+//                    return true;
+//                }
+
+                removedNodeParent.setRight(removedNodeRightChild);
             }
 
-            rightRemovedNodeChild.setLeft(leftRemovedNodeChild);
+            removedNodeRightChild.setLeft(removedNodeLeftChild);
             size--;
 
             return true;
@@ -208,44 +218,28 @@ public class Tree<T> {
             smallestLeftNode = smallestLeftNode.getLeft();
         }
 
-
-        if (smallestLeftNode.getRight() == null) {
-            if (removedNode == root) {
-                root = smallestLeftNode;
-                root.setLeft(leftRemovedNodeChild);
-                root.setRight(rightRemovedNodeChild);
-
-                smallestLeftNodeParent.setLeft(null);
-                size--;
-
-                return true;
-            }
-
-            smallestLeftNodeParent.setLeft(null);
-        } else {
-            if (removedNode == root) {
-                root = smallestLeftNode;
-                root.setLeft(leftRemovedNodeChild);
-                root.setRight(rightRemovedNodeChild);
-
-                smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
-                size--;
-
-                return true;
-            }
+        if (removedNode == root) {
+            root = smallestLeftNode;
+            root.setLeft(removedNodeLeftChild);
+            root.setRight(removedNodeRightChild);
 
             smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
+            size--;
+
+            return true;
         }
 
+        smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
+
         removedNodeParent.setRight(smallestLeftNode);
-        smallestLeftNode.setLeft(leftRemovedNodeChild);
-        smallestLeftNode.setRight(rightRemovedNodeChild);
+        smallestLeftNode.setLeft(removedNodeLeftChild);
+        smallestLeftNode.setRight(removedNodeRightChild);
         size--;
 
         return true;
     }
 
-    public void traverseInWide(Consumer<T> consumer) {
+    public void traverseInWidth(Consumer<T> consumer) {
         if (isEmpty()) {
             return;
         }
@@ -254,20 +248,20 @@ public class Tree<T> {
         queue.add(root);
 
         while (!queue.isEmpty()) {
-            Node<T> current = queue.poll();
-            consumer.accept(current.getData());
+            Node<T> currentNode = queue.poll();
+            consumer.accept(currentNode.getData());
 
-            if (current.getLeft() != null) {
-                queue.add(current.getLeft());
+            if (currentNode.getLeft() != null) {
+                queue.add(currentNode.getLeft());
             }
 
-            if (current.getRight() != null) {
-                queue.add(current.getRight());
+            if (currentNode.getRight() != null) {
+                queue.add(currentNode.getRight());
             }
         }
     }
 
-    public void traverseInDeep(Consumer<T> consumer) {
+    public void traverseInDepth(Consumer<T> consumer) {
         if (isEmpty()) {
             return;
         }
@@ -276,24 +270,24 @@ public class Tree<T> {
         stack.push(root);
 
         while (!stack.isEmpty()) {
-            Node<T> current = stack.pop();
-            consumer.accept(current.getData());
+            Node<T> currentNode = stack.pop();
+            consumer.accept(currentNode.getData());
 
-            if (current.getRight() != null) {
-                stack.push(current.getRight());
+            if (currentNode.getRight() != null) {
+                stack.push(currentNode.getRight());
             }
 
-            if (current.getLeft() != null) {
-                stack.push(current.getLeft());
+            if (currentNode.getLeft() != null) {
+                stack.push(currentNode.getLeft());
             }
         }
     }
 
-    public void traverseInDeepRecursively(Consumer<T> consumer) {
-        traverseInDeepRecursively(root, consumer);
+    public void traverseInDepthRecursively(Consumer<T> consumer) {
+        traverseInDepthRecursively(root, consumer);
     }
 
-    private void traverseInDeepRecursively(Node<T> node, Consumer<T> consumer) {
+    private void traverseInDepthRecursively(Node<T> node, Consumer<T> consumer) {
         if (node == null) {
             return;
         }
@@ -301,11 +295,11 @@ public class Tree<T> {
         consumer.accept(node.getData());
 
         if (node.getLeft() != null) {
-            traverseInDeepRecursively(node.getLeft(), consumer);
+            traverseInDepthRecursively(node.getLeft(), consumer);
         }
 
         if (node.getRight() != null) {
-            traverseInDeepRecursively(node.getRight(), consumer);
+            traverseInDepthRecursively(node.getRight(), consumer);
         }
     }
 

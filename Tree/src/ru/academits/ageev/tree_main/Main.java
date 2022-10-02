@@ -36,14 +36,14 @@ public class Main {
         System.out.println("Был ли удален узел дерева со значением \"2\"? Ответ: " + tree.remove(2));
 
         System.out.println("Обход дерева в ширину:");
-        tree.traverseInWide(consumer);
+        tree.traverseInWidth(consumer);
         System.out.println("===============================================================================");
 
         System.out.println("Обход дерева в глубину без рекурсии:");
-        tree.traverseInDeep(consumer);
+        tree.traverseInDepth(consumer);
         System.out.println("===============================================================================");
 
         System.out.println("Обход дерева в глубину c рекурсией:");
-        tree.traverseInDeepRecursively(consumer);
+        tree.traverseInDepthRecursively(consumer);
     }
 }
