@@ -8,7 +8,7 @@ public interface View {
 
     Menu getMenu();
 
-    void setField(Integer[] size, ArrayList<Cage> cageList);
+    void setField(Integer[] size, ArrayList<Cell> cellList);
 
     void setSizeFrame(String sizeFrame);
 

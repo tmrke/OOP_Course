@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Controller {
-    ModelInterface model = new Model();
-    View view = new GuiView(model);
+    private final ModelInterface model = new Model();
+    private final View view = new GuiView(model);
 
     public void start() {
         view.start(getActionListenerList());

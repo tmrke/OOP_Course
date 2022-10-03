@@ -15,14 +15,16 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GuiView implements View {
-    private Menu menu;
-    private Field field;
+    private final Menu menu = new Menu();
+    private JPanel menuPanel;
+    private JPanel field;
     private JFrame frame;
 
     private final ModelInterface model;
 
     public GuiView(ModelInterface model) {
         this.model = model;
+        field = new JPanel();
     }
 
     @Override
@@ -34,12 +36,12 @@ public class GuiView implements View {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setMinimumSize(new Dimension(450, 450));
 
-            menu = new Menu(model.getSizesString(), model.getFlagCount());
-            frame.add(menu, BorderLayout.NORTH);
+            menuPanel = menu.getMenuPanel(model.getSizesString(), model.getFlagCount());
+            frame.add(menuPanel, BorderLayout.NORTH);
 
             String selectedItem = (String) menu.getFieldSizeComboBox().getSelectedItem();
 
-            field = new Field(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
+            field = getFieldPanel(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
             frame.add(field, BorderLayout.CENTER);
 
             clickNewGame(actionListenerList.get(0));
@@ -49,8 +51,21 @@ public class GuiView implements View {
 
             clickToCage();
         });
+    }
 
+    public JPanel getFieldPanel(Integer[] size, ArrayList<Cell> cellList) {
+        field = new JPanel();
 
+        GridLayout layout = new GridLayout(size[0], size[1]);
+        field.setLayout(layout);
+
+        for (Cell cell : cellList) {
+            field.add(cell);
+        }
+
+        field.setVisible(true);
+
+        return field;
     }
 
     @Override
@@ -59,9 +74,9 @@ public class GuiView implements View {
     }
 
     @Override
-    public void setField(Integer[] size, ArrayList<Cage> cageList) {
+    public void setField(Integer[] size, ArrayList<Cell> cellList) {
         frame.remove(field);
-        field = new Field(size, cageList);
+        field = getFieldPanel(size, cellList);
         frame.add(field);
     }
 
@@ -118,37 +133,31 @@ public class GuiView implements View {
     }
 
     public void clickToCage() {
-        ArrayList<Cage> cageList = model.getCageList();
+        ArrayList<Cell> cellList = model.getCageList();
 
-        for (Cage cage : cageList) {
-            cage.addMouseListener(new MouseAdapter() {
+        for (Cell cell : cellList) {
+            cell.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if (e.getButton() == MouseEvent.BUTTON1) {
-
-                        //leftMouseClick
-
-                        if (!cage.isEnabled()) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {          //leftMouseClick
+                        if (!cell.isEnabled()) {
                             return;
                         }
 
-                        if (cage.isBomb()) {
-                            cage.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
+                        if (cell.isBomb()) {
+                            cell.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
                             JOptionPane.showMessageDialog(field, "Game over");
                         } else {
-                            cage.setEnabled(false);
-                            model.openWithoutBombZone(cage);
+                            cell.setEnabled(false);
+                            model.openWithoutBombZone(cell);
                         }
-                    } else if (e.getButton() == MouseEvent.BUTTON3) {
-
-                        //rightMouseClick
-
-                        if (!cage.isMarkedBomb()) {
-                            cage.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
-                            cage.setMarkedBomb(true);
+                    } else if (e.getButton() == MouseEvent.BUTTON3) {       //rightMouseClick
+                        if (!cell.isMarkedBomb()) {
+                            cell.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
+                            cell.setMarkedBomb(true);
                             model.setFlagCount(model.getFlagCount() - 1);
 
-                            if (cage.isBomb()) {
+                            if (cell.isBomb()) {
                                 model.setMarkedBombCount(model.getMarkedBombCount() + 1);
                             }
 
@@ -168,14 +177,14 @@ public class GuiView implements View {
                                     throw new RuntimeException(ex);
                                 }
 
-                                JOptionPane.showMessageDialog(menu, "You win! Your result: " + resultString);
+                                JOptionPane.showMessageDialog(menuPanel, "You win! Your result: " + resultString);
                             }
                         } else {
-                            cage.setIcon(null);
-                            cage.setMarkedBomb(false);
+                            cell.setIcon(null);
+                            cell.setMarkedBomb(false);
                             model.setFlagCount(model.getFlagCount() + 1);
 
-                            if (cage.isBomb()) {
+                            if (cell.isBomb()) {
                                 model.setMarkedBombCount(model.getMarkedBombCount() - 1);
                             }
                         }

@@ -1,6 +1,6 @@
 package ru.academits.ageev.model;
 
-import ru.academits.ageev.view.Cage;
+import ru.academits.ageev.view.Cell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Random;
 
 public class Model implements ModelInterface {
-    private ArrayList<Cage> cageList;
+    private ArrayList<Cell> cellList;
     private final HashMap<String, Integer[]> sizesHashMap;
 
     private int flagCount = 10;
@@ -53,12 +53,12 @@ public class Model implements ModelInterface {
     }
 
     @Override
-    public ArrayList<Cage> getCageList() {
-        return cageList;
+    public ArrayList<Cell> getCageList() {
+        return cellList;
     }
 
     @Override
-    public ArrayList<Cage> getNewCageList(String sizeString) {
+    public ArrayList<Cell> getNewCageList(String sizeString) {
         switch (sizeString) {
             case "9 x 9", "16 x 16", "16 x 30" -> {
                 Integer[] rowAndColumnSize = getSizeBySizeString(sizeString);
@@ -66,17 +66,17 @@ public class Model implements ModelInterface {
 
                 flagCount = getBombCount(cageListSize);
                 selectedSizeString = sizeString;
-                cageList = new ArrayList<>(cageListSize);
+                cellList = new ArrayList<>(cageListSize);
 
                 for (int i = 0; i < cageListSize; i++) {
-                    cageList.add(new Cage(i));
+                    cellList.add(new Cell(i));
                 }
 
                 generateBomb(cageListSize);
             }
         }
 
-        return cageList;
+        return cellList;
     }
 
     @Override
@@ -102,14 +102,14 @@ public class Model implements ModelInterface {
 
         for (int i = 0; i < getBombCount(cageListSize); i++) {
             int bombIndex = random.nextInt(cageListSize);
-            cageList.get(bombIndex).setBomb(true);
+            cellList.get(bombIndex).setBomb(true);
             System.out.println(bombIndex);
         }
     }
 
     @Override
-    public void openWithoutBombZone(Cage cage) {
-        int[] clickCageCoordinate = getClickCageCoordinate(cage.getIndex());
+    public void openWithoutBombZone(Cell cell) {
+        int[] clickCageCoordinate = getClickCageCoordinate(cell.getIndex());
         int x = clickCageCoordinate[0];
         int y = clickCageCoordinate[1];
 
@@ -142,15 +142,15 @@ public class Model implements ModelInterface {
             for (int i = borderFromX; i <= borderToX; i++) {
                 for (int j = borderFromY; j <= borderToY; j++) {
                     int currentIndex = getClickCageIndex(new int[]{i, j});
-                    Cage currentCage = cageList.get(currentIndex);
+                    Cell currentCell = cellList.get(currentIndex);
 
-                    if (!currentCage.isBomb()) {
-                        currentCage.setEnabled(false);
+                    if (!currentCell.isBomb()) {
+                        currentCell.setEnabled(false);
 
-                        int bombCountAround = getAround3x3BombCount(currentCage);
+                        int bombCountAround = getAround3x3BombCount(currentCell);
 
                         if (bombCountAround != 0) {
-                            currentCage.setText(String.valueOf(bombCountAround));
+                            currentCell.setText(String.valueOf(bombCountAround));
                         }
                     } else {
                         hasBomb = true;
@@ -180,9 +180,9 @@ public class Model implements ModelInterface {
         return coordinate[1] * size[1] - (size[1] - coordinate[0]) - 1;
     }
 
-    private int getAround3x3BombCount(Cage cage) {
+    private int getAround3x3BombCount(Cell cell) {
         int bombCountAround = 0;
-        int[] coordinate = getClickCageCoordinate(cage.getIndex());
+        int[] coordinate = getClickCageCoordinate(cell.getIndex());
 
         Integer[] size = getSizeBySizeString(selectedSizeString);
         int sizeX = size[1];
@@ -214,7 +214,7 @@ public class Model implements ModelInterface {
             for (int j = startY; j <= endY; j++) {
                 int index = getClickCageIndex(new int[]{i, j});
 
-                if (cageList.get(index).isBomb()) {
+                if (cellList.get(index).isBomb()) {
                     bombCountAround++;
                 }
             }

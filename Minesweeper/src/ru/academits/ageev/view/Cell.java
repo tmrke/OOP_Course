@@ -2,13 +2,12 @@ package ru.academits.ageev.view;
 
 import javax.swing.*;
 
-public class Cage extends JButton {
+public class Cell extends JButton {
     private boolean isBomb;
     private boolean isMarkedBomb;
-
     private final int index;
 
-    public Cage(int index) {
+    public Cell(int index) {
         this.index = index;
         isBomb = false;
         isMarkedBomb = false;

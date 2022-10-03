@@ -1,14 +1,14 @@
 package ru.academits.ageev.model;
 
-import ru.academits.ageev.view.Cage;
+import ru.academits.ageev.view.Cell;
 
 import java.util.ArrayList;
 
 public interface ModelInterface {
 
-    ArrayList<Cage> getCageList();
+    ArrayList<Cell> getCageList();
 
-    ArrayList<Cage> getNewCageList(String sizeString);
+    ArrayList<Cell> getNewCageList(String sizeString);
 
     int getFlagCount();
 
@@ -24,5 +24,5 @@ public interface ModelInterface {
 
     boolean winGame();
 
-    void openWithoutBombZone(Cage cage);
+    void openWithoutBombZone(Cell cell);
 }

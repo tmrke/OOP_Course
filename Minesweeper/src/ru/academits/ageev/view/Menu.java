@@ -4,9 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.Duration;
 
-public class Menu extends JPanel {
+public class Menu {
+    private final JPanel menu = new JPanel();
     private final JButton newGameButton = new JButton("new game");
-    private final JComboBox<String> fieldSizeComboBox;
+    private JComboBox<String> fieldSizeComboBox;
     private final JButton aboutButton = new JButton("about");
     private final JButton highScoresButton = new JButton("high scores");
     private final JButton exitButton = new JButton("exit");
@@ -16,29 +17,31 @@ public class Menu extends JPanel {
     private Timer timer;
     private long lastTickTime = System.currentTimeMillis();
 
-    public Menu(String[] sizes, int flagCount) {
+    public JPanel getMenuPanel(String[] sizes, int flagCount) {
         GridLayout gridLayout = new GridLayout(1, 8);
-        setLayout(gridLayout);
+        menu.setLayout(gridLayout);
 
         fieldSizeComboBox = new JComboBox<>(sizes);
 
-        add(newGameButton);
-        add(fieldSizeComboBox);
-        add(aboutButton);
-        add(highScoresButton);
-        add(exitButton);
+        menu.add(newGameButton);
+        menu.add(fieldSizeComboBox);
+        menu.add(aboutButton);
+        menu.add(highScoresButton);
+        menu.add(exitButton);
 
         flagCountLabel.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
         flagCountLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(flagCountLabel);
+        menu.add(flagCountLabel);
         flagCountLabel.setText(String.valueOf(flagCount));
 
 
         timeResult.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/time.png"));
         timeResult.setHorizontalAlignment(SwingConstants.CENTER);
-        add(timeResult);
+        menu.add(timeResult);
 
         timer = getNewTimer();
+
+        return menu;
     }
 
     public void setFlagCountLabel(int flagCount) {
