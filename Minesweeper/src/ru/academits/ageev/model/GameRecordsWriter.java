@@ -1,18 +1,19 @@
 package ru.academits.ageev.model;
 
 import java.io.*;
-import java.util.Arrays;
 
-public class ResultWriter {
+public class GameRecordsWriter {
     private final String path = "Minesweeper/src/ru/academits/ageev/resources/result.txt";
     private final String newResult;
 
-    private final String[] resultsStrings = new String[10];
+    private final int rowsCount = 10;
 
-    private final BufferedReader file = new BufferedReader(new FileReader(path));
+    private final String[] resultsStrings = new String[rowsCount];
+
+    private final BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
     private final StringBuilder inputBuffer = new StringBuilder();
 
-    public ResultWriter(String newResult) throws FileNotFoundException {
+    public GameRecordsWriter(String newResult) throws FileNotFoundException {
         this.newResult = newResult;
     }
 
@@ -23,13 +24,12 @@ public class ResultWriter {
 
         int i = 0;
 
-        while (i < 10) {
-            if ((line = file.readLine()) != null) {
+        while (i < rowsCount) {
+            if ((line = bufferedReader.readLine()) != null) {
                 if (newResult.compareTo(line) < 0 && flag) {
                     temp = line;
                     line = newResult;
-                    inputBuffer.append(line);
-                    inputBuffer.append('\n');
+                    inputBuffer.append(line).append(System.lineSeparator());
 
                     resultsStrings[i] = line;
                     i++;
@@ -42,23 +42,20 @@ public class ResultWriter {
                     line = temp;
                 }
 
-                inputBuffer.append(line);
-                inputBuffer.append('\n');
+                inputBuffer.append(line).append(System.lineSeparator());
 
                 resultsStrings[i] = line;
             } else if (resultsStrings[i] == null && flag) {
                 resultsStrings[i] = newResult;
-                inputBuffer.append(newResult);
-                inputBuffer.append('\n');
+                inputBuffer.append(newResult).append(System.lineSeparator());
+
                 break;
             }
 
             i++;
         }
 
-        System.out.println(Arrays.toString(resultsStrings));
-
-        file.close();
+        bufferedReader.close();
 
         String inputString = inputBuffer.toString();
 

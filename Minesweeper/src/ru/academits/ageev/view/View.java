@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public interface View {
     void start(ArrayList<ActionListener> actionListenerList);
 
+    String getSelectedSizeString();
+
     Menu getMenu();
 
     void setField(Integer[] size, ArrayList<Cell> cellList);

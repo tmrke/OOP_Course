@@ -9,35 +9,35 @@ public class Model implements ModelInterface {
     private ArrayList<Cell> cellList;
     private final HashMap<String, Integer[]> sizesHashMap;
 
-    private int flagCount = 10;
-    private int markedBombCount;
+    private int flagsCount = 10;
+    private int markedBombsCount;
     private String selectedSizeString = "9 x 9";
 
     public Model() {
-        sizesHashMap = new LinkedHashMap<>();
-        sizesHashMap.put("9 x 9", new Integer[]{9, 9});
-        sizesHashMap.put("16 x 16", new Integer[]{16, 16});
-        sizesHashMap.put("16 x 30", new Integer[]{16, 30});     //Везде [0] это координата по X, кроме размеров в sizeHashMap, тут наоборот
+        sizesHashMap = new LinkedHashMap<>();                          //Везде [0] это координата по X, кроме sizeHashMap, тут наоборот
+        sizesHashMap.put("9 x 9", new Integer[]{9, 9, 10});            //[0] = Y
+        sizesHashMap.put("16 x 16", new Integer[]{16, 16, 40});        //[1] = X
+        sizesHashMap.put("16 x 30", new Integer[]{16, 30, 100});       //[2] = количество бобм
     }
 
     @Override
-    public int getFlagCount() {
-        return flagCount;
+    public int getFlagsCount() {
+        return flagsCount;
     }
 
     @Override
-    public void setFlagCount(int flagCount) {
-        this.flagCount = flagCount;
+    public void setFlagsCount(int flagsCount) {
+        this.flagsCount = flagsCount;
     }
 
     @Override
-    public int getMarkedBombCount() {
-        return markedBombCount;
+    public int getMarkedBombsCount() {
+        return markedBombsCount;
     }
 
     @Override
-    public void setMarkedBombCount(int markedBombCount) {
-        this.markedBombCount = markedBombCount;
+    public void setMarkedBombsCount(int markedBombsCount) {
+        this.markedBombsCount = markedBombsCount;
     }
 
     @Override
@@ -57,50 +57,47 @@ public class Model implements ModelInterface {
 
     @Override
     public ArrayList<Cell> getNewCageList(String sizeString) {
-        switch (sizeString) {
-            case "9 x 9", "16 x 16", "16 x 30" -> {
-                Integer[] rowAndColumnSize = getSizeBySizeString(sizeString);
-                int cageListSize = rowAndColumnSize[0] * rowAndColumnSize[1];
+        Integer[] rowAndColumnSize = switch (sizeString) {
+            case "9 x 9", "16 x 16", "16 x 30" -> getSizeBySizeString(sizeString);
+            default -> new Integer[3];
+        };
 
-                flagCount = getBombCount(cageListSize);
-                selectedSizeString = sizeString;
-                cellList = new ArrayList<>(cageListSize);
+        int cageListSize = rowAndColumnSize[0] * rowAndColumnSize[1];
 
-                for (int i = 0; i < cageListSize; i++) {
-                    cellList.add(new Cell(i));
-                }
+        flagsCount = getBombCount();
+        selectedSizeString = sizeString;
+        cellList = new ArrayList<>(cageListSize);
 
-                generateBomb(cageListSize);
-            }
+        for (int i = 0; i < cageListSize; i++) {
+            cellList.add(new Cell(i));
         }
+
+        generateBomb(cageListSize);
 
         return cellList;
     }
 
     @Override
     public boolean winGame() {
-        return markedBombCount == getBombCount(getCellList().size());
+        return markedBombsCount == getBombCount();
     }
 
-    private int getBombCount(int cageListSize) {
-        int bombCount;
-        if (cageListSize == 81) {
-            bombCount = 10;
-        } else if (cageListSize == 256) {
-            bombCount = 40;
-        } else {
-            bombCount = 100;
-        }
-
-        return bombCount;
+    @Override
+    public int getBombCount() {
+        return sizesHashMap.get(selectedSizeString)[2];
     }
 
     private void generateBomb(int cageListSize) {
         Random random = new Random();
 
-        for (int i = 0; i < getBombCount(cageListSize); i++) {
+        for (int i = 0; i < getBombCount(); i++) {
             int bombIndex = random.nextInt(cageListSize);
-            cellList.get(bombIndex).setBomb(true);
+
+            if (!cellList.get(bombIndex).isBomb()) {
+                cellList.get(bombIndex).setBomb(true);
+            } else {
+                i--;
+            }
         }
     }
 

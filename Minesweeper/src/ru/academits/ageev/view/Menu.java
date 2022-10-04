@@ -11,7 +11,7 @@ public class Menu {
     private final JButton aboutButton = new JButton("about");
     private final JButton highScoresButton = new JButton("high scores");
     private final JButton exitButton = new JButton("exit");
-    private final JLabel flagCountLabel = new JLabel();
+    private final JLabel flagsCountLabel = new JLabel();
 
     private final JLabel timeResult = new JLabel("00:00");
     private Timer timer;
@@ -29,10 +29,10 @@ public class Menu {
         menu.add(highScoresButton);
         menu.add(exitButton);
 
-        flagCountLabel.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
-        flagCountLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        menu.add(flagCountLabel);
-        flagCountLabel.setText(String.valueOf(flagCount));
+        flagsCountLabel.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
+        flagsCountLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        menu.add(flagsCountLabel);
+        flagsCountLabel.setText(String.valueOf(flagCount));
 
 
         timeResult.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/time.png"));
@@ -43,9 +43,8 @@ public class Menu {
 
         return menu;
     }
-
-    public void setFlagCountLabel(int flagCount) {
-        flagCountLabel.setText(String.valueOf(flagCount));
+    public void setFlagsCountLabel(int flagCount) {
+        flagsCountLabel.setText(String.valueOf(flagCount));
     }
 
     public JButton getNewGameButton() {

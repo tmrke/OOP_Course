@@ -8,19 +8,21 @@ public interface ModelInterface {
 
     ArrayList<Cell> getNewCageList(String sizeString);
 
-    int getFlagCount();
+    int getFlagsCount();
 
-    void setFlagCount(int flagCount);
+    void setFlagsCount(int flagsCount);
 
-    int getMarkedBombCount();
+    int getMarkedBombsCount();
 
-    void setMarkedBombCount(int markedBombCount);
+    void setMarkedBombsCount(int markedBombsCount);
 
     String[] getSizesString();
 
     Integer[] getSizeBySizeString(String sizeString);
 
     boolean winGame();
+
+    int getBombCount();
 
     void openWithoutBombZone(Cell cell);
 }

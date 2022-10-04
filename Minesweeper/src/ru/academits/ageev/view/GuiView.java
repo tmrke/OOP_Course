@@ -2,7 +2,7 @@ package ru.academits.ageev.view;
 
 import ru.academits.ageev.model.Cell;
 import ru.academits.ageev.model.ModelInterface;
-import ru.academits.ageev.model.ResultWriter;
+import ru.academits.ageev.model.GameRecordsWriter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +38,7 @@ public class GuiView implements View {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setMinimumSize(new Dimension(450, 450));
 
-            menuPanel = menu.getMenuPanel(model.getSizesString(), model.getFlagCount());
+            menuPanel = menu.getMenuPanel(model.getSizesString(), model.getFlagsCount());
             frame.add(menuPanel, BorderLayout.NORTH);
 
             String selectedItem = (String) menu.getFieldSizeComboBox().getSelectedItem();
@@ -70,6 +70,11 @@ public class GuiView implements View {
         field.setVisible(true);
 
         return field;
+    }
+
+    @Override
+    public String getSelectedSizeString() {
+        return getMenu().getSelectedSizeString();
     }
 
     @Override
@@ -174,24 +179,24 @@ public class GuiView implements View {
                         if (!currentCell.isMarkedBomb()) {
                             cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
                             currentCell.setMarkedBomb(true);
-                            model.setFlagCount(model.getFlagCount() - 1);
+                            model.setFlagsCount(model.getFlagsCount() - 1);
 
                             if (currentCell.isBomb()) {
-                                model.setMarkedBombCount(model.getMarkedBombCount() + 1);
+                                model.setMarkedBombsCount(model.getMarkedBombsCount() + 1);
                             }
 
                             if (model.winGame()) {
                                 String resultString = menu.getTime();
-                                ResultWriter resultWriter;
+                                GameRecordsWriter gameRecordsWriter;
 
                                 try {
-                                    resultWriter = new ResultWriter(resultString);
+                                    gameRecordsWriter = new GameRecordsWriter(resultString);
                                 } catch (FileNotFoundException ex) {
                                     throw new RuntimeException(ex);
                                 }
 
                                 try {
-                                    resultWriter.addResult();
+                                    gameRecordsWriter.addResult();
                                 } catch (IOException ex) {
                                     throw new RuntimeException(ex);
                                 }
@@ -201,14 +206,14 @@ public class GuiView implements View {
                         } else {
                             cellButton.setIcon(null);
                             currentCell.setMarkedBomb(false);
-                            model.setFlagCount(model.getFlagCount() + 1);
+                            model.setFlagsCount(model.getFlagsCount() + 1);
 
                             if (currentCell.isBomb()) {
-                                model.setMarkedBombCount(model.getMarkedBombCount() - 1);
+                                model.setMarkedBombsCount(model.getMarkedBombsCount() - 1);
                             }
                         }
 
-                        menu.setFlagCountLabel(model.getFlagCount());
+                        menu.setFlagsCountLabel(model.getFlagsCount());
                     }
                 }
             });
