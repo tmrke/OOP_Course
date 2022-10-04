@@ -1,12 +1,10 @@
 package ru.academits.ageev.model;
 
-import ru.academits.ageev.view.Cell;
-
 import java.util.ArrayList;
 
 public interface ModelInterface {
 
-    ArrayList<Cell> getCageList();
+    ArrayList<Cell> getCellList();
 
     ArrayList<Cell> getNewCageList(String sizeString);
 

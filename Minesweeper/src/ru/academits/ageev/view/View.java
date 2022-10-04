@@ -1,5 +1,7 @@
 package ru.academits.ageev.view;
 
+import ru.academits.ageev.model.Cell;
+
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
@@ -19,4 +21,6 @@ public interface View {
     void clickNewGame(ActionListener actionListener);
 
     void clickToAbout();
+
+    void clickToCage();
 }

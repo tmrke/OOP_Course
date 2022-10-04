@@ -1,5 +1,6 @@
 package ru.academits.ageev.view;
 
+import ru.academits.ageev.model.Cell;
 import ru.academits.ageev.model.ModelInterface;
 import ru.academits.ageev.model.ResultWriter;
 
@@ -11,10 +12,10 @@ import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class GuiView implements View {
+    private final HashMap<JButton, Cell> cellJButtonHashMap;
     private final Menu menu = new Menu();
     private JPanel menuPanel;
     private JPanel field;
@@ -25,6 +26,7 @@ public class GuiView implements View {
     public GuiView(ModelInterface model) {
         this.model = model;
         field = new JPanel();
+        cellJButtonHashMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -60,7 +62,9 @@ public class GuiView implements View {
         field.setLayout(layout);
 
         for (Cell cell : cellList) {
-            field.add(cell);
+            JButton cellButton = new JButton();
+            field.add(cellButton);
+            cellJButtonHashMap.put(cellButton, cell);
         }
 
         field.setVisible(true);
@@ -83,7 +87,7 @@ public class GuiView implements View {
     @Override
     public void setSizeFrame(String sizeFrame) {
         if (sizeFrame.equals("16 x 30")) {
-            frame.setSize(1200, 700);
+            frame.setSize(1240, 720);
         } else if (sizeFrame.equals("16 x 16")) {
             frame.setSize(680, 700);
         } else {
@@ -108,56 +112,71 @@ public class GuiView implements View {
 
     @Override
     public void clickToAbout() {
-        menu.getAbout().addActionListener(e ->
-                SwingUtilities.invokeLater(() -> {
-                    JFrame frameAbout = new JFrame();
-                    frameAbout.setSize(400, 150);
-                    frameAbout.setVisible(true);
+        menu.getAbout().addActionListener(e -> SwingUtilities.invokeLater(() -> {
+            JFrame frameAbout = new JFrame();
+            frameAbout.setSize(400, 150);
+            frameAbout.setVisible(true);
 
-                    JTextArea aboutTextArea = new JTextArea();
-                    StringBuilder stringBuilder = new StringBuilder();
+            JTextArea aboutTextArea = new JTextArea();
+            StringBuilder stringBuilder = new StringBuilder();
 
-                    try {
-                        Scanner scanner = new Scanner(new FileInputStream("Minesweeper/src/ru/academits/ageev/resources/about.txt"));
-                        while (scanner.hasNextLine()) {
-                            stringBuilder.append(scanner.nextLine()).append("\n");
-                        }
-                    } catch (FileNotFoundException ex) {
-                        throw new RuntimeException(ex);
-                    }
+            try {
+                Scanner scanner = new Scanner(new FileInputStream("Minesweeper/src/ru/academits/ageev/resources/about.txt"));
+                while (scanner.hasNextLine()) {
+                    stringBuilder.append(scanner.nextLine()).append("\n");
+                }
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
 
-                    aboutTextArea.append(String.valueOf(stringBuilder));
-                    aboutTextArea.setSize(300, 200);
-                    frameAbout.add(aboutTextArea);
-                }));
+            aboutTextArea.append(String.valueOf(stringBuilder));
+            aboutTextArea.setSize(300, 200);
+            frameAbout.add(aboutTextArea);
+        }));
     }
 
+    @Override
     public void clickToCage() {
-        ArrayList<Cell> cellList = model.getCageList();
-
-        for (Cell cell : cellList) {
-            cell.addMouseListener(new MouseAdapter() {
+        for (JButton cellButton : cellJButtonHashMap.keySet()) {
+            cellButton.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if (e.getButton() == MouseEvent.BUTTON1) {          //leftMouseClick
-                        if (!cell.isEnabled()) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {              //leftMouseClick
+                        if (!cellButton.isEnabled()) {
                             return;
                         }
 
+                        Cell cell = cellJButtonHashMap.get(cellButton);
+
                         if (cell.isBomb()) {
-                            cell.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
+                            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
                             JOptionPane.showMessageDialog(field, "Game over");
                         } else {
-                            cell.setEnabled(false);
+                            cellButton.setEnabled(false);
                             model.openWithoutBombZone(cell);
+
+                            for (JButton cellButton : cellJButtonHashMap.keySet()) {
+                                Cell cell1 = cellJButtonHashMap.get(cellButton);
+                                int aroundBombsCount = cell1.getAroundBombsCount();
+
+                                if (aroundBombsCount != 0) {
+                                    cellButton.setText(String.valueOf(aroundBombsCount));
+                                }
+
+                                if (cell1.isOpen()) {
+                                    cellButton.setEnabled(false);
+                                }
+                            }
                         }
-                    } else if (e.getButton() == MouseEvent.BUTTON3) {       //rightMouseClick
-                        if (!cell.isMarkedBomb()) {
-                            cell.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
-                            cell.setMarkedBomb(true);
+                    } else if (e.getButton() == MouseEvent.BUTTON3) {           //rightMouseClick
+                        Cell currentCell = cellJButtonHashMap.get(cellButton);
+
+                        if (!currentCell.isMarkedBomb()) {
+                            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
+                            currentCell.setMarkedBomb(true);
                             model.setFlagCount(model.getFlagCount() - 1);
 
-                            if (cell.isBomb()) {
+                            if (currentCell.isBomb()) {
                                 model.setMarkedBombCount(model.getMarkedBombCount() + 1);
                             }
 
@@ -180,11 +199,11 @@ public class GuiView implements View {
                                 JOptionPane.showMessageDialog(menuPanel, "You win! Your result: " + resultString);
                             }
                         } else {
-                            cell.setIcon(null);
-                            cell.setMarkedBomb(false);
+                            cellButton.setIcon(null);
+                            currentCell.setMarkedBomb(false);
                             model.setFlagCount(model.getFlagCount() + 1);
 
-                            if (cell.isBomb()) {
+                            if (currentCell.isBomb()) {
                                 model.setMarkedBombCount(model.getMarkedBombCount() - 1);
                             }
                         }
@@ -196,4 +215,3 @@ public class GuiView implements View {
         }
     }
 }
-

@@ -1,7 +1,5 @@
 package ru.academits.ageev.model;
 
-import ru.academits.ageev.view.Cell;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -53,7 +51,7 @@ public class Model implements ModelInterface {
     }
 
     @Override
-    public ArrayList<Cell> getCageList() {
+    public ArrayList<Cell> getCellList() {
         return cellList;
     }
 
@@ -81,7 +79,7 @@ public class Model implements ModelInterface {
 
     @Override
     public boolean winGame() {
-        return markedBombCount == getBombCount(getCageList().size());
+        return markedBombCount == getBombCount(getCellList().size());
     }
 
     private int getBombCount(int cageListSize) {
@@ -103,7 +101,6 @@ public class Model implements ModelInterface {
         for (int i = 0; i < getBombCount(cageListSize); i++) {
             int bombIndex = random.nextInt(cageListSize);
             cellList.get(bombIndex).setBomb(true);
-            System.out.println(bombIndex);
         }
     }
 
@@ -145,13 +142,8 @@ public class Model implements ModelInterface {
                     Cell currentCell = cellList.get(currentIndex);
 
                     if (!currentCell.isBomb()) {
-                        currentCell.setEnabled(false);
-
-                        int bombCountAround = getAround3x3BombCount(currentCell);
-
-                        if (bombCountAround != 0) {
-                            currentCell.setText(String.valueOf(bombCountAround));
-                        }
+                        currentCell.setOpen(true);
+                        currentCell.setAroundBombsCount(getAround3x3BombCount(currentCell));
                     } else {
                         hasBomb = true;
                     }
