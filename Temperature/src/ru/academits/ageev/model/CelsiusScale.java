@@ -1,18 +1,18 @@
 package ru.academits.ageev.model;
 
-public class Kelvin implements Scale {
+public class CelsiusScale implements Scale {
     @Override
     public double convertToCelsius(double value) {
-        return value - 273.15;
+        return value;
     }
 
     @Override
     public double convertFromCelsius(double value) {
-        return value + 273.15;
+        return value;
     }
 
     @Override
     public String toString() {
-        return "Kelvin";
+        return "CelsiusScale";
     }
 }

@@ -1,6 +1,6 @@
 package ru.academits.ageev.view;
 
-import ru.academits.ageev.model.ModelInterface;
+import ru.academits.ageev.model.Model;
 import ru.academits.ageev.model.Scale;
 
 import javax.swing.*;
@@ -8,20 +8,20 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class GuiView implements View {
-    private JTextField leftTextField;
-    private JTextField rightTextField;
+    private JTextField inputTextField;
+    private JTextField outputTextField;
     private JComboBox<Scale> inputScaleComboBox;
     private JComboBox<Scale> outputScaleComboBox;
     private JButton converterButton;
 
     @Override
-    public void start(ModelInterface model, ActionListener actionListener){
+    public void start(Model converter, ActionListener actionListener) {
         SwingUtilities.invokeLater(() -> {
-            leftTextField = new JTextField("25.5", 12);
-            rightTextField = new JTextField(12);
+            inputTextField = new JTextField("25.5", 12);
+            outputTextField = new JTextField(12);
 
-            inputScaleComboBox = new JComboBox<>(model.getScalesList().toArray(new Scale[0]));
-            outputScaleComboBox = new JComboBox<>(model.getScalesList().toArray(new Scale[0]));
+            inputScaleComboBox = new JComboBox<>(converter.scales());
+            outputScaleComboBox = new JComboBox<>(converter.scales());
 
             JFrame window = new JFrame("Temperature converter");
             window.setSize(600, 400);
@@ -38,7 +38,7 @@ public class GuiView implements View {
 
             constraints.gridx = 0;
             constraints.gridy = 1;
-            window.add(leftTextField, constraints);
+            window.add(inputTextField, constraints);
 
             constraints.gridx = 0;
             constraints.gridy = 2;
@@ -56,7 +56,7 @@ public class GuiView implements View {
 
             constraints.gridx = 4;
             constraints.gridy = 1;
-            window.add(rightTextField, constraints);
+            window.add(outputTextField, constraints);
 
             constraints.gridx = 4;
             constraints.gridy = 2;
@@ -75,17 +75,17 @@ public class GuiView implements View {
     }
 
     @Override
-    public String getInputTextFieldValue() {
-        return leftTextField.getText();
+    public String getInputValueString() {
+        return inputTextField.getText();
     }
 
     @Override
-    public void setOutputTextFieldValue(double value) {
-        rightTextField.setText(String.valueOf(value));
+    public void setOutputValue(double value) {
+        outputTextField.setText(String.valueOf(value));
     }
 
     @Override
-    public void showMessageDialog() {
+    public void showErrorMessage() {
         JOptionPane.showMessageDialog(converterButton, "The temperature value should be in the form of a number");
     }
 }

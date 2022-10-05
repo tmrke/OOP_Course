@@ -1,32 +1,32 @@
 package ru.academits.ageev.controller;
 
-import ru.academits.ageev.model.ModelInterface;
+import ru.academits.ageev.model.Model;
 import ru.academits.ageev.view.View;
 
 import java.awt.event.ActionListener;
 
 public class Controller {
     private final View guiView;
-    private final ModelInterface model;
+    private final Model converter;
 
-    public Controller(ModelInterface model, View guiView) {
-        this.model = model;
+    public Controller(Model converter, View guiView) {
+        this.converter = converter;
         this.guiView = guiView;
     }
 
     public void start() {
-        guiView.start(model, getActionListener());
+        guiView.start(converter, getActionListener());
     }
 
     private ActionListener getActionListener() {
         return e -> {
             try {
-                double inputValue = Double.parseDouble(guiView.getInputTextFieldValue());
-                double outputValue = model.getOutputValue(guiView.getInputScale(), guiView.getOutputScale(), inputValue);
+                double inputValue = Double.parseDouble(guiView.getInputValueString());
+                double outputValue = converter.getConvertedTemperature(guiView.getInputScale(), guiView.getOutputScale(), inputValue);
 
-                guiView.setOutputTextFieldValue(outputValue);
+                guiView.setOutputValue(outputValue);
             } catch (NumberFormatException ex) {
-                guiView.showMessageDialog();
+                guiView.showErrorMessage();
             }
         };
     }

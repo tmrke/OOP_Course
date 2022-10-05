@@ -1,6 +1,6 @@
 package ru.academits.ageev.model;
 
-public class Fahrenheit implements Scale {
+public class FahrenheitScale implements Scale {
     @Override
     public double convertToCelsius(double value) {
         return 5 * (value - 32) / 9;
@@ -13,6 +13,6 @@ public class Fahrenheit implements Scale {
 
     @Override
     public String toString() {
-        return "Fahrenheit";
+        return "FahrenheitScale";
     }
 }
