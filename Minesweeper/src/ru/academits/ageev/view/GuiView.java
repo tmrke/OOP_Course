@@ -1,8 +1,9 @@
 package ru.academits.ageev.view;
 
 import ru.academits.ageev.model.Cell;
-import ru.academits.ageev.model.ModelInterface;
+import ru.academits.ageev.model.GameRecordsReader;
 import ru.academits.ageev.model.GameRecordsWriter;
+import ru.academits.ageev.model.ModelInterface;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,11 +13,16 @@ import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Scanner;
+
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class GuiView implements View {
     private final HashMap<JButton, Cell> cellJButtonHashMap;
-    private final Menu menu = new Menu();
+    private final Menu menu;
     private JPanel menuPanel;
     private JPanel field;
     private JFrame frame;
@@ -25,6 +31,7 @@ public class GuiView implements View {
 
     public GuiView(ModelInterface model) {
         this.model = model;
+        menu = new Menu(model);
         field = new JPanel();
         cellJButtonHashMap = new LinkedHashMap<>();
     }
@@ -46,6 +53,7 @@ public class GuiView implements View {
             field = getFieldPanel(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
             frame.add(field, BorderLayout.CENTER);
 
+
             clickNewGame(actionListenerList.get(0));
             clickToAbout();
             clickHighScore(actionListenerList.get(1));
@@ -53,6 +61,11 @@ public class GuiView implements View {
 
             clickToCage();
         });
+    }
+
+    @Override
+    public void setTime(String timeString) {
+        getMenu().getTimeResult().setText(timeString);
     }
 
     public JPanel getFieldPanel(Integer[] size, ArrayList<Cell> cellList) {
@@ -91,13 +104,18 @@ public class GuiView implements View {
 
     @Override
     public void setSizeFrame(String sizeFrame) {
-        if (sizeFrame.equals("16 x 30")) {
+        if (sizeFrame.equals(model.getSizeStringBySize(model.getAllSizes()[2]))) {
             frame.setSize(1240, 720);
-        } else if (sizeFrame.equals("16 x 16")) {
+        } else if (sizeFrame.equals(model.getSizeStringBySize(model.getAllSizes()[1]))) {
             frame.setSize(680, 700);
-        } else {
+        } else if (sizeFrame.equals(model.getSizeStringBySize(model.getAllSizes()[0]))) {
             frame.setSize(450, 470);
         }
+    }
+
+    @Override
+    public void setFlagsCount(int bombsCount) {
+        getMenu().setFlagsCountLabel(model.getBombsCount());
     }
 
     @Override
@@ -158,17 +176,25 @@ public class GuiView implements View {
                             JOptionPane.showMessageDialog(field, "Game over");
                         } else {
                             cellButton.setEnabled(false);
+                            int around3x3BombCount = model.getAround3x3BombCount(cell);
+
+                            if (around3x3BombCount > 0) {
+                                cellButton.setText(String.valueOf(around3x3BombCount));
+
+                                return;
+                            }
+
                             model.openWithoutBombZone(cell);
 
                             for (JButton cellButton : cellJButtonHashMap.keySet()) {
-                                Cell cell1 = cellJButtonHashMap.get(cellButton);
-                                int aroundBombsCount = cell1.getAroundBombsCount();
+                                Cell currentCell = cellJButtonHashMap.get(cellButton);
+                                int aroundBombsCount = currentCell.getAroundBombsCount();
 
                                 if (aroundBombsCount != 0) {
                                     cellButton.setText(String.valueOf(aroundBombsCount));
                                 }
 
-                                if (cell1.isOpen()) {
+                                if (currentCell.isOpen()) {
                                     cellButton.setEnabled(false);
                                 }
                             }
@@ -201,6 +227,8 @@ public class GuiView implements View {
                                     throw new RuntimeException(ex);
                                 }
 
+                                model.stopTimer();
+
                                 JOptionPane.showMessageDialog(menuPanel, "You win! Your result: " + resultString);
                             }
                         } else {
@@ -218,5 +246,30 @@ public class GuiView implements View {
                 }
             });
         }
+    }
+
+    @Override
+    public void clickOnHighScoreButton() {
+        GameRecordsReader gameRecordsReader = new GameRecordsReader();
+        String[] results = gameRecordsReader.getGameRecords();
+
+        JFrame gameRecordsListFrame = new JFrame("High score");
+        gameRecordsListFrame.setSize(400, 320);
+        gameRecordsListFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        GridLayout layout = new GridLayout(10, 0, 10, 10);
+        JPanel grid = new JPanel();
+        grid.setLayout(layout);
+
+        for (String result : results) {
+            JLabel label = new JLabel(result);
+            grid.add(label);
+        }
+
+        gameRecordsListFrame.add(grid);
+        gameRecordsListFrame.setSize(250, 400);
+        gameRecordsListFrame.setVisible(true);
+
+        getMenu().getHighScoresButton().setVisible(true);
     }
 }

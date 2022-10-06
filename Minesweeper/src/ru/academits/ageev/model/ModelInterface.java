@@ -1,5 +1,6 @@
 package ru.academits.ageev.model;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public interface ModelInterface {
@@ -7,6 +8,10 @@ public interface ModelInterface {
     ArrayList<Cell> getCellList();
 
     ArrayList<Cell> getNewCageList(String sizeString);
+
+    Integer[][] getAllSizes();
+
+    String getSizeStringBySize(Integer[] sizes);
 
     int getFlagsCount();
 
@@ -22,7 +27,17 @@ public interface ModelInterface {
 
     boolean winGame();
 
-    int getBombCount();
+    int getBombsCount();
 
     void openWithoutBombZone(Cell cell);
+
+    int getAround3x3BombCount(Cell cell);
+
+    void stopTimer();
+
+    Timer getNewTimer();
+
+    void restartTimer();
+
+    String getTimeString();
 }

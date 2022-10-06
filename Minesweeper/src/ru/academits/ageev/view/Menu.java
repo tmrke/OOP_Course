@@ -1,10 +1,12 @@
 package ru.academits.ageev.view;
 
+import ru.academits.ageev.model.ModelInterface;
+
 import javax.swing.*;
 import java.awt.*;
-import java.time.Duration;
 
 public class Menu {
+    private final ModelInterface model;
     private final JPanel menu = new JPanel();
     private final JButton newGameButton = new JButton("new game");
     private JComboBox<String> fieldSizeComboBox;
@@ -15,7 +17,10 @@ public class Menu {
 
     private final JLabel timeResult = new JLabel("00:00");
     private Timer timer;
-    private long lastTickTime = System.currentTimeMillis();
+
+    public Menu(ModelInterface model) {
+        this.model = model;
+    }
 
     public JPanel getMenuPanel(String[] sizes, int flagCount) {
         GridLayout gridLayout = new GridLayout(1, 8);
@@ -34,15 +39,17 @@ public class Menu {
         menu.add(flagsCountLabel);
         flagsCountLabel.setText(String.valueOf(flagCount));
 
+        timer = model.getNewTimer();
 
         timeResult.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/time.png"));
         timeResult.setHorizontalAlignment(SwingConstants.CENTER);
+
         menu.add(timeResult);
 
-        timer = getNewTimer();
 
         return menu;
     }
+
     public void setFlagsCountLabel(int flagCount) {
         flagsCountLabel.setText(String.valueOf(flagCount));
     }
@@ -67,43 +74,18 @@ public class Menu {
         return exitButton;
     }
 
+    public String getSelectedSizeString() {
+        return (String) fieldSizeComboBox.getSelectedItem();
+    }
+
+
     public String getTime() {
         timer.stop();
+
         return timeResult.getText();
     }
 
-    public Timer getNewTimer() {
-        Timer newTimer = new Timer(100, e -> createActionEventForTimer());
-        newTimer.start();
-
-        return newTimer;
-    }
-
-    public void restartTimer() {
-        lastTickTime = System.currentTimeMillis();
-
-        timer = new Timer(100, e -> createActionEventForTimer());
-        timer.start();
-    }
-
-    private void createActionEventForTimer() {
-        long runningTime = System.currentTimeMillis() - lastTickTime;
-        Duration duration = Duration.ofMillis(runningTime);
-
-        long hours = duration.toHours();
-        duration = duration.minusHours(hours);
-
-        long minutes = duration.toMinutes();
-        duration = duration.minusMinutes(minutes);
-
-        long millis = duration.toMillis();
-        long seconds = millis / 1000;
-
-        String timeResultString = String.format("%02d:%02d", minutes, seconds);
-        timeResult.setText(timeResultString);
-    }
-
-    public String getSelectedSizeString() {
-        return (String) fieldSizeComboBox.getSelectedItem();
+    public JLabel getTimeResult() {
+        return timeResult;
     }
 }

@@ -1,5 +1,7 @@
 package ru.academits.ageev.model;
 
+import javax.swing.*;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -8,16 +10,29 @@ import java.util.Random;
 public class Model implements ModelInterface {
     private ArrayList<Cell> cellList;
     private final HashMap<String, Integer[]> sizesHashMap;
-
     private int flagsCount = 10;
     private int markedBombsCount;
-    private String selectedSizeString = "9 x 9";
+    private final Integer[][] allSizes = {{9, 9, 10}, {16, 16, 40}, {16, 30, 100}};
+    private String selectedSizeString = getSizeStringBySize(allSizes[0]);
+    private Timer timer;
+    private long lastTickTime = System.currentTimeMillis();
+
 
     public Model() {
-        sizesHashMap = new LinkedHashMap<>();                          //Везде [0] это координата по X, кроме sizeHashMap, тут наоборот
-        sizesHashMap.put("9 x 9", new Integer[]{9, 9, 10});            //[0] = Y
-        sizesHashMap.put("16 x 16", new Integer[]{16, 16, 40});        //[1] = X
-        sizesHashMap.put("16 x 30", new Integer[]{16, 30, 100});       //[2] = количество бобм
+        sizesHashMap = new LinkedHashMap<>();                                  //Везде [0] это координата по X, кроме sizeHashMap, тут наоборот
+        sizesHashMap.put(getSizeStringBySize(allSizes[0]), allSizes[0]);       //[0] = Y
+        sizesHashMap.put(getSizeStringBySize(allSizes[1]), allSizes[1]);       //[1] = X
+        sizesHashMap.put(getSizeStringBySize(allSizes[2]), allSizes[2]);       //[2] = количество бобм
+    }
+
+    @Override
+    public Integer[][] getAllSizes() {
+        return allSizes;
+    }
+
+    @Override
+    public String getSizeStringBySize(Integer[] sizes) {
+        return sizes[1] + " x " + sizes[0];
     }
 
     @Override
@@ -57,14 +72,19 @@ public class Model implements ModelInterface {
 
     @Override
     public ArrayList<Cell> getNewCageList(String sizeString) {
-        Integer[] rowAndColumnSize = switch (sizeString) {
-            case "9 x 9", "16 x 16", "16 x 30" -> getSizeBySizeString(sizeString);
-            default -> new Integer[3];
-        };
+        Integer[] rowAndColumnSize = new Integer[2];
+
+        if (sizeString.equals(getSizeStringBySize(allSizes[0]))) {
+            rowAndColumnSize = getSizeBySizeString(sizeString);
+        } else if (sizeString.equals(getSizeStringBySize(allSizes[1]))) {
+            rowAndColumnSize = getSizeBySizeString(sizeString);
+        } else if (sizeString.equals(getSizeStringBySize(allSizes[2]))) {
+            rowAndColumnSize = getSizeBySizeString(sizeString);
+        }
 
         int cageListSize = rowAndColumnSize[0] * rowAndColumnSize[1];
 
-        flagsCount = getBombCount();
+        flagsCount = getBombsCount();
         selectedSizeString = sizeString;
         cellList = new ArrayList<>(cageListSize);
 
@@ -79,18 +99,18 @@ public class Model implements ModelInterface {
 
     @Override
     public boolean winGame() {
-        return markedBombsCount == getBombCount();
+        return markedBombsCount == getBombsCount();
     }
 
     @Override
-    public int getBombCount() {
+    public int getBombsCount() {
         return sizesHashMap.get(selectedSizeString)[2];
     }
 
     private void generateBomb(int cageListSize) {
         Random random = new Random();
 
-        for (int i = 0; i < getBombCount(); i++) {
+        for (int i = 0; i < getBombsCount(); i++) {
             int bombIndex = random.nextInt(cageListSize);
 
             if (!cellList.get(bombIndex).isBomb()) {
@@ -169,7 +189,8 @@ public class Model implements ModelInterface {
         return coordinate[1] * size[1] - (size[1] - coordinate[0]) - 1;
     }
 
-    private int getAround3x3BombCount(Cell cell) {
+    @Override
+    public int getAround3x3BombCount(Cell cell) {
         int bombCountAround = 0;
         int[] coordinate = getClickCageCoordinate(cell.getIndex());
 
@@ -210,5 +231,44 @@ public class Model implements ModelInterface {
         }
 
         return bombCountAround;
+    }
+
+
+    @Override
+    public void stopTimer() {
+        timer.stop();
+    }
+
+    @Override
+    public Timer getNewTimer() {
+        timer = new Timer(0, e -> getTimeString());
+        timer.start();
+
+        return timer;
+    }
+
+    @Override
+    public void restartTimer() {
+        lastTickTime = System.currentTimeMillis();
+
+        timer = new Timer(100, e -> getTimeString());
+        timer.start();
+    }
+
+    @Override
+    public String getTimeString() {
+        long runningTime = System.currentTimeMillis() - lastTickTime;
+        Duration duration = Duration.ofMillis(runningTime);
+
+        long hours = duration.toHours();
+        duration = duration.minusHours(hours);
+
+        long minutes = duration.toMinutes();
+        duration = duration.minusMinutes(minutes);
+
+        long millis = duration.toMillis();
+        long seconds = millis / 1000;
+
+        return String.format("%02d:%02d", minutes, seconds);
     }
 }
