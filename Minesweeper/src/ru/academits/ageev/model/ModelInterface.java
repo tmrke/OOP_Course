@@ -4,9 +4,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public interface ModelInterface {
-
-    ArrayList<Cell> getCellList();
-
     ArrayList<Cell> getNewCageList(String sizeString);
 
     Integer[][] getAllSizes();
@@ -32,6 +29,12 @@ public interface ModelInterface {
     void openWithoutBombZone(Cell cell);
 
     int getAround3x3BombCount(Cell cell);
+
+    boolean is3x3AreaClear(Cell cell);
+
+    void scanField3x3CellList(Cell cell);
+
+    int getAround3x3FlagCount(Cell cell);
 
     void stopTimer();
 

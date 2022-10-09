@@ -1,11 +1,8 @@
 package ru.academits.ageev.model;
 
-import javax.swing.*;
+import javax.swing.Timer;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Random;
+import java.util.*;
 
 public class Model implements ModelInterface {
     private ArrayList<Cell> cellList;
@@ -16,7 +13,6 @@ public class Model implements ModelInterface {
     private String selectedSizeString = getSizeStringBySize(allSizes[0]);
     private Timer timer;
     private long lastTickTime = System.currentTimeMillis();
-
 
     public Model() {
         sizesHashMap = new LinkedHashMap<>();                                  //Везде [0] это координата по X, кроме sizeHashMap, тут наоборот
@@ -66,11 +62,6 @@ public class Model implements ModelInterface {
     }
 
     @Override
-    public ArrayList<Cell> getCellList() {
-        return cellList;
-    }
-
-    @Override
     public ArrayList<Cell> getNewCageList(String sizeString) {
         Integer[] rowAndColumnSize = new Integer[2];
 
@@ -99,7 +90,8 @@ public class Model implements ModelInterface {
 
     @Override
     public boolean winGame() {
-        return markedBombsCount == getBombsCount();
+        int bombCount = getBombsCount();
+        return getMarkedBombsCount() == bombCount && flagsCount == 0;
     }
 
     @Override
@@ -233,6 +225,135 @@ public class Model implements ModelInterface {
         return bombCountAround;
     }
 
+    @Override
+    public boolean is3x3AreaClear(Cell cell) {
+        int[] coordinate = getClickCageCoordinate(cell.getIndex());
+
+        Integer[] size = getSizeBySizeString(selectedSizeString);
+        int sizeX = size[1];
+        int sizeY = size[0];
+
+        int startX = coordinate[0] - 1;
+        int endX = coordinate[0] + 1;
+
+        if (startX < 1) {
+            startX = 1;
+        }
+
+        if (endX > sizeX) {
+            endX = sizeX;
+        }
+
+        int startY = coordinate[1] - 1;
+        int endY = coordinate[1] + 1;
+
+        if (startY < 1) {
+            startY = 1;
+        }
+
+        if (endY > sizeY) {
+            endY = sizeY;
+        }
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+                int index = getClickCageIndex(new int[]{i, j});
+
+                Cell currentCell = cellList.get(index);
+
+                if (currentCell.isBomb() && !currentCell.isMarkedBomb()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void scanField3x3CellList(Cell cell) {
+        int[] coordinate = getClickCageCoordinate(cell.getIndex());
+
+        Integer[] size = getSizeBySizeString(selectedSizeString);
+        int sizeX = size[1];
+        int sizeY = size[0];
+
+        int startX = coordinate[0] - 1;
+        int endX = coordinate[0] + 1;
+
+        if (startX < 1) {
+            startX = 1;
+        }
+
+        if (endX > sizeX) {
+            endX = sizeX;
+        }
+
+        int startY = coordinate[1] - 1;
+        int endY = coordinate[1] + 1;
+
+        if (startY < 1) {
+            startY = 1;
+        }
+
+        if (endY > sizeY) {
+            endY = sizeY;
+        }
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+                int index = getClickCageIndex(new int[]{i, j});
+
+                if (index != cell.getIndex()) {
+                    cellList.get(index).setOpen(true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public int getAround3x3FlagCount(Cell cell) {
+        int flagCountAround = 0;
+        int[] coordinate = getClickCageCoordinate(cell.getIndex());
+
+        Integer[] size = getSizeBySizeString(selectedSizeString);
+        int sizeX = size[1];
+        int sizeY = size[0];
+
+        int startX = coordinate[0] - 1;
+        int endX = coordinate[0] + 1;
+
+        if (startX < 1) {
+            startX = 1;
+        }
+
+        if (endX > sizeX) {
+            endX = sizeX;
+        }
+
+        int startY = coordinate[1] - 1;
+        int endY = coordinate[1] + 1;
+
+        if (startY < 1) {
+            startY = 1;
+        }
+
+        if (endY > sizeY) {
+            endY = sizeY;
+        }
+
+        for (int i = startX; i <= endX; i++) {
+            for (int j = startY; j <= endY; j++) {
+                int index = getClickCageIndex(new int[]{i, j});
+
+                if (cellList.get(index).isMarkedBomb()) {
+                    flagCountAround++;
+                }
+            }
+        }
+
+        return flagCountAround;
+    }
 
     @Override
     public void stopTimer() {

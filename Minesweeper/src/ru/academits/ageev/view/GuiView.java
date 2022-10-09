@@ -160,6 +160,10 @@ public class GuiView implements View {
 
     @Override
     public void clickToCage() {
+        if (model.winGame()) {
+            return;
+        }
+
         for (JButton cellButton : cellJButtonHashMap.keySet()) {
             cellButton.addMouseListener(new MouseAdapter() {
                 @Override
@@ -172,7 +176,13 @@ public class GuiView implements View {
                         Cell cell = cellJButtonHashMap.get(cellButton);
 
                         if (cell.isBomb()) {
-                            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
+                            for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
+                                if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
+                                    currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
+                                    model.setMarkedBombsCount(0);
+                                }
+                            }
+
                             JOptionPane.showMessageDialog(field, "Game over");
                         } else {
                             cellButton.setEnabled(false);
@@ -190,6 +200,10 @@ public class GuiView implements View {
                                 Cell currentCell = cellJButtonHashMap.get(cellButton);
                                 int aroundBombsCount = currentCell.getAroundBombsCount();
 
+                                if (currentCell.isMarkedBomb()) {
+                                    continue;
+                                }
+
                                 if (aroundBombsCount != 0) {
                                     cellButton.setText(String.valueOf(aroundBombsCount));
                                 }
@@ -201,6 +215,24 @@ public class GuiView implements View {
                         }
                     } else if (e.getButton() == MouseEvent.BUTTON3) {           //rightMouseClick
                         Cell currentCell = cellJButtonHashMap.get(cellButton);
+
+                        if (!cellButton.isEnabled()) {
+                            return;
+                        }
+
+                        if (model.getFlagsCount() == 0) {
+                            if (currentCell.isMarkedBomb()) {
+                                cellButton.setIcon(null);
+                                currentCell.setMarkedBomb(false);
+                                model.setFlagsCount(model.getFlagsCount() + 1);
+
+                                if (currentCell.isBomb()) {
+                                    model.setMarkedBombsCount(model.getMarkedBombsCount() - 1);
+                                }
+
+                            }
+                            return;
+                        }
 
                         if (!currentCell.isMarkedBomb()) {
                             cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
@@ -228,6 +260,7 @@ public class GuiView implements View {
                                 }
 
                                 model.stopTimer();
+                                model.setMarkedBombsCount(0);
 
                                 JOptionPane.showMessageDialog(menuPanel, "You win! Your result: " + resultString);
                             }
@@ -242,6 +275,41 @@ public class GuiView implements View {
                         }
 
                         menu.setFlagsCountLabel(model.getFlagsCount());
+                    } else if (e.getButton() == MouseEvent.BUTTON2) {         // wheelMouseClick
+                        Cell currentCell = cellJButtonHashMap.get(cellButton);
+                        int bombAroundCount = model.getAround3x3BombCount(currentCell);
+
+                        if (!cellButton.isEnabled()
+                                && bombAroundCount > 0
+                                && bombAroundCount == model.getAround3x3FlagCount(currentCell)) {
+                            if (model.is3x3AreaClear(currentCell)) {
+                                model.scanField3x3CellList(currentCell);
+
+                                for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
+                                    Cell currentAround3x3Cell = cellJButtonHashMap.get(currentCellButton);
+
+                                    if (currentAround3x3Cell.isMarkedBomb()) {       //TODO потестить, тут какая то лажа!
+                                        continue;
+                                    }
+
+                                    if (currentAround3x3Cell.isOpen()) {
+                                        currentCellButton.setEnabled(false);
+
+                                        int around3x3BombCount = model.getAround3x3BombCount(currentAround3x3Cell);
+
+                                        if (around3x3BombCount > 0) {
+                                            currentCellButton.setText(String.valueOf(around3x3BombCount));
+                                        }
+                                    }
+                                }
+                            } else {
+                                for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
+                                    if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
+                                        currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             });
