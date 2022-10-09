@@ -9,12 +9,42 @@ public class Tree<T> {
     private final Comparator<? super T> comparator;
 
     public Tree() {
-        comparator = (Comparator<T>) this::compare;
+        comparator = (Comparator<T>) (t1, t2) -> {
+            if (t1 == null && t2 == null) {
+                return 0;
+            }
+
+            if (t1 == null) {
+                return -1;
+            }
+
+            if (t2 == null) {
+                return 1;
+            }
+
+            //noinspection unchecked
+            return ((Comparable<T>) t1).compareTo(t2);
+        };
     }
 
     public Tree(Comparator<T> comparator) {
         if (comparator == null) {
-            throw new IllegalArgumentException("Comparator can't be null");
+            comparator = (t1, t2) -> {
+                if (t1 == null && t2 == null) {
+                    return 0;
+                }
+
+                if (t1 == null) {
+                    return -1;
+                }
+
+                if (t2 == null) {
+                    return 1;
+                }
+
+                //noinspection unchecked
+                return ((Comparable<T>) t1).compareTo(t2);
+            };
         }
 
         this.comparator = comparator;
@@ -22,23 +52,6 @@ public class Tree<T> {
 
     public int getSize() {
         return size;
-    }
-
-    private int compare(T t1, T t2) {
-        if (t1 == null && t2 == null) {
-            return 0;
-        }
-
-        if (t1 == null) {
-            return -1;
-        }
-
-        if (t2 == null) {
-            return 1;
-        }
-
-        //noinspection unchecked
-        return ((Comparable<T>) t1).compareTo(t2);
     }
 
     public void add(T data) {
@@ -54,7 +67,7 @@ public class Tree<T> {
         Node<T> currentNode = root;
 
         while (true) {
-            if (compare(data, currentNode.getData()) >= 0) {
+            if (comparator.compare(data, currentNode.getData()) >= 0) {
                 if (currentNode.getRight() == null) {
                     currentNode.setRight(addedNode);
                     size++;
@@ -84,13 +97,13 @@ public class Tree<T> {
         Node<T> currentNode = root;
 
         while (currentNode != null) {
-            int compareResult = compare(currentNode.getData(), data);
+            int comparatorResult = comparator.compare(currentNode.getData(), data);
 
-            if (compareResult == 0) {
+            if (comparatorResult == 0) {
                 return true;
             }
 
-            if (compareResult > 0) {
+            if (comparatorResult > 0) {
                 currentNode = currentNode.getLeft();
             } else {
                 currentNode = currentNode.getRight();
@@ -108,7 +121,7 @@ public class Tree<T> {
         Node<T> removedNode = root;
         Node<T> removedNodeParent = null;
 
-        int comparatorResult = compare(data, removedNode.getData());
+        int comparatorResult = comparator.compare(data, removedNode.getData());
         boolean isLeftChild = false;
 
         while (comparatorResult != 0) {
@@ -126,7 +139,7 @@ public class Tree<T> {
                 return false;
             }
 
-            comparatorResult = compare(data, removedNode.getData());
+            comparatorResult = comparator.compare(data, removedNode.getData());
         }
 
         if (removedNode.getLeft() == null && removedNode.getRight() == null) {
@@ -196,13 +209,11 @@ public class Tree<T> {
             if (removedNodeParent == null) {
                 root = smallestLeftNode;
                 root.setLeft(removedNodeLeftChild);
-                root.setRight(smallestLeftNode.getRight());
 
                 size--;
 
                 return true;
             }
-
 
             if (isLeftChild) {
                 removedNodeParent.setLeft(removedNodeRightChild);
@@ -221,11 +232,8 @@ public class Tree<T> {
             smallestLeftNode = smallestLeftNode.getLeft();
         }
 
-        if (smallestLeftNodeParent != null) {
-            smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
-            smallestLeftNode.setRight(removedNodeRightChild);
-        }
-
+        smallestLeftNodeParent.setLeft(smallestLeftNode.getRight());
+        smallestLeftNode.setRight(removedNodeRightChild);
         smallestLeftNode.setLeft(removedNodeLeftChild);
 
         if (removedNodeParent == null) {
