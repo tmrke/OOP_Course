@@ -6,30 +6,11 @@ import java.util.function.Consumer;
 public class Tree<T> {
     private Node<T> root;
     private int size;
-    private final Comparator<? super T> comparator;
-
-    public Tree() {
-        comparator = (Comparator<T>) (t1, t2) -> {
-            if (t1 == null && t2 == null) {
-                return 0;
-            }
-
-            if (t1 == null) {
-                return -1;
-            }
-
-            if (t2 == null) {
-                return 1;
-            }
-
-            //noinspection unchecked
-            return ((Comparable<T>) t1).compareTo(t2);
-        };
-    }
+    private Comparator<? super T> comparator;
 
     public Tree(Comparator<T> comparator) {
         if (comparator == null) {
-            comparator = (t1, t2) -> {
+            this.comparator = (t1, t2) -> {
                 if (t1 == null && t2 == null) {
                     return 0;
                 }
@@ -46,8 +27,6 @@ public class Tree<T> {
                 return ((Comparable<T>) t1).compareTo(t2);
             };
         }
-
-        this.comparator = comparator;
     }
 
     public int getSize() {

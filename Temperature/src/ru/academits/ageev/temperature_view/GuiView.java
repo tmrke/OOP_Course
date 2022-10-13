@@ -1,7 +1,7 @@
-package ru.academits.ageev.view;
+package ru.academits.ageev.temperature_view;
 
-import ru.academits.ageev.model.Model;
-import ru.academits.ageev.model.Scale;
+import ru.academits.ageev.temperature_model.Model;
+import ru.academits.ageev.temperature_model.Scale;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +28,7 @@ public class GuiView implements View {
             window.setMinimumSize(new Dimension(450, 200));
             window.setVisible(true);
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            window.setLocationRelativeTo(null);
 
             window.setLayout(new GridBagLayout());
             GridBagConstraints constraints = new GridBagConstraints();
@@ -75,13 +76,13 @@ public class GuiView implements View {
     }
 
     @Override
-    public String getInputValueString() {
-        return inputTextField.getText();
+    public double getInputTemperature() {
+        return Double.parseDouble(inputTextField.getText());
     }
 
     @Override
-    public void setOutputValue(double value) {
-        outputTextField.setText(String.valueOf(value));
+    public void setOutputTemperature(double temperatureString) {
+        outputTextField.setText(String.valueOf(temperatureString));
     }
 
     @Override

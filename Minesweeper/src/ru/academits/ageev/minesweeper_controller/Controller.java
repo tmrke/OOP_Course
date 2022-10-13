@@ -1,9 +1,9 @@
-package ru.academits.ageev.controller;
+package ru.academits.ageev.minesweeper_controller;
 
-import ru.academits.ageev.model.Model;
-import ru.academits.ageev.model.ModelInterface;
-import ru.academits.ageev.view.GuiView;
-import ru.academits.ageev.view.View;
+import ru.academits.ageev.minesweeper_model.Model;
+import ru.academits.ageev.minesweeper_model.ModelInterface;
+import ru.academits.ageev.minesweeper_view.GuiView;
+import ru.academits.ageev.minesweeper_view.View;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;

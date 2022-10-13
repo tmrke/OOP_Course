@@ -1,4 +1,4 @@
-package ru.academits.ageev.model;
+package ru.academits.ageev.minesweeper_model;
 
 import javax.swing.Timer;
 import java.time.Duration;
@@ -110,56 +110,6 @@ public class Model implements ModelInterface {
             } else {
                 i--;
             }
-        }
-    }
-
-    @Override
-    public void openWithoutBombZone(Cell cell) {
-        int[] clickCageCoordinate = getClickCageCoordinate(cell.getIndex());
-        int x = clickCageCoordinate[0];
-        int y = clickCageCoordinate[1];
-
-        Integer[] size = getSizeBySizeString(selectedSizeString);
-        int sizeX = size[1];
-        int sizeY = size[0];
-
-        int offset = 1;
-        boolean hasBomb = false;
-
-        while (!hasBomb) {
-            int borderFromX = x - offset;
-            int borderToX = x + offset;
-
-            if (x == 1 || borderFromX < 1) {
-                borderFromX = 1;
-            } else if (x == sizeX || borderToX > sizeX) {
-                borderToX = sizeX;
-            }
-
-            int borderFromY = y - offset;
-            int borderToY = y + offset;
-
-            if (y == 1 || borderFromY < 1) {
-                borderFromY = 1;
-            } else if (y == sizeY || borderToY > sizeY) {
-                borderToY = sizeY;
-            }
-
-            for (int i = borderFromX; i <= borderToX; i++) {
-                for (int j = borderFromY; j <= borderToY; j++) {
-                    int currentIndex = getClickCageIndex(new int[]{i, j});
-                    Cell currentCell = cellList.get(currentIndex);
-
-                    if (!currentCell.isBomb()) {
-                        currentCell.setOpen(true);
-                        currentCell.setAroundBombsCount(getAround3x3BombCount(currentCell));
-                    } else {
-                        hasBomb = true;
-                    }
-                }
-            }
-
-            offset++;
         }
     }
 
@@ -391,5 +341,54 @@ public class Model implements ModelInterface {
         long seconds = millis / 1000;
 
         return String.format("%02d:%02d", minutes, seconds);
+    }
+
+    @Override
+    public void openWithoutBombCells(Cell cell) {
+        if (cell.isBomb() || cell.isMarkedBomb() || cell.isOpen()) {
+            return;
+        }
+
+        cell.setAroundBombsCount(getAround3x3BombCount(cell));
+        cell.setOpen(true);
+
+        if (cell.getAroundBombsCount() > 0) {
+            return;
+        }
+
+        int[] coordinate = getClickCageCoordinate(cell.getIndex());
+        int x = coordinate[0];
+        int y = coordinate[1];
+
+        Integer[] size = getSizeBySizeString(selectedSizeString);
+        int sizeX = size[1];
+        int sizeY = size[0];
+
+        int borderFromX = x - 1;
+        int borderToX = x + 1;
+
+        if (x == 1 || borderFromX < 1) {
+            borderFromX = 1;
+        } else if (x == sizeX || borderToX > sizeX) {
+            borderToX = sizeX;
+        }
+
+        int borderFromY = y - 1;
+        int borderToY = y + 1;
+
+        if (y == 1 || borderFromY < 1) {
+            borderFromY = 1;
+        } else if (y == sizeY || borderToY > sizeY) {
+            borderToY = sizeY;
+        }
+
+        for (int i = borderFromX; i <= borderToX; i++) {
+            for (int j = borderFromY; j <= borderToY; j++) {
+                int currentIndex = getClickCageIndex(new int[]{i, j});
+                Cell currentCell = cellList.get(currentIndex);
+
+                openWithoutBombCells(currentCell);
+            }
+        }
     }
 }

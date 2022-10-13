@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Consumer<Integer> consumer = System.out::println;
 
-        Tree<Integer> tree = new Tree<>();
+        Tree<Integer> tree = new Tree<>(null);
         tree.add(9);
         tree.add(6);
         tree.add(17);

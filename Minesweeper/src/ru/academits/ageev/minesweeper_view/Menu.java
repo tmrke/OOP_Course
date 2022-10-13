@@ -1,6 +1,6 @@
-package ru.academits.ageev.view;
+package ru.academits.ageev.minesweeper_view;
 
-import ru.academits.ageev.model.ModelInterface;
+import ru.academits.ageev.minesweeper_model.ModelInterface;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,14 +34,14 @@ public class Menu {
         menu.add(highScoresButton);
         menu.add(exitButton);
 
-        flagsCountLabel.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
+        flagsCountLabel.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/flag.png"));
         flagsCountLabel.setHorizontalAlignment(SwingConstants.CENTER);
         menu.add(flagsCountLabel);
         flagsCountLabel.setText(String.valueOf(flagCount));
 
         timer = model.getNewTimer();
 
-        timeResult.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/time.png"));
+        timeResult.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/time.png"));
         timeResult.setHorizontalAlignment(SwingConstants.CENTER);
 
         menu.add(timeResult);

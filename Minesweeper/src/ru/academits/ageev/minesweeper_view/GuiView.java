@@ -1,9 +1,9 @@
-package ru.academits.ageev.view;
+package ru.academits.ageev.minesweeper_view;
 
-import ru.academits.ageev.model.Cell;
-import ru.academits.ageev.model.GameRecordsReader;
-import ru.academits.ageev.model.GameRecordsWriter;
-import ru.academits.ageev.model.ModelInterface;
+import ru.academits.ageev.minesweeper_model.Cell;
+import ru.academits.ageev.minesweeper_model.GameRecordsReader;
+import ru.academits.ageev.minesweeper_model.GameRecordsWriter;
+import ru.academits.ageev.minesweeper_model.ModelInterface;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +52,6 @@ public class GuiView implements View {
 
             field = getFieldPanel(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
             frame.add(field, BorderLayout.CENTER);
-
 
             clickNewGame(actionListenerList.get(0));
             clickToAbout();
@@ -144,7 +143,7 @@ public class GuiView implements View {
             StringBuilder stringBuilder = new StringBuilder();
 
             try {
-                Scanner scanner = new Scanner(new FileInputStream("Minesweeper/src/ru/academits/ageev/resources/about.txt"));
+                Scanner scanner = new Scanner(new FileInputStream("Minesweeper/src/ru/academits/ageev/minesweeper_resources/about.txt"));
                 while (scanner.hasNextLine()) {
                     stringBuilder.append(scanner.nextLine()).append("\n");
                 }
@@ -175,10 +174,14 @@ public class GuiView implements View {
 
                         Cell cell = cellJButtonHashMap.get(cellButton);
 
+                        if (cell.isMarkedBomb()) {
+                            return;
+                        }
+
                         if (cell.isBomb()) {
                             for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
                                 if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
-                                    currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
+                                    currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
                                     model.setMarkedBombsCount(0);
                                 }
                             }
@@ -194,7 +197,7 @@ public class GuiView implements View {
                                 return;
                             }
 
-                            model.openWithoutBombZone(cell);
+                            model.openWithoutBombCells(cell);
 
                             for (JButton cellButton : cellJButtonHashMap.keySet()) {
                                 Cell currentCell = cellJButtonHashMap.get(cellButton);
@@ -235,7 +238,7 @@ public class GuiView implements View {
                         }
 
                         if (!currentCell.isMarkedBomb()) {
-                            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/flag.png"));
+                            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/flag.png"));
                             currentCell.setMarkedBomb(true);
                             model.setFlagsCount(model.getFlagsCount() - 1);
 
@@ -279,16 +282,14 @@ public class GuiView implements View {
                         Cell currentCell = cellJButtonHashMap.get(cellButton);
                         int bombAroundCount = model.getAround3x3BombCount(currentCell);
 
-                        if (!cellButton.isEnabled()
-                                && bombAroundCount > 0
-                                && bombAroundCount == model.getAround3x3FlagCount(currentCell)) {
+                        if (!cellButton.isEnabled() && bombAroundCount > 0 && bombAroundCount == model.getAround3x3FlagCount(currentCell)) {
                             if (model.is3x3AreaClear(currentCell)) {
                                 model.scanField3x3CellList(currentCell);
 
                                 for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
                                     Cell currentAround3x3Cell = cellJButtonHashMap.get(currentCellButton);
 
-                                    if (currentAround3x3Cell.isMarkedBomb()) {       //TODO потестить, тут какая то лажа!
+                                    if (currentAround3x3Cell.isMarkedBomb()) {
                                         continue;
                                     }
 
@@ -305,7 +306,7 @@ public class GuiView implements View {
                             } else {
                                 for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
                                     if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
-                                        currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/resources/bang.png"));
+                                        currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
                                     }
                                 }
                             }

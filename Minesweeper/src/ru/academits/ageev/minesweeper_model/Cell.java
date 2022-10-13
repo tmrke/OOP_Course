@@ -1,4 +1,4 @@
-package ru.academits.ageev.model;
+package ru.academits.ageev.minesweeper_model;
 
 public class Cell {
     private boolean isOpen;

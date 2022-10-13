@@ -1,4 +1,4 @@
-package ru.academits.ageev.model;
+package ru.academits.ageev.temperature_model;
 
 public class KelvinScale implements Scale {
     @Override
@@ -13,6 +13,6 @@ public class KelvinScale implements Scale {
 
     @Override
     public String toString() {
-        return "KelvinScale";
+        return "Kelvin scale";
     }
 }

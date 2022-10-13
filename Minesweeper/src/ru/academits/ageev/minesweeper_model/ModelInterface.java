@@ -1,4 +1,4 @@
-package ru.academits.ageev.model;
+package ru.academits.ageev.minesweeper_model;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -26,8 +26,6 @@ public interface ModelInterface {
 
     int getBombsCount();
 
-    void openWithoutBombZone(Cell cell);
-
     int getAround3x3BombCount(Cell cell);
 
     boolean is3x3AreaClear(Cell cell);
@@ -43,4 +41,6 @@ public interface ModelInterface {
     void restartTimer();
 
     String getTimeString();
+
+    void openWithoutBombCells(Cell cell);
 }

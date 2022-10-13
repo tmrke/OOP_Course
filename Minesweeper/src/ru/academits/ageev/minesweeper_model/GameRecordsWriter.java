@@ -1,9 +1,9 @@
-package ru.academits.ageev.model;
+package ru.academits.ageev.minesweeper_model;
 
 import java.io.*;
 
 public class GameRecordsWriter {
-    private final String path = "Minesweeper/src/ru/academits/ageev/resources/result.txt";
+    private final String path = "Minesweeper/src/ru/academits/ageev/minesweeper_resources/result.txt";
     private final String newResult;
 
     private final int rowsCount = 10;

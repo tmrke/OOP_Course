@@ -1,6 +1,6 @@
-package ru.academits.ageev.view;
+package ru.academits.ageev.minesweeper_view;
 
-import ru.academits.ageev.model.Cell;
+import ru.academits.ageev.minesweeper_model.Cell;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
