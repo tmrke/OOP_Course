@@ -9,11 +9,7 @@ public class Tree<T> {
     private final Comparator<? super T> comparator;
 
     public Tree(Comparator<T> comparator) {
-        if (comparator == null) {
-            comparator = this::compare;
-        }
-
-        this.comparator = comparator;
+        this.comparator = Objects.requireNonNullElseGet(comparator, () -> this::compare);
     }
 
     public Tree() {
@@ -22,6 +18,10 @@ public class Tree<T> {
 
     public int getSize() {
         return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
     }
 
     private int compare(T t1, T t2) {
@@ -300,9 +300,5 @@ public class Tree<T> {
         if (node.getRight() != null) {
             traverseInDepthRecursively(node.getRight(), consumer);
         }
-    }
-
-    public boolean isEmpty() {
-        return size == 0;
     }
 }
