@@ -3,7 +3,7 @@ package ru.academits.ageev.minesweeper_model;
 public class Cell {
     private boolean isOpen;
     private boolean isBomb;
-    private boolean isMarkedBomb;
+    private boolean isMarked;
     private final int index;
     private int aroundBombsCount;
 
@@ -15,35 +15,35 @@ public class Cell {
         return aroundBombsCount;
     }
 
+    public void setAroundBombsCount(int aroundBombsCount) {
+        this.aroundBombsCount = aroundBombsCount;
+    }
+
     public boolean isOpen() {
         return isOpen;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public boolean isBomb() {
-        return isBomb;
-    }
-
-    public void setBomb(boolean condition) {
-        isBomb = condition;
-    }
-
-    public boolean isMarkedBomb() {
-        return isMarkedBomb;
-    }
-
-    public void setMarkedBomb(boolean condition) {
-        isMarkedBomb = condition;
     }
 
     public void setOpen(boolean open) {
         isOpen = open;
     }
 
-    public void setAroundBombsCount(int aroundBombsCount) {
-        this.aroundBombsCount = aroundBombsCount;
+    public boolean isBomb() {
+        return isBomb;
+    }
+
+    public void setBomb(boolean isBomb) {
+        this.isBomb = isBomb;
+    }
+
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public void setMarked(boolean isMarked) {
+        this.isMarked = isMarked;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

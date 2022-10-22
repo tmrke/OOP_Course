@@ -3,7 +3,7 @@ package ru.academits.ageev.minesweeper_view;
 import ru.academits.ageev.minesweeper_model.Cell;
 import ru.academits.ageev.minesweeper_model.GameRecordsReader;
 import ru.academits.ageev.minesweeper_model.GameRecordsWriter;
-import ru.academits.ageev.minesweeper_model.ModelInterface;
+import ru.academits.ageev.minesweeper_model.Model;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,10 +13,8 @@ import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Scanner;
+import java.util.List;
+import java.util.*;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -27,9 +25,9 @@ public class GuiView implements View {
     private JPanel field;
     private JFrame frame;
 
-    private final ModelInterface model;
+    private final Model model;
 
-    public GuiView(ModelInterface model) {
+    public GuiView(Model model) {
         this.model = model;
         menu = new Menu(model);
         field = new JPanel();
@@ -37,20 +35,21 @@ public class GuiView implements View {
     }
 
     @Override
-    public void start(ArrayList<ActionListener> actionListenerList) {
+    public void start(List<ActionListener> actionListenerList) {
         SwingUtilities.invokeLater(() -> {
             frame = new JFrame("Minesweeper");
             frame.setSize(450, 470);
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setMinimumSize(new Dimension(450, 450));
+            frame.setLocationRelativeTo(null);
 
             menuPanel = menu.getMenuPanel(model.getSizesString(), model.getFlagsCount());
             frame.add(menuPanel, BorderLayout.NORTH);
 
             String selectedItem = (String) menu.getFieldSizeComboBox().getSelectedItem();
 
-            field = getFieldPanel(model.getSizeBySizeString(selectedItem), model.getNewCageList(selectedItem));
+            field = getFieldPanel(model.getSizeBySizeString(selectedItem), model.getNewCellList(selectedItem));
             frame.add(field, BorderLayout.CENTER);
 
             clickNewGame(actionListenerList.get(0));
@@ -58,7 +57,7 @@ public class GuiView implements View {
             clickHighScore(actionListenerList.get(1));
             clickExit(actionListenerList.get(2));
 
-            clickToCage();
+            clickToCell();
         });
     }
 
@@ -158,7 +157,7 @@ public class GuiView implements View {
     }
 
     @Override
-    public void clickToCage() {
+    public void clickToCell() {
         if (model.winGame()) {
             return;
         }
@@ -168,152 +167,165 @@ public class GuiView implements View {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON1) {              //leftMouseClick
-                        if (!cellButton.isEnabled()) {
-                            return;
-                        }
-
-                        Cell cell = cellJButtonHashMap.get(cellButton);
-
-                        if (cell.isMarkedBomb()) {
-                            return;
-                        }
-
-                        if (cell.isBomb()) {
-                            for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
-                                if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
-                                    currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
-                                    model.setMarkedBombsCount(0);
-                                }
-                            }
-
-                            JOptionPane.showMessageDialog(field, "Game over");
-                        } else {
-                            cellButton.setEnabled(false);
-                            int around3x3BombCount = model.getAround3x3BombCount(cell);
-
-                            if (around3x3BombCount > 0) {
-                                cellButton.setText(String.valueOf(around3x3BombCount));
-
-                                return;
-                            }
-
-                            model.openWithoutBombCells(cell);
-
-                            for (JButton cellButton : cellJButtonHashMap.keySet()) {
-                                Cell currentCell = cellJButtonHashMap.get(cellButton);
-                                int aroundBombsCount = currentCell.getAroundBombsCount();
-
-                                if (currentCell.isMarkedBomb()) {
-                                    continue;
-                                }
-
-                                if (aroundBombsCount != 0) {
-                                    cellButton.setText(String.valueOf(aroundBombsCount));
-                                }
-
-                                if (currentCell.isOpen()) {
-                                    cellButton.setEnabled(false);
-                                }
-                            }
-                        }
+                        leftMouseClickToCell(e, cellButton);
                     } else if (e.getButton() == MouseEvent.BUTTON3) {           //rightMouseClick
-                        Cell currentCell = cellJButtonHashMap.get(cellButton);
-
-                        if (!cellButton.isEnabled()) {
-                            return;
-                        }
-
-                        if (model.getFlagsCount() == 0) {
-                            if (currentCell.isMarkedBomb()) {
-                                cellButton.setIcon(null);
-                                currentCell.setMarkedBomb(false);
-                                model.setFlagsCount(model.getFlagsCount() + 1);
-
-                                if (currentCell.isBomb()) {
-                                    model.setMarkedBombsCount(model.getMarkedBombsCount() - 1);
-                                }
-
-                            }
-                            return;
-                        }
-
-                        if (!currentCell.isMarkedBomb()) {
-                            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/flag.png"));
-                            currentCell.setMarkedBomb(true);
-                            model.setFlagsCount(model.getFlagsCount() - 1);
-
-                            if (currentCell.isBomb()) {
-                                model.setMarkedBombsCount(model.getMarkedBombsCount() + 1);
-                            }
-
-                            if (model.winGame()) {
-                                String resultString = menu.getTime();
-                                GameRecordsWriter gameRecordsWriter;
-
-                                try {
-                                    gameRecordsWriter = new GameRecordsWriter(resultString);
-                                } catch (FileNotFoundException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-
-                                try {
-                                    gameRecordsWriter.addResult();
-                                } catch (IOException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-
-                                model.stopTimer();
-                                model.setMarkedBombsCount(0);
-
-                                JOptionPane.showMessageDialog(menuPanel, "You win! Your result: " + resultString);
-                            }
-                        } else {
-                            cellButton.setIcon(null);
-                            currentCell.setMarkedBomb(false);
-                            model.setFlagsCount(model.getFlagsCount() + 1);
-
-                            if (currentCell.isBomb()) {
-                                model.setMarkedBombsCount(model.getMarkedBombsCount() - 1);
-                            }
-                        }
-
-                        menu.setFlagsCountLabel(model.getFlagsCount());
+                        rightMouseClickToCell(cellButton);
                     } else if (e.getButton() == MouseEvent.BUTTON2) {         // wheelMouseClick
-                        Cell currentCell = cellJButtonHashMap.get(cellButton);
-                        int bombAroundCount = model.getAround3x3BombCount(currentCell);
-
-                        if (!cellButton.isEnabled() && bombAroundCount > 0 && bombAroundCount == model.getAround3x3FlagCount(currentCell)) {
-                            if (model.is3x3AreaClear(currentCell)) {
-                                model.scanField3x3CellList(currentCell);
-
-                                for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
-                                    Cell currentAround3x3Cell = cellJButtonHashMap.get(currentCellButton);
-
-                                    if (currentAround3x3Cell.isMarkedBomb()) {
-                                        continue;
-                                    }
-
-                                    if (currentAround3x3Cell.isOpen()) {
-                                        currentCellButton.setEnabled(false);
-
-                                        int around3x3BombCount = model.getAround3x3BombCount(currentAround3x3Cell);
-
-                                        if (around3x3BombCount > 0) {
-                                            currentCellButton.setText(String.valueOf(around3x3BombCount));
-                                        }
-                                    }
-                                }
-                            } else {
-                                for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
-                                    if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
-                                        currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
-                                    }
-                                }
-                            }
-                        }
+                        wheelMouseClickToCell(cellButton);
                     }
                 }
             });
+        }
+    }
+
+    private void leftMouseClickToCell(MouseEvent e, JButton cellButton) {
+        if (e.getButton() == MouseEvent.BUTTON1)
+            if (!cellButton.isEnabled()) {
+                return;
+            }
+
+        Cell cell = cellJButtonHashMap.get(cellButton);
+
+        if (cell.isMarked()) {
+            return;
+        }
+
+        if (cell.isBomb()) {
+            for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
+                if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
+                    currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
+                    model.setMarkedBombsCount(0);
+                }
+            }
+
+            JOptionPane.showMessageDialog(field, "Game over");
+        } else {
+            cellButton.setEnabled(false);
+            int around3x3BombCount = model.getAround3x3BombCount(cell);
+
+            if (around3x3BombCount > 0) {
+                cellButton.setText(String.valueOf(around3x3BombCount));
+
+                return;
+            }
+
+            model.openWithoutBombCells(cell);
+
+            for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
+                Cell currentCell = cellJButtonHashMap.get(currentCellButton);
+                int aroundBombsCount = currentCell.getAroundBombsCount();
+
+                if (currentCell.isMarked()) {
+                    continue;
+                }
+
+                if (aroundBombsCount != 0) {
+                    currentCellButton.setText(String.valueOf(aroundBombsCount));
+                }
+
+                if (currentCell.isOpen()) {
+                    currentCellButton.setEnabled(false);
+                }
+            }
+        }
+    }
+
+    private void rightMouseClickToCell(JButton cellButton) {
+        Cell currentCell = cellJButtonHashMap.get(cellButton);
+
+        if (!cellButton.isEnabled()) {
+            return;
+        }
+
+        if (model.getFlagsCount() == 0) {
+            if (currentCell.isMarked()) {
+                cellButton.setIcon(null);
+                currentCell.setMarked(false);
+                model.setFlagsCount(model.getFlagsCount() + 1);
+
+                if (currentCell.isBomb()) {
+                    model.setMarkedBombsCount(model.getMarkedBombsCount() - 1);
+                }
+
+            }
+            return;
+        }
+
+        if (!currentCell.isMarked()) {
+            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/flag.png"));
+            currentCell.setMarked(true);
+            model.setFlagsCount(model.getFlagsCount() - 1);
+
+            if (currentCell.isBomb()) {
+                model.setMarkedBombsCount(model.getMarkedBombsCount() + 1);
+            }
+
+            if (model.winGame()) {
+                String resultString = menu.getTime();
+                GameRecordsWriter gameRecordsWriter;
+
+                try {
+                    gameRecordsWriter = new GameRecordsWriter(resultString);
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                try {
+                    gameRecordsWriter.addResult();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                model.stopTimer();
+                model.setMarkedBombsCount(0);
+
+                JOptionPane.showMessageDialog(menuPanel, "You win! Your result: " + resultString);
+            }
+        } else {
+            cellButton.setIcon(null);
+            currentCell.setMarked(false);
+            model.setFlagsCount(model.getFlagsCount() + 1);
+
+            if (currentCell.isBomb()) {
+                model.setMarkedBombsCount(model.getMarkedBombsCount() - 1);
+            }
+        }
+
+        menu.setFlagsCountLabel(model.getFlagsCount());
+    }
+
+    private void wheelMouseClickToCell(JButton cellButton) {
+        Cell currentCell = cellJButtonHashMap.get(cellButton);
+        int bombAroundCount = model.getAround3x3BombCount(currentCell);
+
+        if (!cellButton.isEnabled() && bombAroundCount > 0 && bombAroundCount == model.getAround3x3FlagCount(currentCell)) {
+            if (model.is3x3AreaClear(currentCell)) {
+                model.scanField3x3CellList(currentCell);
+
+                for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
+                    Cell currentAround3x3Cell = cellJButtonHashMap.get(currentCellButton);
+
+                    if (currentAround3x3Cell.isMarked()) {
+                        continue;
+                    }
+
+                    if (currentAround3x3Cell.isOpen()) {
+                        currentCellButton.setEnabled(false);
+
+                        int around3x3BombCount = model.getAround3x3BombCount(currentAround3x3Cell);
+
+                        if (around3x3BombCount > 0) {
+                            currentCellButton.setText(String.valueOf(around3x3BombCount));
+                        }
+                    }
+                }
+            } else {
+                for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
+                    if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
+                        currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
+                    }
+                }
+            }
         }
     }
 

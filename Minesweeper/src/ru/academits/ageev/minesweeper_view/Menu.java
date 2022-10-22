@@ -1,12 +1,12 @@
 package ru.academits.ageev.minesweeper_view;
 
-import ru.academits.ageev.minesweeper_model.ModelInterface;
+import ru.academits.ageev.minesweeper_model.Model;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Menu {
-    private final ModelInterface model;
+    private final Model model;
     private final JPanel menu = new JPanel();
     private final JButton newGameButton = new JButton("new game");
     private JComboBox<String> fieldSizeComboBox;
@@ -18,7 +18,7 @@ public class Menu {
     private final JLabel timeResult = new JLabel("00:00");
     private Timer timer;
 
-    public Menu(ModelInterface model) {
+    public Menu(Model model) {
         this.model = model;
     }
 

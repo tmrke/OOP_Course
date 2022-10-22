@@ -4,9 +4,10 @@ import ru.academits.ageev.minesweeper_model.Cell;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface View {
-    void start(ArrayList<ActionListener> actionListenerList);
+    void start(List<ActionListener> actionListenerList);
 
     void setTime(String timeString);
 
@@ -28,7 +29,7 @@ public interface View {
 
     void clickToAbout();
 
-    void clickToCage();
+    void clickToCell();
 
     void clickOnHighScoreButton();
 }
