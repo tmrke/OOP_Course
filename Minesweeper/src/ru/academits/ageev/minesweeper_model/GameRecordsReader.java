@@ -6,15 +6,17 @@ import java.io.IOException;
 
 public class GameRecordsReader {
     private String[] fromFileResult;
+    private final int positionsCount = 10;
 
     public String[] getGameRecords() {
-        String[] forGameRecordsLabelResult = new String[10];
+        String[] forGameRecordsLabelResult = new String[positionsCount];
+        String[] fromFileResult = getFromFileResult();
 
         for (int i = 0; i < forGameRecordsLabelResult.length; i++) {
             if (getFromFileResult()[i] == null) {
                 forGameRecordsLabelResult[i] = i + 1 + " position:   -";
             } else {
-                forGameRecordsLabelResult[i] = i + 1 + " position: " + getFromFileResult()[i];
+                forGameRecordsLabelResult[i] = i + 1 + " position: " + fromFileResult[i];
             }
         }
 
@@ -24,7 +26,7 @@ public class GameRecordsReader {
     private String[] getFromFileResult() {
         try (BufferedReader bufferedReader = new BufferedReader(
                 new FileReader("Minesweeper/src/ru/academits/ageev/minesweeper_resources/result.txt"))) {
-            fromFileResult = new String[10];
+            fromFileResult = new String[positionsCount];
 
             for (int i = 0; i < fromFileResult.length; i++) {
                 fromFileResult[i] = bufferedReader.readLine();

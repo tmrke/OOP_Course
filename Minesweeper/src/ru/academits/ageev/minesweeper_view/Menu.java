@@ -46,7 +46,6 @@ public class Menu {
 
         menu.add(timeResult);
 
-
         return menu;
     }
 
@@ -77,7 +76,6 @@ public class Menu {
     public String getSelectedSizeString() {
         return (String) fieldSizeComboBox.getSelectedItem();
     }
-
 
     public String getTime() {
         timer.stop();

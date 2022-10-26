@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
-
 public class GuiView implements View {
     private final HashMap<JButton, Cell> cellJButtonHashMap;
     private final Menu menu;
@@ -27,10 +25,14 @@ public class GuiView implements View {
 
     private final Model model;
 
+    private final ImageIcon bangIcon = new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png");
+    private final ImageIcon flagIcon = new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/flag.png");
+    private int currentDigital;
+    private ImageIcon digitalIcon = new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/" + currentDigital + ".png");
+
     public GuiView(Model model) {
         this.model = model;
         menu = new Menu(model);
-        field = new JPanel();
         cellJButtonHashMap = new LinkedHashMap<>();
     }
 
@@ -43,6 +45,8 @@ public class GuiView implements View {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setMinimumSize(new Dimension(450, 450));
             frame.setLocationRelativeTo(null);
+
+            field = new JPanel();
 
             menuPanel = menu.getMenuPanel(model.getSizesString(), model.getFlagsCount());
             frame.add(menuPanel, BorderLayout.NORTH);
@@ -134,9 +138,10 @@ public class GuiView implements View {
     @Override
     public void clickToAbout() {
         menu.getAbout().addActionListener(e -> SwingUtilities.invokeLater(() -> {
-            JFrame frameAbout = new JFrame();
+            JFrame frameAbout = new JFrame("About game");
             frameAbout.setSize(400, 150);
             frameAbout.setVisible(true);
+            frameAbout.getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 5, 0, 5));
 
             JTextArea aboutTextArea = new JTextArea();
             StringBuilder stringBuilder = new StringBuilder();
@@ -193,7 +198,7 @@ public class GuiView implements View {
         if (cell.isBomb()) {
             for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
                 if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
-                    currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
+                    currentCellButton.setIcon(bangIcon);
                     model.setMarkedBombsCount(0);
                 }
             }
@@ -208,6 +213,12 @@ public class GuiView implements View {
 
                 return;
             }
+
+//            if (around3x3BombCount > 0) {
+//                setDigitalIcon(cellButton, around3x3BombCount);
+//
+//                return;
+//            }
 
             model.openWithoutBombCells(cell);
 
@@ -246,13 +257,13 @@ public class GuiView implements View {
                 if (currentCell.isBomb()) {
                     model.setMarkedBombsCount(model.getMarkedBombsCount() - 1);
                 }
-
             }
+
             return;
         }
 
         if (!currentCell.isMarked()) {
-            cellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/flag.png"));
+            cellButton.setIcon(flagIcon);
             currentCell.setMarked(true);
             model.setFlagsCount(model.getFlagsCount() - 1);
 
@@ -322,7 +333,7 @@ public class GuiView implements View {
             } else {
                 for (JButton currentCellButton : cellJButtonHashMap.keySet()) {
                     if (cellJButtonHashMap.get(currentCellButton).isBomb()) {
-                        currentCellButton.setIcon(new ImageIcon("Minesweeper/src/ru/academits/ageev/minesweeper_resources/bang.png"));
+                        currentCellButton.setIcon(bangIcon);
                     }
                 }
             }
@@ -336,7 +347,6 @@ public class GuiView implements View {
 
         JFrame gameRecordsListFrame = new JFrame("High score");
         gameRecordsListFrame.setSize(400, 320);
-        gameRecordsListFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         GridLayout layout = new GridLayout(10, 0, 10, 10);
         JPanel grid = new JPanel();
@@ -352,5 +362,16 @@ public class GuiView implements View {
         gameRecordsListFrame.setVisible(true);
 
         getMenu().getHighScoresButton().setVisible(true);
+    }
+
+    public void setDigitalIcon(JButton cellButton, int bombCount) {
+        if (bombCount > 0) {
+            for (int i = 0; i < 9; i++) {
+                if (bombCount == i) {
+                    currentDigital = i;
+                    cellButton.setIcon(digitalIcon);
+                }
+            }
+        }
     }
 }

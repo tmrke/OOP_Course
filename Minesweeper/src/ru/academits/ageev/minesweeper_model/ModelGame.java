@@ -1,8 +1,11 @@
 package ru.academits.ageev.minesweeper_model;
 
-import javax.swing.Timer;
+import javax.swing.*;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Random;
 
 public class ModelGame implements Model {
     private ArrayList<Cell> cellList;
